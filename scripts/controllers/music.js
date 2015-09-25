@@ -9,9 +9,9 @@
 angular.module('musicboxApp')
     .controller('MusicController', ['$scope', 'getSongsService', 'playMusicService', function ($scope, getSongsService, playMusicService) {
         $scope.pull = 0;
-        $scope.songUrl = 'http://mr3.douban.com/201308250247/4a3de2e8016b5d659821ec76e6a2f35d/view/song/small/p1562725.mp3'; //'musics/Like Sunday,Like Rain.mp3';
+        $scope.songUrl = 'musics/Like Sunday,Like Rain.mp3';  //'http://mr3.douban.com/201308250247/4a3de2e8016b5d659821ec76e6a2f35d/view/song/small/p1562725.mp3';
         //$scope.songs: album, picture, artist, url, title, length, sid, aid, albumtitle, like
-        //
+        
         $scope.setPull = function() {
             /* Act on the event */
             $scope.pull = 1;
