@@ -1,0 +1,149 @@
+
+<!-- 内容部分 -->
+<div id="music-wrapper">
+    <div id="MusicBox">
+        <div id="cd">
+            <div id="cd-main">
+                <img src="images/cdplayer/CDplayer.png" alt="CDplayer">
+            </div>
+            <div id="cd-disk">
+                <img class="spin" src="images/cdplayer/CD-empty%20mask%20sample.png" alt="myCD">
+            </div>
+            <div id="cd-border">
+                <img class="spin" src="images/cdplayer/CDborder.png" alt="CDborder">
+            </div>
+            <div id="cd-string" ng-class="pull ">
+                <img src="images/cdplayer/Line.png" alt="powerline">
+            </div>
+            <div id="cd-button" ng-class="pull ">
+                <img ng-click="pull" ng-mouseup="pullback" src="images/cdplayer/Button.png" alt="powerbutton">
+            </div>
+            
+        </div>
+        <div id="AudioPlayer" style="position:fixed;left:20px; top:20px; z-index: 9999;">
+            <!-- 设置播放器 -->
+            <audio id="musicAudio" controls>
+                <source src="http://api.soundcloud.com/tracks/204082098/stream?client_id=17a992358db64d99e492326797fff3e8" type="audio/mpeg"> Your browser does not support the audio element.
+            </audio>
+            <audio id="musicAudio2" controls >
+                <source ng-src="{{songUrl | trustUrl}}" type="audio/mpeg"> Your browser does not support the audio element.
+            </audio>
+            <p>{{songUrl}}</p>
+        </div>
+    </div>
+</div>
+<!-- Board Part -->
+<div id="RightController">
+    <!-- 右侧:频道列表 -->
+    <div id="ch-list-wrapper" ng-controller="ChannelListController">
+        <div id="chl-section" ng-init="loadChannels()">
+            <ul class="channel-list" ng-repeat="group in groups">
+                <li>{{group.group_id}}|{{group.group_name}}</li>
+                <ul ng-repeat="chl in group.chls">
+                    <li data-cid="chl.id" class="channel">
+                        <a class="chl-name">
+                            <i class="chl-playing fa fa-check-circle"></i>&nbsp;
+                            <span class="cname">
+                                {{chl.id}} - {{chl.name}} - {{chl.cover}} - {{chl.intro}} - {{chl.song_num}} - {{chl.collected}}
+                                <span class="mhz">MHz</span>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </ul>
+        </div>
+    </div>
+    <!-- 右侧:控制及歌词 -->
+    <div id="MainPannel">
+        <!-- 控制台 -->
+        <div id="CtrlPannel">
+            <div id="navicon">
+                <a class="nav-icon" ng-click="chltab=!chltab"><i class="fa fa-navicon fa-2x"></i></a>
+            </div>
+            <div id="chl-name-zone">
+                <span class="chl-name-show">Favorite Radio</span>
+            </div>
+            <div id="btn-zone" ng-controller="BoardController">
+                <ul class="btn-group">
+                    <li class="like">
+                        <span><i class="fa fa-heart fa-lg"></i></span>
+                    </li>
+                    <li class="trash">
+                        <span><i class="fa fa-trash fa-lg"></i></span>
+                    </li>
+                    <li class="stepforward">
+                        <span><i class="fa fa-step-forward fa-lg"></i></span>
+                    </li>
+                    <li class="volume">
+                        <span ng-click="volflag=!volflag"><i class="fa fa-volume-up fa-lg"></i></span>
+                    </li>
+                    <li class="search">
+                        <span ng-click="searchflag=!searchflag"><i class="fa fa-search fa-lg"></i></span>
+                    </li>
+                    <li class="login">
+                        <span ng-click="loginflag=!loginflag"><i class="fa fa-user fa-lg"></i></span>
+                    </li>
+                    <li class="share">
+                        <span ng-click="shareflag=!shareflag"><i class="fa fa-share-alt fa-lg"></i></span>
+                    </li>
+
+                </ul>
+                <div class="popup">
+                    <form name="volumeForm" class="volumePop" ng-show="volflag" action="#" method="post">
+                        <div>
+                            <label for="volume">volume:</label>
+                            <input type="range" name="volume" id="volume" min="0" max="100" value="60" step="1" />
+                        </div>
+                    </form>
+
+                    <form name="loginForm" class="loginPop" ng-show="loginflag" ng-controller="LoginController" ng-submit="Login(user)" action="#" method="post">
+                        <fieldset class="form-group">
+                            <label class="control-label">豆 瓣:
+                            <input type="email" class="form-control" ng-model="user.email" name="username" placeholder="user@account.com" title="请输入Email账户" autofocus="autofocus" required="required" autocomplete="off" value="" /></label>
+                        </fieldset>
+                        <fieldset class="form-group">
+                            <label class="control-label">密 码:
+                            <input type="password" class="form-control" ng-model="user.password" name="password" title="请输入密码" required="required" placeholder="********" value="" /></label>
+                        </fieldset>
+                        <fieldset class="form-group">
+                            <label for="remember" class="control-label checkbox-inline">
+                            <input type="checkbox" ng-model="user.remember" name="remember" id="remember" />
+                            记住我</label>
+                            <input type="submit" class="btn btn-primary pullright" ng-click="Login(user)" value="登  录">
+                        </fieldset>
+                    </form>
+
+                    <form name="searchForm" class="searchPop" ng-show="searchflag">
+                        <div class="form-group">
+                            <label for="search" class="control-label"></label>
+                            <input type="text" id="search" class="form-control" name="search" required="required" placeholder="歌曲、专辑或艺术家" title="请输入搜索内容" value="" />
+                            <input type="submit" class="btn btn-primary" value="搜  索">
+                        </div>
+                    </form>
+                    <div class="sharePop" ng-show="shareflag">
+                        <ul class="sharelist">
+                            <li><a href="#">豆瓣</a></li>
+                            <li><a href="#">微信</a></li>
+                            <li><a href="#">微博</a></li>
+                            <li><a href="#">Facebook</a></li>
+                            <li><a href="#">Twitter</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 歌词 -->
+        <div id="LyricsPannel">
+            ... ... this is lyric zone;
+            <i class="fa fa-music fa-lg"></i>Music
+            //$scope.songs: album, picture, artist, url, title, length, sid, aid, albumtitle, like
+        </div>
+        <!-- 歌曲名/艺术家 -->
+        <div id="SongNamePannel" style="z-index: 999;">
+            <img src="http://img3.douban.com/mpic/s4616653.jpg">
+            
+            <span class="song-author-show">When We Stand Togerther by Nickelback</span>
+        </div>
+    </div>
+    <div id="search-result"></div>
+</div>
