@@ -45,7 +45,7 @@ angular.module('musicboxApp')
         	var cachedData = self.ChannelsListCache.get(url);
         	var deferred = $q.defer();
 
-        	var url2 = 'https://api.douban.com/v2/fm/app_channels&';//'scripts/Channels.json';
+        	var url2 = 'https://api.douban.com/v2/fm/app_channels&callback=JSON_CALLBACK';//'scripts/Channels.json';
         	if ((!cachedData) || (cachedData.timestamp <= (new Date()).getTime() - appConstants.cacheExpiryPeriodMs)) {
     			//var thePromise = $http.get(url2, {cache: appConstants.useBrowserCache});
     			var thePromise = $http.jsonp(url2, {cache: appConstants.useBrowserCache, responseType: 'json'});

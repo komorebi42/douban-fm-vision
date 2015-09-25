@@ -22,10 +22,7 @@
         </div>
         <div id="AudioPlayer" style="position:fixed;left:20px; top:20px; z-index: 9999;">
             <!-- 设置播放器 -->
-            <audio id="musicAudio" controls>
-                <source src="http://api.soundcloud.com/tracks/204082098/stream?client_id=17a992358db64d99e492326797fff3e8" type="audio/mpeg"> Your browser does not support the audio element.
-            </audio>
-            <audio id="musicAudio2" controls >
+            <audio id="musicAudio" controls >
                 <source ng-src="{{songUrl | trustUrl}}" type="audio/mpeg"> Your browser does not support the audio element.
             </audio>
             <p>{{songUrl}}</p>
@@ -38,6 +35,7 @@
     <div id="ch-list-wrapper" ng-controller="ChannelListController">
         <div id="chl-section" ng-init="loadChannels()">
             <ul class="channel-list" ng-repeat="group in groups">
+            <p>TEST</p>
                 <li>{{group.group_id}}|{{group.group_name}}</li>
                 <ul ng-repeat="chl in group.chls">
                     <li data-cid="chl.id" class="channel">
@@ -49,7 +47,7 @@
                             </span>
                         </a>
                     </li>
-                </ul>
+                </ul> 
             </ul>
         </div>
     </div>
@@ -139,9 +137,7 @@
             //$scope.songs: album, picture, artist, url, title, length, sid, aid, albumtitle, like
         </div>
         <!-- 歌曲名/艺术家 -->
-        <div id="SongNamePannel" style="z-index: 999;">
-            <img src="http://img3.douban.com/mpic/s4616653.jpg">
-            
+        <div id="SongNamePannel" style="z-index: 999;">            
             <span class="song-author-show">When We Stand Togerther by Nickelback</span>
         </div>
     </div>

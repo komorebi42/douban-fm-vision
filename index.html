@@ -30,29 +30,13 @@
             </div>
 
             <div id="album" style="float: left;bottom:20px; left:20px;font-size: 50px;">
-                <label>Name:</label>
+                <label>TEST:</label>
                 <input type="text" ng-model="yourName" placeholder="Enter a name here">
                 <button class={{yourName}}>button</button>
+                <h2>Hello:{{yourName}}</h2>
                 <hr/>
-                <h1 >Hello {{yourName}} ; test:</h1>
+                <img src="http://img3.douban.com/mpic/s4616653.jpg">
             </div>
-
-            <form name="loginForm" class="loginPop" ng-show="loginflag" ng-controller="LoginController" ng-submit="Login(user)" action="#" method="post">
-                <fieldset class="form-group">
-                    <label class="control-label">豆 瓣:
-                    <input type="email" class="form-control" ng-model="user.email" name="username" placeholder="user@account.com" title="请输入Email账户" autofocus="autofocus" required="required" autocomplete="off" value="" /></label>
-                </fieldset>
-                <fieldset class="form-group">
-                    <label class="control-label">密 码:
-                    <input type="password" class="form-control" ng-model="user.password" name="password" title="请输入密码" required="required" placeholder="********" value="" /></label>
-                </fieldset>
-                <fieldset class="form-group">
-                    <label for="remember" class="control-label checkbox-inline">
-                    <input type="checkbox" ng-model="user.remember" name="remember" id="remember" />
-                    记住我</label>
-                    <input type="submit" class="btn btn-primary pullright" ng-click="Login(user)" value="登  录">
-                </fieldset>
-            </form>
 
         </div>
 
@@ -61,8 +45,6 @@
         <script type="text/javascript" src="components/angular-animate.min.js"></script>
         <script type="text/javascript" src="components/angular-cookies.min.js"></script>
         <script type="text/javascript" src="components/angular-resource.min.js"></script>
-        <script type="text/javascript" src="components/angular-oauth2.js"></script>
-        <script type="text/javascript" src="components/query-string.js"></script>
         <script type="text/javascript" src="scripts/app.js"></script>
         <script type="text/javascript" src="scripts/controllers/channel.js"></script>
         <script type="text/javascript" src="scripts/controllers/login.js"></script>
@@ -70,7 +52,8 @@
         <script type="text/javascript" src="scripts/controllers/navtabs.js"></script>
         <script type="text/javascript" src="scripts/directives/channelDirective.js"></script>
         <script type="text/javascript" src="scripts/services/dataservice.js"></script>
-
+        <script type="text/javascript" src="http://www.douban.com/js/api.js?v=2"></script>
+        <script type="text/javascript" src="http://www.douban.com/js/api-parser.js?v=1"></script>
     </body>
 
 </html>

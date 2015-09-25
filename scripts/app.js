@@ -6,13 +6,11 @@
  * Main module of the application.
  */
 'use strict';
-angular
-    .module('musicboxApp', [
+angular.module('musicboxApp', [
         'ngAnimate',
         'ngCookies',
         'ngRoute',
-        'ngResource',
-        'angular-oauth2'
+        'ngResource'
     ])
     .constant('appConstants',{
         doubanLoginUrl: 'http://www.douban.com/j/app/login',
@@ -20,9 +18,9 @@ angular
         doubanSongUrl: 'http://www.douban.com/j/app/radio/people',
         cacheExpiryPeriodMs: 10000,
         useBrowserCache: false,
-        API_HOST = 'https://api.douban.com',
-        AUTH_HOST = 'https://www.douban.com',
-        REDIRECT_URL = 'https://douban.fm',
+        API_HOST : 'https://api.douban.com',
+        AUTH_HOST : 'https://www.douban.com',
+        REDIRECT_URL : 'https://douban.fm',
         apikey: '0cef7c30ee4d518f26ce7492cae7f4ad',
         secret: '2844390f63ef84af'
     })
@@ -50,7 +48,7 @@ angular
             .otherwise({
                 redirectTo: '/'
             });
-    }])
+    }]);/*
     .config(['OAuthProvider', 'appConstants', function(OAuthProvider, appConstants){
         OAuthProvider.configure({
             baseUrl: appConstants.API_HOST,
@@ -58,7 +56,7 @@ angular
             clientSecret: appConstants.secret,
             grantPath: appConstants.AUTH_HOST + '/service/auth2/token'
         });
-    }])
+    }]);*//*
     .run(['$rootScope', '$window', 'OAuth', function($rootScope, $window, OAuth) {
         $rootScope.$on('oauth:error', function(event, rejection) {
             // Ignore `invalid_grant` error - should be catched on `LoginController`.
@@ -74,7 +72,7 @@ angular
             //Redirect
             return $window.location.href = '/';
         });
-        /*
+        
         $http.jsonp('http://www.douban.com/j/app/radio/channels?app_name=radio_desktop_win&version=100&callback=JSON_CALLBACK',
              {responseType:'json'})
         .success(function(data){
@@ -84,7 +82,7 @@ angular
             console.log($rootScope.channels);
         }).error(function(e){
             console.log('Getting Channels error.'+e);
-            });*/
-    }]);
+            });
+    }]);*/
 
 
