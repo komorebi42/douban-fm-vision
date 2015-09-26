@@ -452,15 +452,30 @@ a:active {
     z-index: 1;
     background-color: #EEE;
     border-radius: 8px;
+    overflow-Y: auto;
+    overflow-X: hidden;  
 }
 
 #chl-section {
     background-color: #FFF;
     margin-top: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 10px; 
 }
 
-ul.channel-list li.channel {
+ul.channels-list {
+
+}
+
+ul.channels-list li.group-list {
+    height: 35px;
+    line-height: 35px;
+    word-spacing: 2px;
+    font-size: 1.2em;
+    color: #95CF5A;
+    text-align: center;
+}
+
+ul.channels-list li.channel {
     position: relative;
     cursor: pointer;
     width: 420px;
@@ -473,7 +488,7 @@ ul.channel-list li.channel {
     letter-spacing: 2px;
 }
 
-ul.channel-list li.channel a.chl-name {
+ul.channels-list li.channel a.chl-name {
     display: inline-block;
     width: 420px;
     text-decoration: none;
@@ -488,12 +503,12 @@ ul.channel-list li.channel a.chl-name {
     transition: background .2s linear;
 }
 
-ul.channel-list li.channel a.chl-name:hover {
+ul.channels-list li.channel a.chl-name:hover {
     background-color: #0096FF;
     color: #FEFEFE;
 }
 
-ul.channel-list li.channel a.chl-name i.chl-playing {
+ul.channels-list li.channel a.chl-name i.chl-playing {
     color: #98CD60;
     margin-right: 5px;
 }

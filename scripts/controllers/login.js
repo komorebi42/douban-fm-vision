@@ -7,7 +7,7 @@
  */
 'use strict';
 angular.module('musicboxApp')
-    .controller('LoginController', ['$scope', '$http', '$cookieStore', function($scope, $http, $cookieStore) {
+    .controller('LoginController', ['$scope', '$http', '$cookieStore', '$q', function($scope, $http, $cookieStore, $q) {
         $scope.user = {
             'email': '',
             'password': '',
@@ -15,6 +15,20 @@ angular.module('musicboxApp')
         }; //email,password,remember
         $scope.loginfo = {'user_id':'','token':'','expire':''};  //取得的信息,user_id, token, expire, user_name, email
         $scope.loginerr = '';
+
+        $scope.logintest1 = function(){
+            var deferred = $q.defer();
+            var aPromise;
+            aPromise = $http.get('https://www.douban.com/service/auth2/auth?client_id=0cef7c30ee4d518f26ce7492cae7f4ad&redirect_uri=http://douban.fm&response_type=token');
+            aPromise.success(function(data) {
+                console.log(data);
+                deferred.resolve(data);
+            }).error(function(result){
+                console.log(result);
+                deferred.reject(result);
+            });
+            return deferred.promise;
+        };
 
         $scope.Login = function(){
             $http({

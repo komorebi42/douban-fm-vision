@@ -13,7 +13,6 @@ angular.module('musicboxApp')
         $scope.styles = [];  //display_text, bg_color, layout_type, bg_image
 
         //$scope.channels = $rootScope.channels;
-
         
        	$scope.loadChannels = function(){
        		$scope.isLoading = true;
@@ -45,10 +44,10 @@ angular.module('musicboxApp')
         	var cachedData = self.ChannelsListCache.get(url);
         	var deferred = $q.defer();
 
-        	var url2 = 'https://api.douban.com/v2/fm/app_channels&callback=JSON_CALLBACK';//'scripts/Channels.json';
+        	var url2 = 'scripts/channels-oauth2.json';//'https://api.douban.com/v2/fm/app_channels&callback=JSON_CALLBACK';
         	if ((!cachedData) || (cachedData.timestamp <= (new Date()).getTime() - appConstants.cacheExpiryPeriodMs)) {
-    			//var thePromise = $http.get(url2, {cache: appConstants.useBrowserCache});
-    			var thePromise = $http.jsonp(url2, {cache: appConstants.useBrowserCache, responseType: 'json'});
+    			var thePromise = $http.get(url2, {cache: appConstants.useBrowserCache});
+    			//var thePromise = $http.jsonp(url2, {cache: appConstants.useBrowserCache, responseType: 'json'});
     			thePromise.success(function(result){
     				self.ChannelsListCache.put(url, {
     					timestamp: (new Date()).getTime(),

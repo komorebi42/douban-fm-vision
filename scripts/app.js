@@ -9,18 +9,20 @@
 angular.module('musicboxApp', [
         'ngAnimate',
         'ngCookies',
-        'ngRoute',
-        'ngResource'
+        'ngResource',
+        'ngRoute'
     ])
     .constant('appConstants',{
         doubanLoginUrl: 'http://www.douban.com/j/app/login',
         doubanChannelUrl: 'http://www.douban.com/j/app/radio/channels',
         doubanSongUrl: 'http://www.douban.com/j/app/radio/people',
+        doubanLyricUrl: 'http://api.douban.com/v2/fm/lyric',
         cacheExpiryPeriodMs: 10000,
         useBrowserCache: false,
         API_HOST : 'https://api.douban.com',
         AUTH_HOST : 'https://www.douban.com',
-        REDIRECT_URL : 'https://douban.fm',
+        REDIRECT_URL : 'https://vinkerz.github.io',
+        AUTHORIZE_URL : '/service/auth2/auth',
         apikey: '0cef7c30ee4d518f26ce7492cae7f4ad',
         secret: '2844390f63ef84af'
     })
