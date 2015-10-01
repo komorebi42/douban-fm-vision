@@ -26,13 +26,16 @@ angular.module('musicboxApp', [
         apikey: '0cef7c30ee4d518f26ce7492cae7f4ad',
         secret: '2844390f63ef84af'
     })
-    .config(function ($httpProvider) {
+    .config(['$httpProvider', function ($httpProvider) {
         $httpProvider.defaults.headers.common['Content-Type'] = 'application/x-www-form-urlencoded';
         //$httpProvider.defaults.headers.common['withCredentials'] = true;
         //$httpProvider.defaults.useXDomain = true;
 
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
-    })
+    }])
+    .config(['$compileProvider', function($compileProvider) {
+        $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https|ftp|mailto|file|tel|data|blob):/);
+    }])
     .config(['$routeProvider', '$logProvider', function ($routeProvider, $logProvider) {
 
         $logProvider.debugEnabled(true);

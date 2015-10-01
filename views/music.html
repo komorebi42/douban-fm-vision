@@ -6,44 +6,54 @@
             <div id="cd-main">
                 <img src="images/cdplayer/CDplayer.png" alt="CDplayer">
             </div>
-            <div id="cd-disk">
-                <img class="spin" src="images/cdplayer/CD-empty%20mask%20sample.png" alt="myCD">
+            <div id="cd-mask">
+                <img ng-class="{'spin': playing, 'spin spin-paused': !playing}" src="images/cdplayer/CDmask.png" alt="CDmask"> 
             </div>
             <div id="cd-border">
-                <img class="spin" src="images/cdplayer/CDborder.png" alt="CDborder">
+                <img ng-class="{'spin': playing, 'spin spin-paused': !playing}" src="images/cdplayer/CDborder.png" alt="CDborder">
             </div>
-            <div id="cd-string" ng-class="pull ">
-                <img src="images/cdplayer/Line.png" alt="powerline">
+            <div id="cd-disk">
+                <div id="mask">
+                    <img id="diskimg" ng-class="{'spin': playing, 'spin spin-paused': !playing}" alt="songPicture">
+                </div>
             </div>
-            <div id="cd-button" ng-class="pull ">
-                <img ng-click="pull" ng-mouseup="pullback" src="images/cdplayer/Button.png" alt="powerbutton">
+            <div ng-class="{'pull': playing}">
+                <div id="cd-string">
+                    <img src="images/cdplayer/Line.png" alt="powerline">
+                </div>
+                <div id="cd-button">
+                    <img ng-click="playing=!playing" is-playing src="images/cdplayer/Button.png" alt="powerbutton">
+                </div>
             </div>
+            <!--
+            <div id="cd-power" ng-class="{pull: playing}">
+                <img ng-click="playing=!playing" ng-mouseenter="ispull" src="images/cdplayer/Power.png" alt="powerbutton">
+            </div> -->
             
         </div>
         <div id="AudioPlayer" style="position:fixed;left:20px; top:20px; z-index: 9999;">
             <!-- 设置播放器 -->
-            <audio id="musicAudio" controls >
-                <source ng-src="{{songUrl | trustUrl}}" type="audio/mpeg"> Your browser does not support the audio element.
+            <audio id="musicAudio" controls auto-adjust>
+                source ng-src="{{ song.url | trustUrl }}" type="audio/mpeg"> 
+                Your browser does not support the audio element.
             </audio>
-            <p>{{songUrl}}</p>
-            <button ng-href="{{authorize}}">user login test</button>
+            <p>{{song.url}}</p>
         </div>
     </div>
 </div>
 <!-- Board Part -->
-<div id="RightController">
+<div id="RightPannel">
     <!-- 右侧:频道列表 -->
-    <div ng-show="showChlsList">
-        <div id="ch-list-wrapper" ng-controller="ChannelListController">
+    <div id="ChlPannel" ng-show="showChlsList" class="animate">
+        <div id="chl-list-wrapper" ng-controller="ChannelListController">
             <div id="chl-section" ng-init="loadChannels()">
                 <ul class="channels-list" ng-repeat="group in groups">
-
                     <li class="group-list">{{group.group_name}}</li>
 
                     <ul ng-repeat="chl in group.chls">
                         <li class="channel">
-                            <a class="chl-name" ng-click="">
-                                <i class="chl-playing fa fa-check-circle" ng-show=""></i>&nbsp;
+                            <a class="chl-name" ng-click="chlSelected(chl.id, chl.name)">
+                                <i class="chl-playing fa fa-check-circle" ng-show="showSelected(chl.id)"></i>&nbsp;
                                 <span class="cname">
                                     {{chl.name}}
                                     <span class="mhz">MHz</span>
@@ -64,18 +74,21 @@
                 <a class="nav-icon" ng-click="showChlsList=!showChlsList"><i class="fa fa-navicon fa-2x"></i></a>
             </div>
             <div id="chl-name-zone">
-                <span class="chl-name-show">Favorite Radio</span>
+                <span class="chl-name-show" ng-model="channel.chlName">{{channel.chlName}} MHz</span>
             </div>
-            <div id="btn-zone" ng-controller="BoardController">
+            <div id="btn-zone">
                 <ul class="btn-group">
+                    <li class="random">
+                        <span ng-click="random=!random"><i class="fa fa-refresh fa-lg" ng-class="{'fa-refresh': !random, 'fa-random': random}"></i></span>
+                    </li>
                     <li class="like">
-                        <span><i class="fa fa-heart fa-lg"></i></span>
+                        <span ng-click="rate=!rate"><i class="fa fa-heart-o fa-lg" ng-class="{'fa-heart': rate, 'fa-heart-o': !rate}"></i></span>
                     </li>
                     <li class="trash">
-                        <span><i class="fa fa-trash fa-lg"></i></span>
+                        <span ng-click="bye=!bye"><i class="fa fa-trash-o fa-lg" ng-class="{'fa-trash': bye, 'fa-trash-o': !bye}"></i></span>
                     </li>
                     <li class="stepforward">
-                        <span><i class="fa fa-step-forward fa-lg"></i></span>
+                        <span ng-click="next()"><i class="fa fa-step-forward fa-lg"></i></span>
                     </li>
                     <li class="volume">
                         <span ng-click="volflag=!volflag"><i class="fa fa-volume-up fa-lg"></i></span>
@@ -144,7 +157,7 @@
         </div>
         <!-- 歌曲名/艺术家 -->
         <div id="SongNamePannel" style="z-index: 999;">            
-            <span class="song-author-show">When We Stand Togerther by Nickelback</span>
+            <span class="song-author-show">{{song.title}} by {{song.artist}}</span>
         </div>
     </div>
     <div id="search-result"></div>
