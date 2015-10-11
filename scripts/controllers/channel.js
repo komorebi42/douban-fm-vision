@@ -13,59 +13,71 @@ angular.module('musicboxApp')
         $scope.styles = [];  //display_text, bg_color, layout_type, bg_image
 
         $scope.chlSelected = function(chlId, chlName) {
-            $scope.selectedChl = chlId;
-
-            if (chlService.chlId === chlId) {  //去重复点击
-                return false;
-            } else {
-                chlService.chlId = chlId;
-                chlService.chlName = chlName;
-                chlService.setChannels(chlId, chlName);
-                $scope.$emit('chlSelected', chlId);
-                return true;
-            }            
+            if (chlService.chlSelected(chlId, chlName)) {
+              $scope.$emit('chlSelected');
+            }
         };
+
         $scope.showSelected = function(chlId) {
-            return ($scope.selectedChl == chlId);
+            return chlService.showSelected(chlId);
         };
 
-        //$scope.channels = $rootScope.channels;
-        
        	$scope.loadChannels = function(){
        		$scope.isLoading = true;
 
        		chlService.getChannels()
-   			.then(
-   				function(data) {
-   					window.console.log(data);
-   					$scope.groups = data.groups;
-   					$scope.isLoading = false;
-   				},
-   				function(){
-   					$scope.dataRetrievalError = true;
-   					$scope.isLoading = false;
-   				}
-   			);
+       			.then(
+       				function(data) {
+       					//window.console.log(data);
+       					$scope.groups = data.groups;
+       					$scope.isLoading = false;
+       				},
+       				function(){
+       					$scope.dataRetrievalError = true;
+       					$scope.isLoading = false;
+       				}
+       			);
        	};
 
-	}])
+	}]);
+  
+  // channel service
+angular.module('musicboxApp')
 	.service('chlService',['$http', '$q', '$cacheFactory', '$parse', '$cookieStore', 'appConstants', function($http, $q, $cacheFactory, $parse, $cookieStore, appConstants){
         var self = this;
         self.ChannelsListCache = $cacheFactory('ChannelsList');
         self.chlId = '';
         self.chlName = '';
+        self.selectedChl = '';
 
         this.getChlId = function() {
-            return $cookieStore.get('chlId');
-        }        
+            return (self.chlId ? self.chlId : $cookieStore.get('chlId'));
+        };
 
         this.getChlName = function() {
-            return $cookieStore.get('chlName');
-        }
+            return (self.chlName ? self.chlName : $cookieStore.get('chlName'));
+        };
 
         this.setChannels = function(Id, Name) {
             $cookieStore.put('chlId', Id);
             $cookieStore.put('chlName', Name);
+        };
+
+        this.chlSelected = function(Id, Name) {
+            if (self.chlId === Id) {
+                this.setChannels(Id, Name);
+                return false;
+            } else {
+                self.chlId = Id;
+                self.chlName = Name;
+                this.setChannels(Id, Name);
+                return true;
+            }
+        };
+
+        this.showSelected = function(Id) {
+            self.selectedChl = this.getChlId();
+            return (self.selectedChl == Id);
         };
 
         this.getChannels = function(){

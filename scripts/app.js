@@ -28,13 +28,13 @@ angular.module('musicboxApp', [
     })
     .config(['$httpProvider', function ($httpProvider) {
         $httpProvider.defaults.headers.common['Content-Type'] = 'application/x-www-form-urlencoded';
-        //$httpProvider.defaults.headers.common['withCredentials'] = true;
-        //$httpProvider.defaults.useXDomain = true;
-
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
+        
+        //$httpProvider.interceptors.push('myinterceptor');
     }])
     .config(['$compileProvider', function($compileProvider) {
-        $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https|ftp|mailto|file|tel|data|blob):/);
+        $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel|data|blob):/);
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel|data|blob):/);
     }])
     .config(['$routeProvider', '$logProvider', function ($routeProvider, $logProvider) {
 
@@ -53,41 +53,9 @@ angular.module('musicboxApp', [
             .otherwise({
                 redirectTo: '/'
             });
-    }]);/*
-    .config(['OAuthProvider', 'appConstants', function(OAuthProvider, appConstants){
-        OAuthProvider.configure({
-            baseUrl: appConstants.API_HOST,
-            clientId: appConstants.apikey,
-            clientSecret: appConstants.secret,
-            grantPath: appConstants.AUTH_HOST + '/service/auth2/token'
-        });
-    }]);*//*
-    .run(['$rootScope', '$window', 'OAuth', function($rootScope, $window, OAuth) {
-        $rootScope.$on('oauth:error', function(event, rejection) {
-            // Ignore `invalid_grant` error - should be catched on `LoginController`.
-            if ('invalid_grant' === rejection.data.error) {
-                return;
-            }
-
-            // Refresh token when a `invalid_token` error occurs.
-            if ('invalid_token' === rejection.data.error) {
-                return OAuth..getRefreshToken();
-            }
-
-            //Redirect
-            return $window.location.href = '/';
-        });
-        
-        $http.jsonp('http://www.douban.com/j/app/radio/channels?app_name=radio_desktop_win&version=100&callback=JSON_CALLBACK',
-             {responseType:'json'})
-        .success(function(data){
-            console.log('Channels get success!');
-            $rootScope.Channels = data.channels;
-            console.log(data);
-            console.log($rootScope.channels);
-        }).error(function(e){
-            console.log('Getting Channels error.'+e);
-            });
-    }]);*/
-
-
+    }])
+    .filter('trustUrl', function($sce) {
+        return function(url) {
+            return $sce.trustAsResourceUrl(url);
+        };
+    });

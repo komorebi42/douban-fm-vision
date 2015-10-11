@@ -7,7 +7,7 @@
  */
 'use strict';
 angular.module('musicboxApp')
-	.directive('chooseChl', [function () {
+	.directive('showCid', [function () {
 		return {
 			restrict: 'A',
 			scope: {
@@ -16,8 +16,7 @@ angular.module('musicboxApp')
 			},
 			required: 'ChannelListController',
 			link: function (scope, iElement, iAttrs, ChannelListController) {
-					iElement.bind('click', function() {
-					});
+					
 			}
 		};
 	}]);

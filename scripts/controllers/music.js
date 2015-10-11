@@ -7,10 +7,12 @@
  */
 'use strict';
 angular.module('musicboxApp')
-    .controller('MusicController', ['$scope', 'getSongsService', 'playMusicService', 'chlService', 'appConstants', function ($scope, getSongsService, playMusicService, chlService, appConstants) {
+    .controller('MusicController', ['$scope', '$filter', 'songsService', 'lyricsService', 'chlService', 'loginService', 'appConstants', '$timeout', function ($scope, $filter, songsService, lyricsService, chlService, loginService, appConstants, $timeout) {
         var self = this;
-        $scope.pull = 0;
-        $scope.songUrl = 'musics/Like Sunday,Like Rain.mp3';  //'http://mr3.douban.com/201308250247/4a3de2e8016b5d659821ec76e6a2f35d/view/song/small/p1562725.mp3';
+        self.pt = '';
+
+        $scope.songUrl = 'musics/Like Sunday,Like Rain.mp3';  
+        //'http://mr3.douban.com/201308250247/4a3de2e8016b5d659821ec76e6a2f35d/view/song/small/p1562725.mp3';
         //$scope.songs: album, picture, artist, url, title, length, sid, aid, albumtitle, like
         
         $scope.authorize = appConstants.AUTH_HOST + appConstants.AUTHORIZE_URL + '?client_id=' + appConstants.apikey + '&redirect_uri=' + appConstants.REDIRECT_URL + '&response_type=token';
@@ -23,219 +25,356 @@ angular.module('musicboxApp')
         //s: skip, sid  short 下一首,   type=s，跳过歌曲的sid不一定要在h记录里面。
         //r: rate, sid  short 加tag  喜欢
         //u: unlike, sid  short 取消tag  取消喜欢 
-        //
         //b,n,p: 都是返回新的播放列表
         //h= sid:[psbr] | sid:[psbr]，避免重复，长度限定20项
         //type= [bnsur],benpsur
-        
-        $scope.logInfo = {'user_id':'','token':'','expire':''};
-        $scope.songParam = {'type': 'n', 'sid': '', 'cid': '9', 'h': ''};
-        //fm= r:random math.random(), rest: sid|sid,未播放的曲目, status: p for playing, du: duration unmove,
-        //short: esur, type=e &status=p &uid=4556698 &sid=963365
-        //long: bnp, &sid= &h= &channel=1 &type=n
-        
-        $scope.toggle = function() {
-            $scope.playing = !$scope.playing;
-            $scope.plug = true;
-            if ($scope.plug === true) {
-                $scope.plug = !$scope.plug;
+
+        // channel selected
+        $scope.$on('chlSelected', function(e) {
+            $scope.channel = {
+                'chlId': chlService.getChlId(),
+                'chlName': chlService.getChlName()
+            };
+            if ($scope.channel.chlId <= 0) {
+                $scope.loged = loginService.getLogStatus();
+                if ($scope.loged) {
+                    // yidonglu
+                    $scope.getCurrPlay('n');
+                } else {
+                    loginService.checkCookie();
+                    if (loginService.getLogStatus()) {
+                        // yidenglu
+                        $scope.getCurrPlay('n');
+                    } else {
+                        // popup
+                    }
+                }
             } else {
-                $scope.plug = true;
+                $scope.getCurrPlay('n');
             }
-        };
-
-        $scope.cd = {
-            defaultCD: 'images/cdplayer/CDdefault.png',
-        };
-
-        // 选择频道
-        $scope.$on('chlSelected', function(event, chl) {
-            $scope.getPlayList.getplaylist('', 'n', chl);
         });
 
-        $scope.getPlayList = {
-            getplaylist: function(sid, type, channel) {
-                getSongsService.getSongs.play_list(sid, type, channel)
-                        .then(function(data) {
-                            $scope.songList = data.song;
-                            $scope.song = $scope.songList[0];
-                            $scope.channel = {
-                                "chlId": chlService.getChlId() ,
-                                "chlName": chlService.getChlName()
-                            };
-                            //playMusicService.setUrl($scope.song.url);  //url
-                            document.getElementById("musicAudio").src = $scope.song.url;
-                            if ($scope.song.picture == null) {
-                                document.getElementById("diskimg").src = $scope.cd.defaultCD;
-                            } else {
-                                document.getElementById("diskimg").src = $scope.song.picture;
-                            }
-                        });
-                    }
-        };
+        // initial
+        $scope.initPlay = function() {
+            $scope.playing = false;
+            $scope.vol = 70;
+            $scope.imguseful = false;
+            $scope.currentTime = '';
+            $scope.loged = false;
 
-        $scope.getPlayList.getplaylist('', 'n', '155');
-
-        //$scope.songs: picture, artist, url, title, length, sid, aid, albumtitle, like
-        $scope.songs = {
-                "r": 0,
-                "is_show_quick_start": 0,
-                "song": [{
-                    "status": 0,
-                    "picture": "http:\/\/img3.douban.com\/lpic\/s4713483.jpg",
-                    "alert_msg": "",
-                    "albumtitle": "Avril Live Acoustic",
-                    "singers": [{
-                        "related_site_id": 0,
-                        "is_site_artist": false,
-                        "id": "5120",
-                        "name": "Avril Lavigne"
-                    }],
-                    "file_ext": "mp3",
-                    "like": "0",
-                    "album": "\/subject\/2134063\/",
-                    "ver": 0,
-                    "ssid": "a8c0",
-                    "title": "He Wasn't (Live Acoustic Version)",
-                    "url": "http:\/\/mr7.doubanio.com\/3f51d64442007445562d89c8dda50ff5\/0\/fm\/song\/p885_128k.mp3",
-                    "artist": "Avril Lavigne",
-                    "subtype": "",
-                    "length": 199,
-                    "sid": "885",
-                    "aid": "2134063",
-                    "sha256": "e42ca791904173e9048225ba01ed73418d92b7c3ac0d7ffc470808805d754f27",
-                    "kbps": "128"
-                }]
+            $scope.channel = {
+                'chlId': chlService.getChlId(),
+                'chlName': chlService.getChlName()
             };
-        //调用之前先给songParam填值;
-        $scope.loadSongs = function(){
-            $scope.isLoading = true;
-            /*
-            getSongsService.getSongs($scope.logInfo, $scope.songParam)
-            .then(
-                function(data) {
-                    $scope.songs = data.song;
-                    $scope.isLoading = false;
-                },
-                function(){
-                    $scope.dataRetrievalError = true;
-                    $scope.isLoading = false;
-                }
-            );
-*/
+            $scope.lyric = {
+                'name': '',
+                'content': '',
+                'valid': false,
+                'withTimeStamp': false
+            };
+            $scope.getCurrPlay('n');
         };
 
-    }])
-    .service('getSongsService',['$http', '$q', '$cacheFactory', 'appConstants', function($http, $q, $cacheFactory, appConstants){
-        var self = this;
-        self.SongsListCache = $cacheFactory('SongsList');
-        //$scope.loginfo = {'user_id':'','token':'','expire':''};
-        //$scope.songParam = {'sid': '', 'h': '', 'channel': '', 'type': ''};
-        //sid: song id , h: history, channel: cid, type: b,e,n,p,s,r,u,
-        //var h = songParam.h;
-        //var aid = songParam.aid;
-        //short: esur, type=e &status=p &uid=4556698 &sid=963365
-        //long: bnp, &sid= &h= &channel=1 &type=n
+        // new,skip,bye: n,s,b
+        $scope.getCurrPlay = function(type) {
+            $scope.playing = false;
+            $scope.getPlaylist(songsService.getSong().sid, type, chlService.getChlId(), $scope.currentTime);
+            $timeout(function(){
+                $scope.getNextPlay('p');
+            }, 3000);
+        };
 
-        //http://www.douban.com/j/app/radio/people?app_name=radio_desktop_win&version=100  urlencode编码
-        //&user_id=&expire=&token=  认证  '&user_id=' + uid + '&token=' + token + '&expire=' + expire;
-        //
-        //long report: 垃圾桶(bye)+新频道或开始(new)+曲目为空(playing)
-        //short report: 手自动下一曲(s,e)+是否喜欢(r,u);
-        //
-        //
-        
-            //if (type === 'b' || type === 'n' || type === 'p') { 
-              //  url = url + '&type=' + type + '&sid=' + sid + '&channel=' + cid + '&h=' + h;
-            //} else { 
-              //  url = url + '&type=' + type + '&sid=' + sid;     
-            //}
-            
-        // 频道选取 
-        /*
-        $scope.$watch('choosedChl.selectedChl', function(newVal, oldVal) {
-            if (newVal !== oldVal) {
-                window.console.log('choosedChl.selectChl:' + newVal);
-                $scope.apply(this.getSongs.play_list('','n',newVal));
+        // end: e
+        $scope.endedSong = function() {
+            $scope.playing = false;
+            $scope.imguseful = false;
+
+            if (!$scope.songNext) {
+                $scope.getCurrPlay('n');
             } else {
-                window.console.log('first init');
+                $scope.song = songsService.getSongNext();
+                $scope.getLyric();
+
+                $scope.playing = true;
+                $scope.imguseful = true;
+
+                songsService.getSongsRaw(songsService.getSong().sid, 'e', chlService.getChlId(), $scope.currentTime)
+                    .then(function(data) {
+                        window.console.log('song ended:', data);
+                    });
+                $timeout(function(){
+                    $scope.getNextPlay('p');
+                }, 3000);
             }
-        });*/
-
-        this.getSongs = {
-            play_list: function(sid, type, channel) {
-                sid = sid || '';
-                type = type || 'e';
-                channel = channel || '0';
-                var app_name = app_name || 'radio_android';
-                var version = version || '630';
-
-                var url = 'http://douban.fm/j/mine/playlist?' + '&sid=' + sid + '&type=' + type + '&channel=' + channel;// + '&app_name=' + app_name + '&version=' + version;  //client=client 认证
-                //return this.getSongs.get(url);
-                //http://douban.fm/j/mine/playlist?type=n&sid=&pt=0.0&channel=0&from=mainsite&r=c7bc353d05
-                window.console.log(url);
-                var deferred = $q.defer();
-                var thePromise = $http.get(url, {cache: appConstants.useBrowserCache, responseType: 'json'});
-                thePromise.success(function(result){
-                    deferred.resolve(result);
-                }).error(function(response){
-                    deferred.reject(response);
-                });
-                return deferred.promise;
-            },
-
-            get: function(url) {
-                
-            }
-            
         };
-    }])
-    .service('updateSong', ['$http','$scope', '$log', function($http, $scope, $log) {
-        $scope.getSongList = function(Type){
-            $http({
-                method: 'get',
-                url: 'http://www.douban.com/j/app/radio/people?app_name=radio_desktop_win&version=100',
-                //headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                data: {
-                    'app_name': 'radio_desktop_win',
-                    'version': 100,
-                    'type': Type,  //类型
-                    'sid': $scope.songId,  //需要处理的歌曲
-                    'channel': $scope.channel_id  //用户选择的频道
+
+        // playing, rate, unrate: p, r, u
+        $scope.getNextPlay = function(type) {
+            var pt = $scope.currentTime;
+            songsService.getSongsRaw(songsService.getSong().sid, type, chlService.getChlId(), pt)
+                .then(function(data) {
+                    if (data.r === 0) {
+                        songsService.setSongNext(data.song[0]);
+                        $scope.songNext = songsService.getSongNext();
+
+                    } else {  // 302 response
+                        $timeout(function(){
+                            $scope.getNextPlay('p');
+                        }, 3000);
+                        window.console.log('err:', data.err);
+                    }
+                }, function(reason) {
+                    // 302 response
+                    window.console.log('reason:', reason);
+                });
+        };
+
+        // get songlist
+        $scope.getPlaylist = function(sid, type, channel, pt) {
+            songsService.getSongsRaw(sid, type, channel, pt)
+                .then(function(data) {
+                    if (data.r === 0) {
+                        songsService.setSong(data.song[0]);
+                        $scope.song = songsService.getSong();
+                        $scope.getLyric();
+
+                        $scope.playing = true;
+                        $scope.imguseful = true;
+                    } else if (data.r === 1) {
+                        $scope.song = songsService.getSongNext();
+                        $scope.getLyric();
+                        $timeout(function(){
+                            $scope.getNextPlay('p');
+                        }, 3000);
+                        window.console.log('err:', data.err);
+                    }
+                }, function(reason) {
+                    // 302
+                    window.console.log('reason:', reason);
+                });
+        };
+
+        // get lyrics
+        $scope.getLyric = function() {
+            lyricsService.getLyrics(songsService.getSong().sid, songsService.getSong().ssid)
+                .then(function(data) {
+                    if (data.sid) {
+                        $scope.lyric.name = data.name;
+                        $scope.lyric.content = lyricsService.parseLyrics(data.lyric);
+                        $scope.lyric.valid = $scope.lyric.content ? true : false;
+
+                        if ('normal' === lyricsService.getLyricType()) {
+                            // only text; normal
+                            $scope.lyric.withTimeStamp = false;
+                        } else {
+                            // timestamp 
+                            $scope.lyric.withTimeStamp = true;
+                        }
+                        window.console.log('request sid-ssid:', songsService.getSong().sid, '+', songsService.getSong().ssid);
+                        window.console.log('song sid-ssid:', $scope.song.sid, '+', $scope.song.ssid);
+                        window.console.log('lyric content:', $scope.lyric.content);
+                        window.console.log('lyric raw:', data.lyric);
+                    } else {
+                        $scope.lyric.name = ''; //data.code;
+                        $scope.lyric.content = ''; //data.msg;
+                        $scope.lyric.valid = false;
+                    }
+                }, function(reason) {
+                    $scope.lyric.name = '未发现歌词';
+                    window.console.log('未发现歌词 reject:', reason);
+                });
+        };
+    }]);
+    
+    // get song service
+angular.module('musicboxApp')
+    .service('songsService',['$http', '$q', '$cookieStore', 'appConstants', function($http, $q, $cookieStore, appConstants){
+        var self = this;
+        self.songinfo = {};
+        self.songnext = {};
+
+        this.setSong = function(song) {
+            self.songinfo = song;
+            $cookieStore.put('song', song);
+        };
+
+        this.getSong = function() {
+            return (self.songinfo ? self.songinfo : $cookieStore.get('song'));
+        };
+
+        this.setSongNext = function(song) {
+            self.songnext = song;
+            $cookieStore.put('songnext', song);
+        };
+
+        this.getSongNext = function() {
+            return (self.songnext ? self.songnext : $cookieStore.get('songnext'));
+        };
+
+        this.getSongsRaw = function(sid, type, channel, pt) {
+            sid = sid || '';
+            type = type || 'e';
+            channel = channel || '0';
+            pt = (type == 'p') ? '0.0' : (pt || '0.0');
+            var pb = this.getSong().kbps || '128';
+            var rd = this.getRandom();
+
+            var url = 'http://douban.fm/j/mine/playlist?'  + '&type=' + type + '&sid=' + sid + '&pt=' + pt + '&channel=' + channel + '&pb=' + pb + '&from=mainsite&r=' + rd;
+            window.console.log('new request, type:', type, ':', url);
+            var deferred = $q.defer();
+            var thePromise = $http.get(url, {cache: appConstants.useBrowserCache, responseType: 'json'});
+            thePromise.success(function(result){
+                deferred.resolve(result);
+            }).error(function(response){
+                deferred.reject(response);
+            });
+            return deferred.promise;
+        };
+
+        this.getRandom = function() {
+            var num = '1234567890abcdef', random = '';
+            for (var i = 0; i < 10; i++) {
+                random += num.charAt(Math.floor(Math.random() * 16));
+            }
+            return random;  
+        };
+
+    }]);
+    
+    // login service
+angular.module('musicboxApp')
+    .service('loginService', [function () {
+        var self = this;
+        self.loged = false;
+
+        this.getLogStatus = function() {
+            return self.loged;
+        };
+
+        this.checkCookie = function() {
+            chrome.cookies.get({
+                url: 'http://douban.com',
+                name: 'dbcl2'
+            }, function(result) {
+                if (result) {
+                    chrome.cookies.set({
+                        url: 'http://douban.fm',
+                        name: 'dbcl2',
+                        value: result.value
+                    });
+                    self.loged = true;
+                } else {
+                    self.loged = false;
                 }
-            }).success(function(data){
-                $scope.songsList = data.song;
-                $log.debug('get songs successed. by http');
+            });
+
+            chrome.cookies.get({
+                url: 'http://douban.com',
+                name: 'ck'
+            }, function(result) {
+                if (result) {
+                    chrome.cookies.set({
+                        url: 'http://douban.fm',
+                        name: 'ck',
+                        value: result.value
+                    });
+                }
             });
         };
-    }])
-    .filter('trustUrl', function($sce) {
-        return function(url) {
-            return $sce.trustAsResourceUrl(url);
-        };
-    })
-    .service('playMusicService', function() {
+    }]);
+
+    // lyrics service
+angular.module('musicboxApp')
+    .service('lyricsService', ['$http', '$q', 'appConstants', function ($http, $q, appConstants) {
         var self = this;
-        self.url = '';
+        self.lyrictype = 'normal';
 
-        this.setUrl = function(val) {
-            return this.url = val;
+        this.getLyricType = function() {
+            return self.lyrictype;
         };
 
-        this.playMusic = function() {
-            var audio = document.getElementById('musicAudio');
-            audio.src = this.url;
-            //audio.src = 'http://mr3.douban.com/201308250247/4a3de2e8016b5d659821ec76e6a2f35d/view/song/small/p1562725.mp3';
-            //http://api.soundcloud.com/tracks/204082098/stream?client_id=17a992358db64d99e492326797fff3e8
-            audio.controls = true;
-            audio.autoplay = false;
-            audio.crossOrigin = 'anonymous';
-            audio.play();
-            var context = new window.AudioContext() || new window.webkitAudioContext();
+        this.getLyrics = function(sid, ssid) {
+            var sid1 = '1563351';
+            var ssid1 = '80b3';
+            var url = 'http://api.douban.com/v2/fm/lyric?'  + 'sid=' + sid1 + '&ssid=' + ssid1; // + '&apikey=' + '02646d3fb69a52ff072d47bf23cef8fd' + '&app_name=douban_fm_iphone_3.0&sdkVersion=1.9.0&did=d1d5754d8b077285fe85581feafabc82'; //appConstants.apikey + '&version=630&app_name=radio_android';
+            window.console.log(url);
+            var deferred = $q.defer();
+            var thePromise = $http.get(url, {cache: appConstants.useBrowserCache, responseType: 'json'});
+            thePromise.success(function(result){
+                deferred.resolve(result);
+            }).error(function(response){
+                deferred.reject(response);
+            });
+            return deferred.promise;
+        };
 
-            window.addEventListener('load', function(e) {
-              var source = context.createMediaElementSource(audio);
-              source.connect(context.destination);  
-            }, false);
-        };  
-    });
+        this.parseLyrics = function(lyr) {
+            var lyrarr = lyr.split('\r\n');
+            var regex = /^((?:\[[\d.:]+\])*)([^\[\]]*)$/;  // for both '[]' and no '[]'
+            var lyrics = {};
+            var nindex = 0;
+
+            angular.forEach(lyrarr, function(value, key, array) {
+                var result = value.match(regex);
+                if (result && result[2]) {
+                    if (result[1]) {
+                        var timestamp = result[1].slice(1, -1).split('][');
+                        angular.forEach(timestamp, function(v, k, a) {
+                            var temp = v.split(':');
+                            lyrics[Number(temp[0])*60 + temp[1]] = result[2];
+                        });
+                    } else {
+                        lyrics[nindex] = result[2];
+                        nindex ++;
+                    }
+                }
+            });
+
+            if (!nindex) {
+                self.lyrictype = 'withTimeStamp';
+            } else {
+                self.lyrictype = 'normal';
+            }
+
+            return lyrics;
+
+            /*
+            for (var i = 0, result; i < lyr.length; i++) {
+                result = lyr[i].match(regex);
+                if (result[2]) {
+                    var timestamp = result[1].slice(1, -1).split('][');
+                    for (var j = 0, temp; j < timestamp.length; j++) {
+                        temp = timestamp[j].split(':');
+                        lyrics[Number(temp[0])*60 + temp[1]] = result[2];
+                    }
+                }
+            }
+            return lyrics;*/
+        };
+    }]);
+
+    // interceptors config
+angular.module('musicboxApp')
+    .config(['$httpProvider', function ($httpProvider) {        
+        $httpProvider.interceptors.push('songsServiceInterceptor');
+    }]);
+    
+    // interceptors config
+angular.module('musicboxApp')
+    .factory('songsServiceInterceptor', ['$q', '$injector', function ($q, $injector) {
+        var redirectInterceptor = {
+            responseError: function(response) {
+                if (response.status === 302) {
+                    var songsService = $injector.get('songsService');
+                    var $http = $injector.get('$http');
+                    var deferred  = $q.defer();
+                    window.console.log('interceptors response:', response);
+                    //response.data.redirect;
+                }
+                window.console.log('interceptors response:', response);
+                return $q.resolve(response);
+            }
+        };
+    
+        return redirectInterceptor;
+    }]);

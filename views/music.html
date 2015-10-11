@@ -1,62 +1,50 @@
 
 <!-- 内容部分 -->
 <div id="music-wrapper">
-    <div id="MusicBox">
+    <div id="MusicBox" ng-init="initPlay()">
         <div id="cd">
             <div id="cd-main">
                 <img src="images/cdplayer/CDplayer.png" alt="CDplayer">
             </div>
-            <div id="cd-mask">
-                <img ng-class="{'spin': playing, 'spin spin-paused': !playing}" src="images/cdplayer/CDmask.png" alt="CDmask"> 
-            </div>
             <div id="cd-border">
-                <img ng-class="{'spin': playing, 'spin spin-paused': !playing}" src="images/cdplayer/CDborder.png" alt="CDborder">
+                <img ng-show="imguseful" ng-class="{'spin': playing, 'spin spin-paused': !playing}" src="images/cdplayer/CDborder.png" alt="CDborder">
             </div>
             <div id="cd-disk">
-                <div id="mask">
-                    <img id="diskimg" ng-class="{'spin': playing, 'spin spin-paused': !playing}" alt="songPicture">
-                </div>
+                <img class="diskimg" ng-show="imguseful" ng-src="{{ song.picture | trustUrl }}" ng-class="{'spin': playing, 'spin spin-paused': !playing}" alt="songPicture">
+                <img class="spin" src="images/cdplayer/CDdefault.png" alt="defaultDisk">
             </div>
-            <div ng-class="{'pull': playing}">
+            <div ng-class="{'pull': playing, 'push':!playing}">
                 <div id="cd-string">
                     <img src="images/cdplayer/Line.png" alt="powerline">
                 </div>
                 <div id="cd-button">
-                    <img ng-click="playing=!playing" is-playing src="images/cdplayer/Button.png" alt="powerbutton">
+                    <img id='btn' ng-click="playing=!playing" ng-play src="images/cdplayer/Button.png" alt="powerbutton">
                 </div>
             </div>
-            <!--
-            <div id="cd-power" ng-class="{pull: playing}">
-                <img ng-click="playing=!playing" ng-mouseenter="ispull" src="images/cdplayer/Power.png" alt="powerbutton">
-            </div> -->
             
         </div>
         <div id="AudioPlayer" style="position:fixed;left:20px; top:20px; z-index: 9999;">
             <!-- 设置播放器 -->
-            <audio id="musicAudio" controls auto-adjust>
-                source ng-src="{{ song.url | trustUrl }}" type="audio/mpeg"> 
-                Your browser does not support the audio element.
+            <audio id="musicAudio" controls ng-auto-ended  ng-auto-paused ng-lyrics autoplay ng-src="{{ song.url | trustUrl }}" type="audio/mpeg">
+                Your browser does not support the audio element. Please try the new version Chrome.
             </audio>
-            <p>{{song.url}}</p>
         </div>
     </div>
 </div>
 <!-- Board Part -->
 <div id="RightPannel">
     <!-- 右侧:频道列表 -->
-    <div id="ChlPannel" ng-show="showChlsList" class="animate">
-        <div id="chl-list-wrapper" ng-controller="ChannelListController">
+    <div id="ChlPannel" ng-show="showChlsList" class="chlPannelShow">
+        <div id="chl-list-wrapper" class="scroll" ng-controller="ChannelListController">
             <div id="chl-section" ng-init="loadChannels()">
                 <ul class="channels-list" ng-repeat="group in groups">
-                    <li class="group-list">{{group.group_name}}</li>
-
+                    <li class="group-list" ng-bind="group.group_name"></li>
                     <ul ng-repeat="chl in group.chls">
                         <li class="channel">
-                            <a class="chl-name" ng-click="chlSelected(chl.id, chl.name)">
-                                <i class="chl-playing fa fa-check-circle" ng-show="showSelected(chl.id)"></i>&nbsp;
-                                <span class="cname">
-                                    {{chl.name}}
-                                    <span class="mhz">MHz</span>
+                            <a class="chl-name" ng-click="chlSelected(chl.id, chl.name)" ng-class="{'li-even': $even, 'li-odd': $odd}">
+                                <i show-cid="chl.id" class="chl-playing fa fa-check-circle" ng-show="showSelected(chl.id)"></i>&nbsp;
+                                <span class="cname ng-cloak">
+                                    {{chl.name}}<span class="mhz">MHz</span>
                                 </span>
                             </a>
                         </li>
@@ -74,30 +62,30 @@
                 <a class="nav-icon" ng-click="showChlsList=!showChlsList"><i class="fa fa-navicon fa-2x"></i></a>
             </div>
             <div id="chl-name-zone">
-                <span class="chl-name-show" ng-model="channel.chlName">{{channel.chlName}} MHz</span>
+                <span class="chl-name-show ng-cloak" ng-class="{'slide-animate': 1}">{{channel.chlName}} MHz</span>
             </div>
             <div id="btn-zone">
                 <ul class="btn-group">
-                    <li class="random">
-                        <span ng-click="random=!random"><i class="fa fa-refresh fa-lg" ng-class="{'fa-refresh': !random, 'fa-random': random}"></i></span>
+                    <li class="loop">
+                        <span ng-click="loop=!loop" ng-single-loop><i class="fa fa-random fa-lg" ng-class="{'fa-refresh': loop, 'fa-random': !loop}"></i></span>
                     </li>
                     <li class="like">
-                        <span ng-click="rate=!rate"><i class="fa fa-heart-o fa-lg" ng-class="{'fa-heart': rate, 'fa-heart-o': !rate}"></i></span>
+                        <span ng-click="rate=!rate" ng-like ng-current-time><i class="fa fa-heart-o fa-lg" ng-class="{'fa-heart': rate, 'fa-heart-o': !rate}"></i></span>
                     </li>
-                    <li class="trash">
-                        <span ng-click="bye=!bye"><i class="fa fa-trash-o fa-lg" ng-class="{'fa-trash': bye, 'fa-trash-o': !bye}"></i></span>
+                    <li class="bye">
+                        <span ng-click="getCurrPlay('b')" ng-current-time><i class="fa fa-trash-o fa-lg"></i></span>
                     </li>
-                    <li class="stepforward">
-                        <span ng-click="next()"><i class="fa fa-step-forward fa-lg"></i></span>
+                    <li class="skip">
+                        <span ng-click="getCurrPlay('s')" ng-current-time><i class="fa fa-step-forward fa-lg"></i></span>
                     </li>
                     <li class="volume">
-                        <span ng-click="volflag=!volflag"><i class="fa fa-volume-up fa-lg"></i></span>
+                        <span ng-click="volflag=!volflag"><i class="fa fa-volume-up fa-lg" ng-class="{'fa-volume-up': (vol >= 60), 'fa-volume-down': (vol > 0 && vol < 60), 'fa-volume-off': (vol == 0)}"></i></span>
                     </li>
                     <li class="search">
                         <span ng-click="searchflag=!searchflag"><i class="fa fa-search fa-lg"></i></span>
                     </li>
                     <li class="login">
-                        <span ng-click="getAuth()"><i class="fa fa-user fa-lg"></i></span>
+                        <span ng-click="getAuth()"><a href="https://www.douban.com/accounts/login" target="_blank"><i class="fa fa-user fa-lg"></i></a></span>
                     </li>
                     <li class="share">
                         <span ng-click="shareflag=!shareflag"><i class="fa fa-share-alt fa-lg"></i></span>
@@ -105,14 +93,12 @@
 
                 </ul>
                 <div class="popup">
-                    <form name="volumeForm" class="volumePop" ng-show="volflag" action="#" method="post">
-                        <div>
-                            <label for="volume">volume:</label>
-                            <input type="range" name="volume" id="volume" min="0" max="100" value="60" step="1" />
-                        </div>
-                    </form>
+                    <div class="volumePop" ng-show="volflag">
+                        <label for="volume">volume:</label>
+                        <input ng-volume type="range" name="volume" id="volume" min="0" max="100" step="1" ng-model="vol"/>
+                    </div>
                     <!--
-                    <form name="loginForm" class="loginPop" ng-show="loginflag" ng-controller="LoginController" action="#" method="post">
+                    <div name="loginForm" class="loginPop" ng-show="loginflag" ng-controller="LoginController" action="#" method="post">
                         <fieldset class="form-group">
                             <label class="control-label">豆 瓣:
                             <input type="email" class="form-control" ng-model="user.email" name="username" placeholder="user@account.com" title="请输入Email账户" autofocus="autofocus" required="required" autocomplete="off" value="" /></label>
@@ -127,16 +113,16 @@
                             记住我</label>
                             <input type="submit" class="btn btn-primary pullright" ng-click="logintest1()" value="登  录">
                         </fieldset>
-                    </form>
+                    </div>
                     -->
 
-                    <form name="searchForm" class="searchPop" ng-show="searchflag">
+                    <div class="searchPop" ng-show="searchflag">
                         <div class="form-group">
                             <label for="search" class="control-label"></label>
-                            <input type="text" id="search" class="form-control" name="search" required="required" placeholder="歌曲、专辑或艺术家" title="请输入搜索内容" value="" />
-                            <input type="submit" class="btn btn-primary" value="搜  索">
+                            <input type="text" id="search" class="input-large" name="search" required="required" placeholder="歌曲、专辑或艺术家" title="请输入搜索内容" value="" />
+                            <input type="submit" class="btn btn-primary btn-large" value="搜  索">
                         </div>
-                    </form>
+                    </div>
                     <div class="sharePop" ng-show="shareflag">
                         <ul class="sharelist">
                             <li><a href="#">豆瓣</a></li>
@@ -151,13 +137,23 @@
         </div>
         <!-- 歌词 -->
         <div id="LyricsPannel">
-            ... ... this is lyric zone;
-            <i class="fa fa-music fa-lg"></i>Music
-            //$scope.songs: album, picture, artist, url, title, length, sid, aid, albumtitle, like
+            <div id="lyrics-wrapper">
+                <div id="lyrics-live" ng-if="lyric.valid">
+                    <p ng-bind="lyric.name"><i class="fa fa-music fa-lg"></i></p>
+                    <p ng-bind="lyric.show" ng-show="lyric.withTimeStamp"></p>
+                    <ul id="lyrics-move" ng-repeat="(key, value) in lyric.content" ng-show="!lyric.withTimeStamp">
+                        <li ng-bind="value"></li>
+                    </ul>
+                    <p id="middle"></p>
+                </div>
+                <div ng-if="!lyric.valid">
+                    <img class="lyric-img" ng-show="imguseful" ng-src="{{ song.picture | trustUrl }}">
+                </div>
+            </div>
         </div>
         <!-- 歌曲名/艺术家 -->
         <div id="SongNamePannel" style="z-index: 999;">            
-            <span class="song-author-show">{{song.title}} by {{song.artist}}</span>
+            <span class="song-author-show ng-cloak" ng-class="{'slide-animate2': showmarquee}" ng-show-marquee>{{song.title}} by {{song.artist}}</span>
         </div>
     </div>
     <div id="search-result"></div>
