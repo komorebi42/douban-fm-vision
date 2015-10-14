@@ -1087,15 +1087,17 @@ ul.channels-list li.channel a.chl-name span.cname:hover {
     height: 50px;
     margin: 0 auto;
     text-align: center;
-    font-size: 1em;
+    font-size: 1.2em;
     color: #555;
     border-radius: 8px;
     background-color: rgba(242, 242, 242, .8);
+    /*visibility: hidden;*/
 }
 
 #btn-zone div.popup div.notifyPop p {
     position: absolute;
-    visibility: hidden;
+    width: 380px;
+    height: 50px;
     text-align: center;
 }
 
@@ -1106,6 +1108,7 @@ ul.channels-list li.channel a.chl-name span.cname:hover {
 
 .showpop {
     visibility: visible !important;
+    margin: 0 auto;
     z-index: 10;
 }
 
@@ -1414,6 +1417,16 @@ footer {
 
 .fa-github:before {
     content: "\f09b"
+}
+
+.fa-gear:before,
+.fa-cog:before {
+    content: "\f013"
+}
+
+.fa-gears:before,
+.fa-cogs:before {
+    content: "\f085"
 }
 
 .fa-heart:before {

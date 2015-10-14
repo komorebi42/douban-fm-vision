@@ -25,7 +25,7 @@
         </div>
         <div id="AudioPlayer" style="position:fixed;left:20px; top:20px;">
             <!-- 设置播放器 -->
-            <audio id="musicAudio" controls autoplay ng-status ng-lyrics playing="status.playing" volume="vol" ng-src="{{ songUI.url | trustUrl }}" type="audio/mpeg">
+            <audio id="musicAudio" controls autoplay ng-status ng-lyrics playing="status.playing" ng-volume volume="status.vol" max-vol="status.maxvol" ng-src="{{ songUI.url | trustUrl }}" type="audio/mpeg">
                 Your browser does not support the audio element. Please try the new version Chrome.
             </audio>
         </div>
@@ -82,9 +82,9 @@
                     <li class="volume">
                         <span ng-click="volflag=!volflag"><i class="fa fa-volume-up fa-2x" ng-class="{'fa-volume-up': (status.vol >= 60), 'fa-volume-down': (status.vol > 0 && status.vol < 60), 'fa-volume-off': (status.vol == 0)}"></i></span>
                     </li>
-                    <li class="search">
+                    <!-- <li class="search">
                         <span ng-click="searchflag=!searchflag"><i class="fa fa-search fa-2x"></i></span>
-                    </li>
+                    </li> -->
                     <li class="login">
                         <span ng-click="getAuth()"><a href="https://www.douban.com/accounts/login" target="_blank"><i class="fa fa-user fa-2x"></i></a></span>
                     </li>
@@ -96,7 +96,7 @@
                 <div class="popup">
                     <div class="volumePop" ng-show="volflag">
                         <label for="volume">volume:</label>
-                        <input type="range" name="volume" id="volume" min="0" max="100" step="1" ng-model="status.vol"/>
+                        <input type="range" name="volume" id="volume" min="0" max="{{status.maxvol}}" step="1" ng-model="status.vol"/>
                     </div>
                     <div class="notifyPop" ng-show="notiflag">
                         <p ng-class="{'showpop': inform.chlpop}" ng-click="notiflag=!notiflag">点击
@@ -105,7 +105,7 @@
                         <p ng-class="{'showpop': inform.likepop}" ng-click="notiflag=!notiflag">点击
                             <a href="https://www.douban.com/accounts/login" target="_blank">登录</a>
                             , 同步你的专属喜好</p>
-                        <p style="visibility: visible">test</p>
+                        <!-- <p style="visibility: visible">test</p> -->
                     </div>
                     <!--
                     <div name="loginForm" class="loginPop" ng-show="loginflag" ng-controller="LoginController" action="#" method="post">
@@ -151,11 +151,11 @@
                 <div id="lyrics-wrapper" ng-if="lyric.valid || !slideshow" class="scrollbar">
                     <div id="lyrics-live" ng-class="{'no-margin': !lyric.withTS}">
                         <ul ng-repeat="oneline in lyric.content">
-                            <li id="lyrics-line" ng-class="{'highlight': (lyric.hlindex === $index && lyric.withTS), 'slide-animate2': showmarquee}" ng-bind="oneline.line"></li>
+                            <li id="lyrics-line" ng-class="{'highlight': (lyric.hlindex === $index && lyric.withTS), 'slide-animate2': showmarquee2}" ng-lyric-marquee ng-bind="oneline.line"></li>
                         </ul>
                     </div>
                 </div>
-                <div id="image-wrapper" ng-if="!lyric.valid || slideshow">
+                <div id="image-wrapper" ng-if="slideshow || !lyric.valid">
                     <p class="lyrics-notice" ng-if="lyricNotice" ng-click="lyricNotice=!lyricNotice">
                         未发现歌词<br />
                         Not Found
@@ -171,7 +171,7 @@
     </div>
     <div style="position:fixed; left:10px; bottom: 20px; background: #DDD; z-index: 998; overflow:auto;">
         <ul ng-repeat="lyline in lyric.content">
-            <li >{{lyline.ts}} : {{lyline.line}}</li>
+            <li >{{index}} - {{lyline.ts}} : {{lyline.line}}</li>
         </ul>
         <p>{{status.vol}} - 当前音量</p>
     </div>

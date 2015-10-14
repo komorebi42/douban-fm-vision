@@ -46,6 +46,7 @@ angular.module('musicboxApp')
                         });
                     }
                     if (!scope.status.signed) {
+                        scope.inform.notiflag = true;
                         scope.inform.likepop = true;
                     }
                 });
@@ -79,6 +80,25 @@ angular.module('musicboxApp')
                         scope.showmarquee = true;
                     } else {
                         scope.showmarquee = false;
+                    }
+                }, 5000);
+            }
+        };
+    }]);
+// show marquee,  [bind on #lyric-line li]
+angular.module('musicboxApp')
+    .directive('ngLyricMarquee', ['$window', '$timeout', '$animate', function($window, $timeout, $animate) {
+        return {
+            restrict: 'A',
+            link: function(scope, iElement, iAttrs) {
+                $timeout(function() {
+                    var textWidth = iElement.prop('scrollWidth');
+                    var wrapWidth = iElement.parent().prop('scrollWidth');
+                    //var offset = parseInt((wrapWidth + textWidth) / 2) + 'px';
+                    if (textWidth >= wrapWidth) {
+                        scope.showmarquee2 = true;
+                    } else {
+                        scope.showmarquee2 = false;
                     }
                 }, 5000);
             }

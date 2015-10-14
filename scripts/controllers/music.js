@@ -42,6 +42,7 @@ angular.module('musicboxApp')
                     $scope.getCurrPlay('n');
                 } else {
                     // popup
+                    $scope.inform.notiflag = true;
                     $scope.inform.chlpop = true;
                 }
             } else {
@@ -54,6 +55,7 @@ angular.module('musicboxApp')
             'playing': false,
             'imguseful': false,
             'vol': songsService.getVolume() ? songsService.getVolume() : 80,
+            'maxvol': 100,
             'curtime': '',
             'signed': loginService.getLogStatus(),
             'counts': 0
@@ -79,6 +81,7 @@ angular.module('musicboxApp')
             'deltatime': ''
         };
         $scope.inform = {
+            'notiflag': false,
             'chlpop': false,
             'likepop': false
         };
@@ -144,8 +147,12 @@ angular.module('musicboxApp')
                 songsService.getSongsRaw('e', $scope.status.curtime)
                     .then(function(data) {
                         window.console.log('STATUS: ended,', data);
-                    });          
+                    });
 
+                if (songsService.checkArrNext()) {
+                    $scope.getNextPlay('p');
+                }
+                
                 $scope.songNext = songsService.getSongPlay();
                 window.console.log('ENDEDSONG fired getSongPlay()');
             }
@@ -238,34 +245,40 @@ angular.module('musicboxApp')
         self.arrLen = 0;
         self.curPos = 0;
         self.songinfo = {};
+        self.sid = '';
+        self.ssid = '';
 
         this.setSongArr = function(arr) {
-            self.songArr = arr;
-            self.arrLen = arr.length;
-            self.curPos = 0;
-            self.songinfo = arr[0];
-            if (arr[0]) {            
-                $cookieStore.put('song', arr[0]);
-            }
+            if (arr) {
+                self.songArr = arr;
+                self.arrLen = arr.length;
+                self.curPos = 0;
+                if (arr[0]) {
+                    self.songinfo = arr[0];
+                }
+            } 
+            // if (arr[0]) {            
+            //     $cookieStore.put('song', arr[0]);
+            // }
             window.console.log('FUNCTION SETSONGARR: arrLen - ', self.arrLen, ' curPos - ', self.curPos);
         };
 
         this.getSongPlay = function() {
             if (self.curPos <= self.arrLen - 1) {
-                self.songinfo =  self.songArr[self.curPos] ? self.songArr[self.curPos] : $cookieStore.get('song');
+                if (self.songArr[self.curPos]) {
+                    self.songinfo =  self.songArr[self.curPos]; // ? self.songArr[self.curPos] : $cookieStore.get('song');
+                }
                 self.curPos ++;
                 window.console.log('FUNCTION Song self.curPos:', self.curPos - 1, 'self.arrLen', self.arrLen);
                 window.console.log('FUNCTION Song self.curPos:', self.curPos - 1, self.songinfo);
                 return self.songinfo;
             } else {
+                self.curPos = 0;
                 if (self.songArrNext) {
                     this.setSongArr(self.songArrNext);
-                    //self.songinfo = self.songArrNext[0];
                     self.curPos ++;
                     window.console.log('FUNCTION SongNEXT Length:', self.songArrNext.length);
                     window.console.log('FUNCTION SongNEXT:', self.songArrNext);
-                    window.console.log('getSongPlay() fired getSongPlay()');
-                    window.console.log('不会执行:', self.songinfo);
                     self.songArrNext = [];
                     return self.songinfo;
                 } 
@@ -273,21 +286,33 @@ angular.module('musicboxApp')
             }
         };
 
+        this.setSongArrNext = function(arr) {
+            self.songArrNext = arr;
+        };
+
+        this.checkArrNext = function() {
+            return (self.songArrNext ? true : false);
+        };
+
         this.getSong = function() {
             return self.songinfo;
         };
 
-        this.setSongArrNext = function(arr) {
-            self.songArrNext = arr;
+        this.getsid = function() {
+            return self.songinfo.sid;
+        };
+
+        this.getssid = function() {
+            return self.songinfo.ssid;
         };
 
         this.getSongsRaw = function(type, pt) {
             type = type || 'p';
             pt = (type == 'p') ? '0.0' : (pt || '0.0');
 
-            var sid = this.getSong().sid || '';
+            var sid = self.songinfo.sid || '';
             var channel = chlService.getChlId() || '155';
-            var pb = this.getSong().kbps || '128';
+            var pb = self.songinfo.ssid || '128';
             var rd = this.getRandom();
             var deferred = $q.defer();
             var url = '';
@@ -332,7 +357,7 @@ angular.module('musicboxApp')
                 if (result) {
                     return result.value;
                 } else {
-                    return 80;
+                    return 79;
                 }
             });
         };
@@ -393,8 +418,8 @@ angular.module('musicboxApp')
         };
 
         this.getLyrics = function() {
-            var urlsid = songsService.getSong().sid;
-            var urlssid = songsService.getSong().ssid;
+            var urlsid = songsService.getsid();
+            var urlssid = songsService.getssid();
             //var sid1 = '1563351';
             //var ssid1 = '80b3';
             var deferred = $q.defer();
@@ -420,14 +445,14 @@ angular.module('musicboxApp')
             //  result[1]: [02:33.22][04:33.22]    ((?:\[[\d.:-]+\])*)
             //  result[2]: content     ([^\[\]]*)
             //var regex = /^((?:\[[\d.:-]+\])*)(?:\[offset:(-?\d+)?\])?((?:\[[\d.:-]+\])*)([^\[\]]*)$/;  // add offset
-            var regexfull = /^((?:\[[\d.:-]+\])*)(?:\[offset:(-?\d+)?\])?((?:\[[\d.:-]+\])*)(?:\[ti:(\S*)\])?(?:\[ar:(\S*)\])?(?:\[al:(\S*)\])?(?:\[by:(\S*)\])?([^\[\]]*)$/;  // add title artist album by-who
+            var regexfull = /^((?:\[[\d.:-]+\])*)(?:\[offset:(-?\d+)?\])?((?:\[[\d.:-]+\])*)(?:\[ti:(\S*\s*)\])?(?:\[ar:(\S*\s*)\])?(?:\[al:(\S*\s*)\])?(?:\[by:(\S*\s*)\])?([^\[\]]*)$/;  // add title artist album by-who
             //  g1: [02:33.22][04:33.22]     ((?:\[[\d.:-]+\])*)
             //  g2: -500    [offset: -500]      (?:\[offset:(-?\d+)?\])?
             //  g3: [03:23.11][04:33.22]      ((?:\[[\d.:-]+\])*)
-            //  g4: title  [ti: artist]        (?:\[ti:(\S*)\])?
-            //  g5: artist  [ar: artist]        (?:\[ar:(\S*)\])?
-            //  g6: album  [al: artist]        (?:\[al:(\S*)\])?
-            //  g7: writer  [by: writer]        (?:\[by:(\S*)\])?
+            //  g4: title  [ti: artist]        (?:\[ti:(\S*\s*)\])?
+            //  g5: artist  [ar: artist]        (?:\[ar:(\S*\s*)\])?
+            //  g6: album  [al: album]        (?:\[al:(\S*\s*)\])?
+            //  g7: writer  [by: writer]        (?:\[by:(\S*\s*)\])?
             //  g8: content     ([^\[\]]*)
             var offset = 0;
             var lyricsArr = [];

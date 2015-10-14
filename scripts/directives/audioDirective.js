@@ -91,23 +91,21 @@ angular.module('musicboxApp')
     .directive('ngVolume', ['songsService', function(songsService) {
         return {
             restrict: 'A',
-            // scope: {
-            //     volume: '='
-            // },
+            scope: {
+                volume: '=volume',
+                maximum: '=maxVol'
+            },
             link: function(scope, iElement, iAttrs) {
             	var audio = document.getElementById('musicAudio');
                 scope.$watch('volume', function(newValue, oldValue) {
                     if (newValue != oldValue) {
                         scope.$applyAsync(function() {
-                            audio.volume = parseInt(newValue) / parseInt(iAttrs.max);
+                            audio.volume = parseInt(newValue) / parseInt(scope.maximum);
                             audio.play();
                             songsService.setVolume(newValue);
-                            window.console.log('newValue:',newValue);
-                            window.console.log('audio.volume:',audio.volume);
-                            window.console.log('scope.volume:',volume);
                         });
                     } else {
-                        window.console.log('scope.volume:',volume);
+                        window.console.log('scope.volume:',scope.volume);
                         window.console.log('audio.volume:',audio.volume);
                     }
                 }, true);
@@ -151,16 +149,16 @@ angular.module('musicboxApp')
                             scope.lyric.hlindex = indexhl;
                             scope.lyric.deltatime = deltatime;
                             if (indexhl && indexhl != indexck) {
-                                window.console.log('TEST NUM:', testnum);
+                                window.console.log('TEST NUM:', testnum, 'HIGHLIGHT index:', indexhl, 'CHECK:', indexck);
                                 testnum++;
                                 indexck = indexhl;
-                                offset = (indexhl * (40)) + 'px';
+                                offset = (indexhl * (40));
                                 //lyriclive.animate({scrollTop: offset}, "slow");
                                 //lyriclive.scrollTop = offset;
                                 //lyriclive.scrollTop(offset);
-                                lyriclive.animate({scrollTop: offset}, "slow");
-                                //lyriclive.scrollTop = offset;
-                                //lyriclive.scrollTop(offset);
+                                lyricwrap.animate({scrollTop: offset}, "slow");
+                                //lyricwrap.scrollTop = offset;
+                                //lyricwrap.scrollTop(offset);
                             }
                         } else if (scope.lyric.valid && !scope.lyric.withTS) {
                         	//scope.lyric.textonly = true;
