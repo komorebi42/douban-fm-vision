@@ -11,7 +11,7 @@ angular.module('musicboxApp')
         var self = this;
         self.pt = '';
 
-        $scope.songUrl = 'musics/Like Sunday,Like Rain.mp3';  
+        //$scope.songUrl = 'musics/Like Sunday,Like Rain.mp3';  
         //'http://mr3.douban.com/201308250247/4a3de2e8016b5d659821ec76e6a2f35d/view/song/small/p1562725.mp3';
         //$scope.songs: album, picture, artist, url, title, length, sid, aid, albumtitle, like
         
@@ -36,192 +36,269 @@ angular.module('musicboxApp')
                 'chlName': chlService.getChlName()
             };
             if ($scope.channel.chlId <= 0) {
-                $scope.loged = loginService.getLogStatus();
-                if ($scope.loged) {
+                $scope.status.signed = loginService.getLogStatus();
+                if ($scope.status.signed) {
                     // yidonglu
                     $scope.getCurrPlay('n');
                 } else {
-                    loginService.checkCookie();
-                    if (loginService.getLogStatus()) {
-                        // yidenglu
-                        $scope.getCurrPlay('n');
-                    } else {
-                        // popup
-                    }
+                    // popup
+                    $scope.inform.chlpop = true;
                 }
             } else {
                 $scope.getCurrPlay('n');
             }
         });
 
-        // initial
-        $scope.initPlay = function() {
-            $scope.playing = false;
-            $scope.vol = 70;
-            $scope.imguseful = false;
-            $scope.currentTime = '';
-            $scope.loged = false;
-
-            $scope.channel = {
-                'chlId': chlService.getChlId(),
-                'chlName': chlService.getChlName()
-            };
-            $scope.lyric = {
-                'name': '',
-                'content': '',
-                'valid': false,
-                'withTimeStamp': false
-            };
-            $scope.getCurrPlay('n');
+        // initial scope
+        $scope.status = {
+            'playing': false,
+            'imguseful': false,
+            'vol': songsService.getVolume() ? songsService.getVolume() : 80,
+            'curtime': '',
+            'signed': loginService.getLogStatus(),
+            'counts': 0
+        };
+        $scope.songUI = {
+            'url': '',
+            'disk': '',
+            'artist': '',
+            'title': '',
+            'picture': ''
+        };
+        $scope.channel = {
+            'chlId': chlService.getChlId(),
+            'chlName': chlService.getChlName()
+        };
+        $scope.lyric = {
+            'name': '',
+            'content': '',
+            'valid': false,
+            'withTS': false,
+            'hlindex': 0,
+            'showline': '',
+            'deltatime': ''
+        };
+        $scope.inform = {
+            'chlpop': false,
+            'likepop': false
         };
 
-        // new,skip,bye: n,s,b
+        // initial play
+        // $scope.initPlay = function() {
+        //     $scope.playing = $scope.status.playing;
+        //     $scope.imguseful = $scope.status.imguseful;
+        //     $scope.vol = $scope.status.vol;
+        //     $scope.paused = false;
+
+        //     $scope.getCurrPlay('n');
+        // };
+
+        // get ui data
+        $scope.setshowUI = function(song) {
+            var songUI = {};
+            if (song) {
+                songUI = {
+                    'url': song.url,
+                    'disk': song.picture,
+                    'artist': song.artist,
+                    'title': song.title,
+                    'picture': song.picture
+                };
+            } else {
+                songUI = {
+                    'url': 'musics/Like Sunday,Like Rain.mp3',
+                    'disk': 'images/cdplayer/CDLikesunday.png',
+                    'artist': 'Frank Whaley',
+                    'title': 'Like Sunday, Like Rain',
+                    'picture': ''
+                };
+            }
+            $scope.songUI = songUI;
+            $scope.status.playing = true;
+        };
+
+        // new,skip,bye: n->p, s->p, b->p
         $scope.getCurrPlay = function(type) {
-            $scope.playing = false;
-            $scope.getPlaylist(songsService.getSong().sid, type, chlService.getChlId(), $scope.currentTime);
+            $scope.status.playing = false;
+            $scope.getPlaylist(type, $scope.status.curtime);
             $timeout(function(){
                 $scope.getNextPlay('p');
             }, 3000);
         };
 
-        // end: e
+        // end: e->p
         $scope.endedSong = function() {
-            $scope.playing = false;
-            $scope.imguseful = false;
+            $scope.status.playing = false;
+            $scope.status.imguseful = false;
 
             if (!$scope.songNext) {
-                $scope.getCurrPlay('n');
+                //$scope.getCurrPlay('n');
+                $scope.getNextPlay('p');
             } else {
-                $scope.song = songsService.getSongNext();
+                $scope.setshowUI($scope.songNext);
                 $scope.getLyric();
 
-                $scope.playing = true;
-                $scope.imguseful = true;
-
-                songsService.getSongsRaw(songsService.getSong().sid, 'e', chlService.getChlId(), $scope.currentTime)
+                $scope.status.playing = true;
+                $scope.status.imguseful = true;
+                
+                songsService.getSongsRaw('e', $scope.status.curtime)
                     .then(function(data) {
-                        window.console.log('song ended:', data);
-                    });
-                $timeout(function(){
-                    $scope.getNextPlay('p');
-                }, 3000);
+                        window.console.log('STATUS: ended,', data);
+                    });          
+
+                $scope.songNext = songsService.getSongPlay();
+                window.console.log('ENDEDSONG fired getSongPlay()');
             }
         };
 
         // playing, rate, unrate: p, r, u
         $scope.getNextPlay = function(type) {
-            var pt = $scope.currentTime;
-            songsService.getSongsRaw(songsService.getSong().sid, type, chlService.getChlId(), pt)
-                .then(function(data) {
-                    if (data.r === 0) {
-                        songsService.setSongNext(data.song[0]);
-                        $scope.songNext = songsService.getSongNext();
+            var pt = $scope.status.curtime;
 
-                    } else {  // 302 response
-                        $timeout(function(){
-                            $scope.getNextPlay('p');
-                        }, 3000);
-                        window.console.log('err:', data.err);
+            songsService.getSongsRaw(type, pt)
+            .then(function(data) {
+                if (data && data.r === 0) {
+                    if (type === 'p') {
+                        songsService.setSongArrNext(data.song);
+                        $scope.songNext = songsService.getSongPlay();
+                    } else {
+                        if (type === 'u') {
+                            songsService.setSongArrNext([]);
+                        }
+                        songsService.setSongArr(data.song);
+                        $scope.songNext = songsService.getSongPlay();
                     }
-                }, function(reason) {
+                    window.console.log('GETNEXTPLAY fired getSongPlay()');
+                } else {  
                     // 302 response
-                    window.console.log('reason:', reason);
-                });
+                    window.console.log('PLAYSTATUS: NEXT t=p,r,u f1.data:', data);
+                }
+            }, function(reason) {
+                // 302 response
+                window.console.log('PLAYSTATUS: NEXT t=p,r,u f2.reject:', reason);
+            });
         };
 
-        // get songlist
-        $scope.getPlaylist = function(sid, type, channel, pt) {
-            songsService.getSongsRaw(sid, type, channel, pt)
-                .then(function(data) {
-                    if (data.r === 0) {
-                        songsService.setSong(data.song[0]);
-                        $scope.song = songsService.getSong();
-                        $scope.getLyric();
+        // get songlist : n s b
+        $scope.getPlaylist = function(type, pt) {
+            songsService.getSongsRaw(type, pt).then(function(data) {
+                if (data && data.r === 0) {
+                    songsService.setSongArr(data.song);
+                    $scope.song = songsService.getSongPlay();
+                    window.console.log('GETPLAYLIST fired getSongPlay()');
+                    $scope.setshowUI($scope.song);
+                    $scope.getLyric();
 
-                        $scope.playing = true;
-                        $scope.imguseful = true;
-                    } else if (data.r === 1) {
-                        $scope.song = songsService.getSongNext();
-                        $scope.getLyric();
-                        $timeout(function(){
-                            $scope.getNextPlay('p');
-                        }, 3000);
-                        window.console.log('err:', data.err);
-                    }
-                }, function(reason) {
-                    // 302
-                    window.console.log('reason:', reason);
-                });
+                    $scope.status.playing = true;
+                    $scope.status.imguseful = true;
+                } else {
+                    // $scope.song = songsService.getSongPlay(); // getSongNext()
+                    // $scope.setshowUI($scope.song);
+                    // $scope.getLyric();
+                    window.console.log('PLAYSTATUS: CURR t=n,s,b f1.data:', data);
+                }
+            }, function(reason) {
+                // 302
+                window.console.log('PLAYSTATUS: CURR t=n,s,b f2.reject:', reason);
+            });
         };
 
         // get lyrics
         $scope.getLyric = function() {
-            lyricsService.getLyrics(songsService.getSong().sid, songsService.getSong().ssid)
-                .then(function(data) {
-                    if (data.sid) {
-                        $scope.lyric.name = data.name;
-                        $scope.lyric.content = lyricsService.parseLyrics(data.lyric);
-                        $scope.lyric.valid = $scope.lyric.content ? true : false;
-
-                        if ('normal' === lyricsService.getLyricType()) {
-                            // only text; normal
-                            $scope.lyric.withTimeStamp = false;
+            lyricsService.getLyrics().then(function(data) {
+                if (data && data.sid) {
+                    $scope.lyric.name = data.name;
+                    $scope.lyric.content = lyricsService.parseLyrics(data.lyric);
+                    $scope.lyric.valid = (lyricsService.getLyricType() !== 'invalid') ? true : false;
+                    // invalid, withTS, textonly
+                    if ($scope.lyric.valid) {
+                        if ('textonly' === lyricsService.getLyricType()) {
+                        // only text; textonly
+                            $scope.lyric.withTS = false;
                         } else {
                             // timestamp 
-                            $scope.lyric.withTimeStamp = true;
+                            $scope.lyric.withTS = true;
                         }
-                        window.console.log('request sid-ssid:', songsService.getSong().sid, '+', songsService.getSong().ssid);
-                        window.console.log('song sid-ssid:', $scope.song.sid, '+', $scope.song.ssid);
-                        window.console.log('lyric content:', $scope.lyric.content);
-                        window.console.log('lyric raw:', data.lyric);
-                    } else {
-                        $scope.lyric.name = ''; //data.code;
-                        $scope.lyric.content = ''; //data.msg;
-                        $scope.lyric.valid = false;
                     }
-                }, function(reason) {
-                    $scope.lyric.name = '未发现歌词';
-                    window.console.log('未发现歌词 reject:', reason);
-                });
+                }
+            }, function(reason) {
+                $scope.lyric.valid = false;
+                window.console.log('Lyrics Reject MSG:', reason.msg);
+            });
+
         };
     }]);
-    
+
     // get song service
 angular.module('musicboxApp')
-    .service('songsService',['$http', '$q', '$cookieStore', 'appConstants', function($http, $q, $cookieStore, appConstants){
+    .service('songsService',['$http', '$q', '$cookieStore', 'chlService', 'appConstants', function($http, $q, $cookieStore, chlService, appConstants){
         var self = this;
+        self.songArr = [];
+        self.songArrNext = [];
+        self.arrLen = 0;
+        self.curPos = 0;
         self.songinfo = {};
-        self.songnext = {};
 
-        this.setSong = function(song) {
-            self.songinfo = song;
-            $cookieStore.put('song', song);
+        this.setSongArr = function(arr) {
+            self.songArr = arr;
+            self.arrLen = arr.length;
+            self.curPos = 0;
+            self.songinfo = arr[0];
+            if (arr[0]) {            
+                $cookieStore.put('song', arr[0]);
+            }
+            window.console.log('FUNCTION SETSONGARR: arrLen - ', self.arrLen, ' curPos - ', self.curPos);
+        };
+
+        this.getSongPlay = function() {
+            if (self.curPos <= self.arrLen - 1) {
+                self.songinfo =  self.songArr[self.curPos] ? self.songArr[self.curPos] : $cookieStore.get('song');
+                self.curPos ++;
+                window.console.log('FUNCTION Song self.curPos:', self.curPos - 1, 'self.arrLen', self.arrLen);
+                window.console.log('FUNCTION Song self.curPos:', self.curPos - 1, self.songinfo);
+                return self.songinfo;
+            } else {
+                if (self.songArrNext) {
+                    this.setSongArr(self.songArrNext);
+                    //self.songinfo = self.songArrNext[0];
+                    self.curPos ++;
+                    window.console.log('FUNCTION SongNEXT Length:', self.songArrNext.length);
+                    window.console.log('FUNCTION SongNEXT:', self.songArrNext);
+                    window.console.log('getSongPlay() fired getSongPlay()');
+                    window.console.log('不会执行:', self.songinfo);
+                    self.songArrNext = [];
+                    return self.songinfo;
+                } 
+                return {};
+            }
         };
 
         this.getSong = function() {
-            return (self.songinfo ? self.songinfo : $cookieStore.get('song'));
+            return self.songinfo;
         };
 
-        this.setSongNext = function(song) {
-            self.songnext = song;
-            $cookieStore.put('songnext', song);
+        this.setSongArrNext = function(arr) {
+            self.songArrNext = arr;
         };
 
-        this.getSongNext = function() {
-            return (self.songnext ? self.songnext : $cookieStore.get('songnext'));
-        };
-
-        this.getSongsRaw = function(sid, type, channel, pt) {
-            sid = sid || '';
-            type = type || 'e';
-            channel = channel || '0';
+        this.getSongsRaw = function(type, pt) {
+            type = type || 'p';
             pt = (type == 'p') ? '0.0' : (pt || '0.0');
+
+            var sid = this.getSong().sid || '';
+            var channel = chlService.getChlId() || '155';
             var pb = this.getSong().kbps || '128';
             var rd = this.getRandom();
-
-            var url = 'http://douban.fm/j/mine/playlist?'  + '&type=' + type + '&sid=' + sid + '&pt=' + pt + '&channel=' + channel + '&pb=' + pb + '&from=mainsite&r=' + rd;
-            window.console.log('new request, type:', type, ':', url);
             var deferred = $q.defer();
+            var url = '';
+
+            if (!sid && (type !== 'n')) {
+                type = 'n';
+            }
+
+            url = 'http://douban.fm/j/mine/playlist?'  + '&type=' + type + '&sid=' + sid + '&pt=' + pt + '&channel=' + channel + '&pb=' + pb + '&from=mainsite&r=' + rd;
+            window.console.log('REQUEST SONG: TYPE-', type, ' url-', url);
+
             var thePromise = $http.get(url, {cache: appConstants.useBrowserCache, responseType: 'json'});
             thePromise.success(function(result){
                 deferred.resolve(result);
@@ -239,16 +316,38 @@ angular.module('musicboxApp')
             return random;  
         };
 
+        this.setVolume = function(vol) {
+            if (typeof vol === 'number') {
+                $cookieStore.set({
+                    name: 'vol',
+                    value: vol
+                });
+            }
+        };
+
+        this.getVolume = function() {
+            $cookieStore.get({
+                name: 'vol'
+            }, function(result) {
+                if (result) {
+                    return result.value;
+                } else {
+                    return 80;
+                }
+            });
+        };
+
     }]);
     
     // login service
 angular.module('musicboxApp')
     .service('loginService', [function () {
         var self = this;
-        self.loged = false;
+        self.signed = false;
 
         this.getLogStatus = function() {
-            return self.loged;
+            this.checkCookie();
+            return self.signed;
         };
 
         this.checkCookie = function() {
@@ -262,9 +361,9 @@ angular.module('musicboxApp')
                         name: 'dbcl2',
                         value: result.value
                     });
-                    self.loged = true;
+                    self.signed = true;
                 } else {
-                    self.loged = false;
+                    self.signed = false;
                 }
             });
 
@@ -285,71 +384,150 @@ angular.module('musicboxApp')
 
     // lyrics service
 angular.module('musicboxApp')
-    .service('lyricsService', ['$http', '$q', 'appConstants', function ($http, $q, appConstants) {
+    .service('lyricsService', ['$http', '$q', 'songsService', 'appConstants', function ($http, $q, songsService, appConstants) {
         var self = this;
-        self.lyrictype = 'normal';
+        self.lyrictype = 'textonly';  // invalid, withTS, textonly
 
         this.getLyricType = function() {
             return self.lyrictype;
         };
 
-        this.getLyrics = function(sid, ssid) {
-            var sid1 = '1563351';
-            var ssid1 = '80b3';
-            var url = 'http://api.douban.com/v2/fm/lyric?'  + 'sid=' + sid1 + '&ssid=' + ssid1; // + '&apikey=' + '02646d3fb69a52ff072d47bf23cef8fd' + '&app_name=douban_fm_iphone_3.0&sdkVersion=1.9.0&did=d1d5754d8b077285fe85581feafabc82'; //appConstants.apikey + '&version=630&app_name=radio_android';
-            window.console.log(url);
+        this.getLyrics = function() {
+            var urlsid = songsService.getSong().sid;
+            var urlssid = songsService.getSong().ssid;
+            //var sid1 = '1563351';
+            //var ssid1 = '80b3';
             var deferred = $q.defer();
-            var thePromise = $http.get(url, {cache: appConstants.useBrowserCache, responseType: 'json'});
-            thePromise.success(function(result){
-                deferred.resolve(result);
-            }).error(function(response){
-                deferred.reject(response);
-            });
-            return deferred.promise;
+
+            if (urlsid && urlssid) {
+                var url = 'http://api.douban.com/v2/fm/lyric?'  + 'sid=' + urlsid + '&ssid=' + urlssid; // + '&apikey=' + '02646d3fb69a52ff072d47bf23cef8fd' + '&app_name=douban_fm_iphone_3.0&sdkVersion=1.9.0&did=d1d5754d8b077285fe85581feafabc82'; //appConstants.apikey + '&version=630&app_name=radio_android';
+                window.console.log('REQUEST LYRICS:', url);
+                var thePromise = $http.get(url, {cache: appConstants.useBrowserCache, responseType: 'json'});
+                thePromise.success(function(result){
+                        deferred.resolve(result);
+                    }).error(function(response){
+                        deferred.reject(response);
+                    });
+                return deferred.promise;
+            } else {
+                return deferred.reject({'msg': 'NOT FOUND sid or ssid'});
+            }
         };
 
         this.parseLyrics = function(lyr) {
             var lyrarr = lyr.split('\r\n');
-            var regex = /^((?:\[[\d.:]+\])*)([^\[\]]*)$/;  // for both '[]' and no '[]'
-            var lyrics = {};
-            var nindex = 0;
+            //var regexbasic = /^((?:\[[\d.:-]+\])*)([^\[\]]*)$/;  // for both with '[]' and without '[]'
+            //  result[1]: [02:33.22][04:33.22]    ((?:\[[\d.:-]+\])*)
+            //  result[2]: content     ([^\[\]]*)
+            //var regex = /^((?:\[[\d.:-]+\])*)(?:\[offset:(-?\d+)?\])?((?:\[[\d.:-]+\])*)([^\[\]]*)$/;  // add offset
+            var regexfull = /^((?:\[[\d.:-]+\])*)(?:\[offset:(-?\d+)?\])?((?:\[[\d.:-]+\])*)(?:\[ti:(\S*)\])?(?:\[ar:(\S*)\])?(?:\[al:(\S*)\])?(?:\[by:(\S*)\])?([^\[\]]*)$/;  // add title artist album by-who
+            //  g1: [02:33.22][04:33.22]     ((?:\[[\d.:-]+\])*)
+            //  g2: -500    [offset: -500]      (?:\[offset:(-?\d+)?\])?
+            //  g3: [03:23.11][04:33.22]      ((?:\[[\d.:-]+\])*)
+            //  g4: title  [ti: artist]        (?:\[ti:(\S*)\])?
+            //  g5: artist  [ar: artist]        (?:\[ar:(\S*)\])?
+            //  g6: album  [al: artist]        (?:\[al:(\S*)\])?
+            //  g7: writer  [by: writer]        (?:\[by:(\S*)\])?
+            //  g8: content     ([^\[\]]*)
+            var offset = 0;
+            var lyricsArr = [];
+            var tstype = 0;
+            var linetempObj = {};
+            var isEmpty = lyr.match(/^\s*$/);
 
-            angular.forEach(lyrarr, function(value, key, array) {
-                var result = value.match(regex);
-                if (result && result[2]) {
-                    if (result[1]) {
-                        var timestamp = result[1].slice(1, -1).split('][');
-                        angular.forEach(timestamp, function(v, k, a) {
-                            var temp = v.split(':');
-                            lyrics[Number(temp[0])*60 + temp[1]] = result[2];
-                        });
+            if (isEmpty) {
+                self.lyrictype = 'invalid';
+                return lyricsArr;
+            }
+            angular.forEach(lyrarr, function(value, key, arr) {
+                var group = value.match(regexfull);
+                if (group) {
+                    // find offset command
+                    if (group[2]) {
+                        offset = group[2];
+                        if (group[1]) {  
+                            // add timestamp with offset
+                            var timestamp1 = group[1].slice(1, -1).split('][');                        
+                            angular.forEach(timestamp1, function(v, k, a) {
+                                var temp = v.split(':');
+                                lyricsArr.push({'ts' : parseFloat(Number(temp[0])*60 + parseFloat(temp[1]) + parseInt(offset)/1000).toFixed(2), 'line' : group[8]});
+                            });
+                            tstype ++;
+                        } else if (group[3]) {
+                                // add timestamp without offset
+                                var timestamp2 = group[3].slice(1, -1).split('][');                        
+                                angular.forEach(timestamp2, function(v, k, a) {
+                                    var temp = v.split(':');
+                                    lyricsArr.push({'ts' : parseFloat(Number(temp[0])*60 + parseFloat(temp[1])).toFixed(2), 'line' : group[8]});
+                                });
+                                tstype ++;
+                            }
                     } else {
-                        lyrics[nindex] = result[2];
-                        nindex ++;
+                        if (group[1]) {
+                            // offset not found
+                            var timestamp = group[1].slice(1, -1).split('][');                        
+                                angular.forEach(timestamp, function(v, k, a) {
+                                    var temp = v.split(':');
+                                    lyricsArr.push({'ts' : parseFloat(Number(temp[0])*60 + parseFloat(temp[1]) + parseInt(offset)/1000).toFixed(2), 'line' : group[8]});
+                                });
+                                tstype ++;
+                        } else {
+                            lyricsArr.push({'ts' : -1, 'line' : group[8]});
+                        }
+                    }
+                    // add title to lyrics
+                    if (group[4]) {
+                        lyricsArr.push({'ts' : -4, 'line' : group[4]});
+                    }
+                    // add artist to lyrics
+                    if (group[5]) {
+                        lyricsArr.push({'ts' : -3, 'line' : group[5]});
+                    }
+                    // add album to lyrics
+                    if (group[6]) {
+                        lyricsArr.push({'ts' : -3, 'line' : group[6]});
+                    }
+                    // add writer to lyrics
+                    if (group[7]) {
+                        lyricsArr.push({'ts' : -2, 'line' : group[7]});
                     }
                 }
             });
+        
+            // angular.forEach(lyrarr, function(value, key, array) {
+            //     var result = value.match(regexbasic);
+            //     if (result) {
+            //         if (result[1]) {
+            //             var timestamp = result[1].slice(1, -1).split('][');
+            //             angular.forEach(timestamp, function(v, k, a) {
+            //                 var temp = v.split(':');
+            //                 lyricsArr.push({'ts' : parseFloat(Number(temp[0])*60 + parseFloat(temp[1])).toFixed(2), 'line' : result[2]});
+            //             });
+            //             tstype ++;
+            //         } else {
+            //             lyricsArr.push({'ts' : -1, 'line' : result[2]});
+            //         }
+            //     }
+            // });
 
-            if (!nindex) {
-                self.lyrictype = 'withTimeStamp';
-            } else {
-                self.lyrictype = 'normal';
-            }
-
-            return lyrics;
-
-            /*
-            for (var i = 0, result; i < lyr.length; i++) {
-                result = lyr[i].match(regex);
-                if (result[2]) {
-                    var timestamp = result[1].slice(1, -1).split('][');
-                    for (var j = 0, temp; j < timestamp.length; j++) {
-                        temp = timestamp[j].split(':');
-                        lyrics[Number(temp[0])*60 + temp[1]] = result[2];
+            if (tstype > 2) {
+                self.lyrictype = 'withTS';
+                tstype = 0;
+                for (var i = lyricsArr.length - 1; i > 0; i--) {
+                    for (var j = 0; j < i; j++) {
+                        var diff = parseInt(lyricsArr[j].ts) > parseInt(lyricsArr[j+1].ts);
+                            if (diff) {
+                                linetempObj = lyricsArr[j];
+                                lyricsArr[j] = lyricsArr[j+1];
+                                lyricsArr[j+1] = linetempObj;
+                            }
                     }
                 }
+            } else {
+                self.lyrictype = 'textonly';
+                tstype = 0;
             }
-            return lyrics;*/
+            return lyricsArr;
         };
     }]);
 

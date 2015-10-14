@@ -1,0 +1,33 @@
+<p class="roll">
+    <span>Contact: Kyle</span>
+</p>
+<p>Email: kyleyang02@126.com</p>
+
+<channel>test channel directive</channel>
+<hr/>
+
+
+<div ng-controller="ChannelListController">
+    <ul ng-repeat="chl in channels">
+        <li>
+            <a>
+                data;{{chl.name_en}},{{chl.name}},{{chl.channel_id}},
+            </a>
+        </li>
+    </ul>
+</div>
+<hr/>
+
+<div id="chl-section" ng-controller="ChannelListController">
+    <ul class="channel-list" ng-repeat="chl in channels track by $index">
+        <li data-cid="{chl.channel_id}" class="channel">
+            <a class="chl-name" href="#">
+                <i class="chl-playing fa fa-check-circle"></i>&nbsp;
+                        <span class="cname">
+                            {{chl.channel_id}} | {{chl.name_en}} | {{chl.name}}
+                            <span class="mhz">MHz</span>
+                        </span>
+            </a>
+        </li>
+    </ul>
+</div>

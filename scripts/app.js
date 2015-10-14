@@ -33,7 +33,7 @@ angular.module('musicboxApp', [
         //$httpProvider.interceptors.push('myinterceptor');
     }])
     .config(['$compileProvider', function($compileProvider) {
-        $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel|data|blob):/);
+        $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel|data|blob|chrome-extension):/);
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel|data|blob):/);
     }])
     .config(['$routeProvider', '$logProvider', function ($routeProvider, $logProvider) {
@@ -46,9 +46,9 @@ angular.module('musicboxApp', [
                 controller: 'MusicController',
                 controllerAs: 'music'
             })
-            .when('/about', {
-                templateUrl: 'views/about.html',
-                controller: 'AboutController'
+            .when('/option', {
+                templateUrl: 'views/option.html',
+                controller: 'OptionController'
             })
             .otherwise({
                 redirectTo: '/'

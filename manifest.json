@@ -3,7 +3,7 @@
     "name": "FM Music Player",
     "description": "豆瓣FM Music Player",
     "version": "0.1",
-    "permissions": ["notifications", "cookies", "http://*.douban.fm/*", "https://*.douban.fm/*", "http://*.douban.com/*", "https://*.douban.com/*"],
+    "permissions": ["notifications", "cookies", "http://*.douban.fm/*", "https://*.douban.fm/*", "http://*.douban.com/*", "https://*.douban.com/*", "http://223.68.189.43/PASV/*"],
     "background": {
         "scripts": ["scripts/app.js"]
     },
