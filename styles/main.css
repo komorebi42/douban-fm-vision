@@ -254,45 +254,49 @@ a:active {
     background-color: #222;
 }
 
-#cd-main,
+#cd-player,
 #cd-disk,
-#cd-border,
-#cd-string,
-#cd-button,
-#cd-power {
+#cd-axis,
+#cd-line,
+#cd-button {
     position: absolute;
 }
 
-#cd-main img,
+#cd-player img,
 #cd-disk img,
-#cd-border img,
-#cd-string img,
-#cd-button img,
-#cd-power img {
+#cd-axis img,
+#cd-line img,
+#cd-button img {
     -webkit-user-drag: none;
 }
 
-#cd-main {
+#cd-player {
     width: 800px;
     /* 949x984 radio=1.18625 */
     z-index: 2;
 }
 
-#cd-border {
-    top: 163px;
-    /* 163px cd to cdplayer border 137.4 */
-    left: 170px;
-    /* 170px cd to cdplayer border 143.3 */
+#cd-player img {
+    width: 1024px;
+}
+
+#cd-axis {
+    top: 169px;
+    left: 169px;
     width: 602px;
     height: 602px;
     z-index: 5;
 }
 
+#cd-axis img {
+    width: 602px;
+    /*border-radius: 50%;
+    background-color: #ABDC89;*/
+}
+
 #cd-disk {
-    top: 163px;
-    /* 163px cd to cdplayer border 137.4 */
-    left: 170px;
-    /* 170px cd to cdplayer border 143.3 */
+    top: 169px;
+    left: 169px;
     width: 602px;
     height: 602px;
     z-index: 3;
@@ -303,14 +307,14 @@ a:active {
     display: block;
     z-index: 4;
     position: absolute;
-    top: 7px;
-    left: 7px;
-    width: 588px;
-    height: 588px;
+    top: 6px;
+    left: 6px;
+    width: 590px;
+    height: 590px;
     border-radius: 50%;
 }
 
-#cd-power {
+#cd-line {
     top: 300px;
     /*300px*/
     /* 900-13px 747.7  300px */
@@ -319,13 +323,8 @@ a:active {
     z-index: 1;
 }
 
-#cd-string {
-    top: 300px;
-    /*300px*/
-    /* 900-13px 747.7  300px */
-    left: 430px;
-    /* 450px 379.34   358px */
-    z-index: 1;
+#cd-line img {
+    width: 50px;
 }
 
 #cd-button {
@@ -335,14 +334,8 @@ a:active {
     z-index: 2;
 }
 
-#cd-power:active {
-    top: 400px;
-    /* 900-13px 747.7 + 50px */
-    -webkit-transition: top .5s linear;
-    -moz-transition: top .5s linear;
-    -ms-transition: top .5s linear;
-    -o-transition: top .5s linear;
-    transition: top .5s linear;
+#cd-button img {
+    width: 80px;
 }
 
 #cd-button:active {
@@ -802,7 +795,7 @@ ul.channels-list li.channel a.chl-name span.cname:hover {
     opacity: 0.8;
     border: 3px solid transparent;
     background-clip: content-box;
-    background-image: -webkit-linear-gradient(45deg, #00AEFD, #00AEFD 20%, #A0D672 20%, #A0D672 40%, #00AEFD 40%, #00AEFD 60%, #A0D672 60%, #A0D672 80%, #00AEFD 80%, #00AEFD);
+    background-image: -webkit-linear-gradient(45deg, #00AEFD,#A0D672 50%,#00AEFD);
 }
 
 .scrollbar::-webkit-scrollbar-thumb {
@@ -934,7 +927,7 @@ ul.channels-list li.channel a.chl-name span.cname:hover {
 #CtrlPannel #btn-zone {
     margin-top: 10px;
     height: 50px;
-    background-color: #fff;
+    background-color: #F6F6F6;
 }
 
 #CtrlPannel #btn-zone ul.btn-group {
@@ -994,6 +987,7 @@ ul.channels-list li.channel a.chl-name span.cname:hover {
 
 .heart-active {
     color: red !important;
+    z-index: 10;
     -webkit-animation: red-heart .3s ease-out;
     animation: red-heart .3s ease-out;
 }
@@ -1058,9 +1052,47 @@ ul.channels-list li.channel a.chl-name span.cname:hover {
 }
 */
 
+#btn-zone div.progress {
+    position: relative;
+    width: 540px;
+    height: 10px;
+    line-height: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+    background-color: #E9E9E9;
+}
+
+#btn-zone div.progress #played {
+    position: absolute;
+    display: block;
+    height: 100%;
+    z-index: 9;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+    background-color: rgba(160, 214, 114, 0.8); /*#A0D672;*/
+}
+
+#btn-zone div.progress #cursor {
+    position: absolute;
+    display: block;
+    left: 0;
+    z-index: 10;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+    background-color: rgba(0, 174, 253, 1); /*#00AEFD;*/
+}
+
 #btn-zone div.popup {
     position: relative;
-    margin: 10px auto 0;
+    margin: 20px auto 0;
     width: 540px;
     height: 50px;
     line-height: 50px;
@@ -1087,21 +1119,21 @@ ul.channels-list li.channel a.chl-name span.cname:hover {
     height: 50px;
     margin: 0 auto;
     text-align: center;
-    font-size: 1.2em;
-    color: #555;
-    border-radius: 8px;
-    background-color: rgba(242, 242, 242, .8);
     /*visibility: hidden;*/
 }
 
-#btn-zone div.popup div.notifyPop p {
+#btn-zone div.popup div.notifyPop div {
     position: absolute;
     width: 380px;
     height: 50px;
-    text-align: center;
+    font-size: 1.2em;
+    color: #555;
+    border-radius: 8px;
+    background-color: rgba(242, 242, 242, 0.8);
+    visibility: hidden;
 }
 
-#btn-zone div.popup div.notifyPop p a {
+#btn-zone div.popup div.notifyPop div a {
     text-decoration: none;
     color: #A0D672;
 }
@@ -1109,6 +1141,7 @@ ul.channels-list li.channel a.chl-name span.cname:hover {
 .showpop {
     visibility: visible !important;
     margin: 0 auto;
+    text-align: center;
     z-index: 10;
 }
 
@@ -1144,7 +1177,7 @@ ul.channels-list li.channel a.chl-name span.cname:hover {
 
 #LyricsPannel {
     position: relative;
-    top: 120px;
+    top: 130px;
     width: 540px;
     height: 540px;
     overflow: hidden;
@@ -1156,7 +1189,6 @@ ul.channels-list li.channel a.chl-name span.cname:hover {
     border-radius: 8px;
     box-shadow: 0 2px 1em #D2D2D2, 0 -1px 1em #D2D2D2;
     background-color: #F1F1F1;
-    /*background-image: url(); */
 }
 
 
@@ -1168,18 +1200,17 @@ ul.channels-list li.channel a.chl-name span.cname:hover {
     height: 540px;
     border-radius: 8px;
     box-shadow: 0 2px 1em #D2D2D2, 0 -1px 1em #D2D2D2;
-    background-color: rgba(112, 211, 216, .8);
+    background-color: rgba(112, 211, 216, 0.8);
     color: #F6F6F6;
     margin: 0 auto;
     overflow-Y: auto;
-    overflow-X: hidden;
 }
 
 #lyrics-wrapper #lyrics-live {
     width: 100%;
     position: relative;
     padding-top: 10px;
-    margin: 200px auto 300px;
+    margin: 180px auto 300px;
     line-height: 40px;
     word-spacing: 1px;
     letter-spacing: 1px;
@@ -1188,19 +1219,31 @@ ul.channels-list li.channel a.chl-name span.cname:hover {
 }
 
 #lyrics-wrapper #lyrics-live .no-margin {
-    margin-top: 0;
+    margin-top: 0 ;
     overflow-Y: auto;
 }
 
 #lyrics-line {
     height: 40px;
+    /*overflow-X: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;*/
 }
 
 .highlight {
-    background: rgba(255, 255, 255, .8) !important;
+    background: rgba(255, 255, 255, 0.8) !important;
     color: #A0D672 !important;
 }
 
+.highlight:hover {
+    animation-play-state: paused;
+}
+
+.slide-animate3 {
+    animation: marquee2 10s linear infinite;
+    -webkit-animation: marquee2 10s linear infinite;
+    animation-play-state: running;
+}
 
 /* lyric image */
 
@@ -1285,8 +1328,8 @@ ul.channels-list li.channel a.chl-name span.cname:hover {
     margin: 0 auto;
     background-color: #FFF;
     width: 100%;
-    height: 70px;
-    line-height: 70px;
+    height: 60px;
+    line-height: 60px;
     font-size: 1.6em;
     font-weight: 200;
     word-spacing: 2px;
@@ -1535,6 +1578,9 @@ footer {
     content: "\f074"
 }
 
+.fa-download:before {
+    content: "\f019"
+}
 
 /* Misc */
 
