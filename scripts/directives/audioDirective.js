@@ -6,6 +6,30 @@
  * Directive of the musicboxApp
  */
 'use strict';
+// expand or compress player
+angular.module('musicboxApp')
+    .directive('ngExpand', ['expandService', function (expandService) {
+        return {
+            restrict: 'A',
+            link: function (scope, iElement, iAttrs) {
+                scope.$applyAsync(function() {
+                    var player = angular.element(document.querySelector('#MusicBox'));
+                    var pannel = angular.element(document.querySelector('#RightPannel'));
+                    scope.$watch(iAttrs.isexpand, function(newValue, oldValue) {
+                        if (newValue) {
+                            player.animate({left: 700}, 3000);  //left: 50% of (2280px - 800px)
+                            scope.status.hidepannel = true;
+                            //pannel.animate({right: 830}, 3000);  //right: 50% of (2280px - 540px)
+                        } else {
+                            player.animate({left: 44}, 3000);  // left: 2% of 2280px
+                            scope.status.hidepannel = false;
+                            //pannel.animate({right: 132}, 3000);  // right: 6% of 2280px
+                        }
+                    }, true);
+                });
+            }
+        };
+    }]);
 //  change play status, [bind on #cd-button] AudioController
 angular.module('musicboxApp')
     .directive('ngPlug', [function() {
@@ -133,6 +157,9 @@ angular.module('musicboxApp')
                             });
                             scope.lyric.hlindex = indexhl;
                             scope.lyric.deltatime = deltatime;
+                        } else {
+                            scope.lyric.hlindex = -1;
+                            scope.lyric.deltatime = 0;
                         }
                     });
                 });

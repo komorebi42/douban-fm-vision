@@ -46,15 +46,19 @@ angular.module('musicboxApp')
 	.service('chlService',['$http', '$q', '$cacheFactory', '$parse', '$cookieStore', 'appConstants', function($http, $q, $cacheFactory, $parse, $cookieStore, appConstants){
         var self = this;
         self.ChannelsListCache = $cacheFactory('ChannelsList');
-        self.chlId = '155';
-        self.chlName = '舒缓';
+        self.chlId = '';
+        self.chlName = '';
 
         this.getChlId = function() {
-            return (self.chlId ? self.chlId : $cookieStore.get('chlId'));
+          if (self.chlId !== '0') {
+            return (self.chlId ? self.chlId : ($cookieStore.get('chlId') ? $cookieStore.get('chlId') : '155'));
+          } else {
+            return 0;  // personal MHz            
+          }
         };
 
         this.getChlName = function() {
-            return (self.chlName ? self.chlName : $cookieStore.get('chlName'));
+            return (self.chlName ? self.chlName : ($cookieStore.get('chlName') ? $cookieStore.get('chlName') : '舒缓'));
         };
 
         this.setChannels = function(Id, Name) {
@@ -75,7 +79,7 @@ angular.module('musicboxApp')
         };
 
         this.showSelected = function(Id) {
-            return (this.getChlId() == Id);
+            return (this.getChlId() === Id);
         };
 
         this.getChannels = function(){

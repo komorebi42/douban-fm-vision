@@ -8,26 +8,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
     <link rel="stylesheet" type="text/css" href="styles/main.css">
-    <!-- <link rel="stylesheet" type="text/css" href="styles/font-awesome.min.css"> -->
 </head>
 
 <body>
     <div ng-app="musicboxApp" class="container">
         <div id="menu-wrapper">
-            <div class="col-md-12" id="menu">
-                <nav id="main-nav" ng-controller="NavTabsController">
-                    <ul class="primary_menu">
-                        <li ng-class="{active: isActive('/music')}">
-                            <a ng-href="#/">
-                                <span><i class="fa fa-music fa-lg"></i>&nbsp; Music</span></a>
-                        </li>
-                        <li ng-class="{active: isActive('/option')}">
-                            <a ng-href="#/option">
-                                <span><i class="fa fa-github fa-lg"></i>&nbsp; Option</span></a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
+            <nav id="main-nav" ng-controller="NavTabsController">
+                <ul class="primary_menu">
+                    <li ng-click="showbtn=!showbtn">
+                        <a><i class="fa fa-umbrella fa-2x main-btn" ng-class="{'blue-btn': showbtn, 'green-btn': !showbtn}"></i></a>
+                    </li>
+                    <li ng-show="showbtn" ng-click="expandPlayer()" class="btn-menu" ng-forbidrepeat>
+                        <a><i class="fa fa-expand fa-2x green-btn" ng-class="{'fa-expand': !btnStatus.expanded, 'fa-compress': btnStatus.expanded}"></i></a>
+                    </li>
+                    <li ng-show="showbtn" ng-click="showbtn=!showbtn" class="btn-menu-1" ng-class="{active: isActive('/music')}">
+                        <a ng-href="#/"><i class="fa fa-music fa-2x green-btn"></i></a>
+                    </li>
+                    <li ng-show="showbtn" ng-click="showbtn=!showbtn" class="btn-menu-2" ng-class="{active: isActive('/option')}">
+                        <a ng-href="#/option"><i class="fa fa-gear fa-2x gear green-btn"></i></a>
+                    </li>
+                    <li ng-show="showbtn" ng-click="showbtn=!showbtn" class="btn-menu-3">
+                        <a ng-href="https://github.com/vinkerz/vinkerz.github.io"  target="_blank"><i class="fa fa-github fa-2x green-btn"></i></a>
+                    </li>
+                </ul>
+            </nav>
         </div>
         <div id="content">
             <div ng-view></div>

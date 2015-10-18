@@ -7,11 +7,22 @@
  */
 'use strict';
 angular.module('musicboxApp')
-	.controller('AudioController', ['$scope', function ($scope) {
+	.controller('AudioController', ['$rootScope', '$scope', 'expandService', function ($rootScope, $scope, expandService) {
         $scope.paused = false;
+        $scope.menu = {
+        	'expand' : false
+        };
         
         $scope.initPlay = function() {
             $scope.playMusic('n');
         };
+
+        $rootScope.$on('setExpand', function(event, attrs) {
+        	$rootScope.$broadcast('getExpand', attrs);
+        });
+
+        $scope.$on('getExpand', function(event, attrs) {
+        	attrs.value ? $scope.menu.expand = true : $scope.menu.expand = false;
+        });
 
 	}]);

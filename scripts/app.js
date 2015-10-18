@@ -18,7 +18,7 @@ angular.module('musicboxApp', [
         doubanSongUrl: 'http://www.douban.com/j/app/radio/people',
         doubanLyricUrl: 'http://api.douban.com/v2/fm/lyric',
         cacheExpiryPeriodMs: 10000,
-        useBrowserCache: false,
+        useBrowserCache: true,
         API_HOST : 'https://api.douban.com',
         AUTH_HOST : 'https://www.douban.com',
         REDIRECT_URL : 'https://vinkerz.github.io',

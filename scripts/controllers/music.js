@@ -7,10 +7,7 @@
  */
 'use strict';
 angular.module('musicboxApp')
-    .controller('MusicController', ['$scope', '$filter', 'songsService', 'lyricsService', 'chlService', 'loginService', 'appConstants', '$timeout', function ($scope, $filter, songsService, lyricsService, chlService, loginService, appConstants, $timeout) {
-        var self = this;
-        self.pt = '';
-
+    .controller('MusicController', ['$scope', '$filter', 'songsService', 'lyricsService', 'chlService', 'loginService', 'expandService', 'appConstants', '$timeout', function ($scope, $filter, songsService, lyricsService, chlService, loginService, expandService, appConstants, $timeout) {
         //$scope.songUrl = 'musics/Like Sunday,Like Rain.mp3';  
         //'http://mr3.douban.com/201308250247/4a3de2e8016b5d659821ec76e6a2f35d/view/song/small/p1562725.mp3';
         //$scope.songs: album, picture, artist, url, title, length, sid, aid, albumtitle, like
@@ -57,7 +54,8 @@ angular.module('musicboxApp')
             'maxvol': 100,
             'curtime': '',
             'signed': loginService.getLogStatus(),
-            'counts': 0
+            'counts': 0,
+            'hidepannel': false
         };
         $scope.song = {
             'url': '',
@@ -65,8 +63,10 @@ angular.module('musicboxApp')
             'artist': '',
             'title': '',
             'picture': '',
-            'like': false
+            'like': false,
+            'download':''
         };
+        $scope.history = []; //h= sid:[psbr] | sid:[psbr]，避免重复，长度限定20项
         $scope.channel = {
             'chlId': chlService.getChlId(),
             'chlName': chlService.getChlName()
@@ -78,9 +78,9 @@ angular.module('musicboxApp')
             'tsuseful': false,
             'hlindex': 0,
             'showline': '',
-            'deltatime': ''
+            'deltatime': '',
+            'marq': []
         };
-        $scope.lyricFull = [];
         $scope.inform = {
             'notiflag': false,
             'chlpop': false,
@@ -93,14 +93,15 @@ angular.module('musicboxApp')
             'disk': 'images/cdplayer/disk@2x.png',
             'line': 'images/cdplayer/line@2x.png',
             'player': 'images/cdplayer/player@2x.png',
-            'info': ''
+            'info': 'images/cdplayer/infosample.jpeg'
         };
         $scope.setting = {
             'axis': true
         };
         $scope.isTextFull = function(index) {
-            angular.forEach($scope.lyricFull, function(v, k, a) {
-                if (index === value) {
+            // window.console.log('lyric.marq Arr.length:', $scope.lyric.marq.length, $scope.lyric.marq);
+            angular.forEach($scope.lyric.marq, function(v, k, a) {
+                if (index === v) {
                     return true;
                 }
             });
@@ -110,30 +111,46 @@ angular.module('musicboxApp')
         // get ui data
         $scope.showUI = function(song) {
             $scope.song = song ? {
+                'sid': song.sid,
                 'url': song.url,
                 'disk': song.picture || $scope.fixedUI.disk,
                 'artist': song.artist,
                 'title': song.title,
                 'picture': song.picture || $scope.fixedUI.info,
-                'like': song.like
+                'like': song.like,
+                'download': song.title + '_' + song.artist + '.' + song.url.split('.')[song.url.split('.').length - 1]
             } : {
+                'sid': '',
                 'url': 'musics/Like Sunday,Like Rain.mp3',
                 'disk': 'images/cdplayer/sample.jpg',
                 'artist': 'Frank Whaley',
                 'title': 'Like Sunday, Like Rain',
                 'picture': 'images/cdplayer/infosample.jpeg',
-                'like': false
+                'like': false,
+                'download': 'Like Sunday,Like Rain.mp3'
             };
             $scope.showLyric();
+            // window.console.log('download name:', $scope.song.download);
             $scope.fixedUI.axis = $scope.setting.axis ? $scope.fixedUI.axis : $scope.fixedUI.axisNo;
         };
 
-        // new,skip,bye: n->p, s->p, b->p, e->p
+        // new,skip,bye: n->p, s->p, b->p, e->p, r, u //h= sid:[psbr] | sid:[psbr]，避免重复，长度限定20项
         $scope.playMusic = function(type) {
-            $scope.status.playing = false;
-            $scope.status.imguseful = false;
-            $scope.lyric.valid = false;
+            if (type !== 'n' && type !== 'u') {
+                var history = $scope.song.sid + ':' + type;
+                if ($scope.history.length > 20) {
+                    $scope.history.shift();
+                }
+                $scope.history.push(history);
+            }
 
+            if (type !== 'r' && type !== 'u') {
+                $scope.status.playing = false;
+                $scope.status.imguseful = false;
+                $scope.lyric.valid = false;
+                $scope.lyric.hlindex = 0;
+            }
+            
             window.console.log('play-Music, type:',type);
             if (type === 'e') {
                 $scope.showUI($scope.nextSong);
@@ -141,7 +158,7 @@ angular.module('musicboxApp')
             $scope.getSongArr(type);
 
             $timeout(function() {
-                $scope.getSongArr('p');
+                $scope.getSongArr('p', $scope.history.join(' | '));
             }, 3000);
         };
 
@@ -157,8 +174,8 @@ angular.module('musicboxApp')
         };
 
         // get Song Array; type: n,s,b,p,r,u,e; 
-        $scope.getSongArr = function(type) {
-            songsService.getSongsRaw(type, $scope.status.curtime)
+        $scope.getSongArr = function(type, history) {
+            songsService.getSongsRaw(type, history, $scope.status.curtime)
             .then(function(data) {
                 if (data && data.r === 0) {
                     switch(type) {
@@ -183,12 +200,12 @@ angular.module('musicboxApp')
                             $scope.getNextSong();
                             break;
                     }
-                    window.console.log('---',type,'--- response:');
+                    // window.console.log('---',type,'--- response:');
                 } else {  
-                    window.console.log('NEXTArr TYPE:', type, 'data:', data);
+                    // window.console.log('NEXTArr TYPE:', type, 'data:', data);
                 }
             }, function(reason) {
-                window.console.log('NEXTArr REJECTED TYPE:', type, 'reject:', reason);
+                // window.console.log('NEXTArr REJECTED TYPE:', type, 'reject:', reason);
             });
         };
 
@@ -270,7 +287,7 @@ angular.module('musicboxApp')
             return self.songinfo;
         };
 
-        this.getSongsRaw = function(type, pt) {
+        this.getSongsRaw = function(type, history, pt) {
             type = type || 'n';
             pt = (type == 'p') ? '0.0' : (pt || '0.0');
 
@@ -283,6 +300,8 @@ angular.module('musicboxApp')
 
             type = (!sid && (type !== 'n')) ? 'n' : type;
             url = 'http://douban.fm/j/mine/playlist?'  + '&type=' + type + '&sid=' + sid + '&pt=' + pt + '&channel=' + channel + '&pb=' + pb + '&from=mainsite&r=' + rd;
+
+            url = history ? url + '&h=' + history : url;
 
             var thePromise = $http.get(url, {cache: appConstants.useBrowserCache, responseType: 'json'});
             thePromise.success(function(result){
@@ -302,28 +321,12 @@ angular.module('musicboxApp')
         };
 
         this.setVolume = function(vol) {
-            if (typeof vol === 'number') {
-                $cookieStore.set({
-                    name: 'vol',
-                    value: vol
-                });
-            }
+            $cookieStore.put('vol', vol);
         };
 
         this.getVolume = function() {
-            $cookieStore.get({
-                name: 'vol'
-            }, function(result) {
-                if (result) {
-                    return result.value;
-                } else {
-                    return 79;
-                }
-            }, function(reason) {
-                return 78;
-            });
+            return $cookieStore.get('vol');
         };
-
     }]);
     
     // login service
@@ -515,6 +518,28 @@ angular.module('musicboxApp')
             }
             return lyricsArr;
         };
+    }]);
+
+    // expand or compress player
+angular.module('musicboxApp')
+    .service('expandService', [function () {
+        var self = this;
+
+        var service = {
+            isexpand : false,
+
+            setExpandStatus : function(status) {
+                this.isexpand = status;
+                // window.console.log('set expand :', this.isexpand);
+            },
+
+            getExpandStatus : function() {
+                // window.console.log('get expand :', this.isexpand);
+                return this.isexpand;
+            }
+        };
+
+        return service;
     }]);
 
 //     // interceptors config
