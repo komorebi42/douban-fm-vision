@@ -12,32 +12,33 @@
 
 <body>
     <div ng-app="musicboxApp" class="container">
-        <div id="menu-wrapper">
-            <nav id="main-nav" ng-controller="NavTabsController">
-                <ul class="primary_menu">
-                    <li ng-click="showbtn=!showbtn">
-                        <a><i class="fa fa-umbrella fa-2x main-btn" ng-class="{'blue-btn': showbtn, 'green-btn': !showbtn}"></i></a>
-                    </li>
-                    <li ng-show="showbtn" ng-click="expandPlayer()" class="btn-menu" ng-forbidrepeat>
-                        <a><i class="fa fa-expand fa-2x green-btn" ng-class="{'fa-expand': !btnStatus.expanded, 'fa-compress': btnStatus.expanded}"></i></a>
-                    </li>
-                    <li ng-show="showbtn" ng-click="showbtn=!showbtn" class="btn-menu-1" ng-class="{active: isActive('/music')}">
-                        <a ng-href="#/"><i class="fa fa-music fa-2x green-btn"></i></a>
-                    </li>
-                    <li ng-show="showbtn" ng-click="showbtn=!showbtn" class="btn-menu-2" ng-class="{active: isActive('/option')}">
-                        <a ng-href="#/option"><i class="fa fa-gear fa-2x gear green-btn"></i></a>
-                    </li>
-                    <li ng-show="showbtn" ng-click="showbtn=!showbtn" class="btn-menu-3">
-                        <a ng-href="https://github.com/vinkerz/vinkerz.github.io"  target="_blank"><i class="fa fa-github fa-2x green-btn"></i></a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        <div id="content">
-            <div ng-view></div>
-        </div>
-        <div id="option">
-            <div ng-show=""></div>
+        <div id="wraper" ng-controller="WraperController">
+            <div id="menu-wrapper">
+                <nav id="main-nav" ng-controller="NavTabsController">
+                    <ul class="primary_menu">
+                        <li ng-click="showbtn=!showbtn">
+                            <a class="main-btn"><i class="fa fa-umbrella fa-2x green-btn" ng-class="{'blue-btn': showbtn}"></i></a>
+                        </li>
+                        <li ng-show="showbtn" ng-click="expandPlayer()" class="btn-menu">
+                            <a class="expand"><i class="fa fa-expand fa-2x green-btn" ng-class="{'fa-expand': !menubtn.expanded, 'fa-compress': menubtn.expanded}"></i></a>
+                        </li>
+                        <li ng-show="showbtn" ng-click="music.coffee=!music.coffee" class="btn-menu-1">
+                            <a ><i class="fa fa-gear fa-2x green-btn" ng-class="{'fa-coffee': music.coffee, 'fa-gear gear': !music.coffee}"></i></a>
+                        </li>
+                        <li ng-show="showbtn" ng-click="showbtn=!showbtn" class="btn-menu-2">
+                            <a class="expand" href="https://github.com/vinkerz/vinkerz.github.io" target="_blank"><i class="fa fa-github fa-2x green-btn"></i></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div id="content" ng-show="!music.option" class="show-option">
+                <div ng-controller="MusicController" ng-content></div>
+                <!-- <div ng-include="views/music.html" scope="" onload=""></div> -->
+            </div>
+            <div id="option" ng-show="music.option" class="show-option">
+                <div ng-controller="OptionController" ng-option></div>
+                <!-- <div ng-include="views/option.html" scope="" onload=""></div> -->
+            </div>
         </div>
     </div>
     <script type="text/javascript" src="components/jquery-2.1.4.min.js"></script>
@@ -47,6 +48,8 @@
     <script type="text/javascript" src="components/angular-resource.min.js"></script>
     <script type="text/javascript" src="components/angular-route.min.js"></script>
     <script type="text/javascript" src="scripts/app.js"></script>
+    <script type="text/javascript" src="scripts/controllers/wraper.js"></script>
+    <script type="text/javascript" src="scripts/controllers/option.js"></script>
     <script type="text/javascript" src="scripts/controllers/channel.js"></script>
     <script type="text/javascript" src="scripts/controllers/music.js"></script>
     <script type="text/javascript" src="scripts/controllers/audio.js"></script>

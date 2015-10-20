@@ -13,7 +13,7 @@ angular.module('musicboxApp', [
         'ngRoute'
     ])
     .constant('appConstants',{
-        doubanLoginUrl: 'http://www.douban.com/j/app/login',
+        doubanLoginUrl: 'https://www.douban.com/accounts/login', // http://www.douban.com/j/app/login',
         doubanChannelUrl: 'http://www.douban.com/j/app/radio/channels',
         doubanSongUrl: 'http://www.douban.com/j/app/radio/people',
         doubanLyricUrl: 'http://api.douban.com/v2/fm/lyric',
@@ -36,24 +36,24 @@ angular.module('musicboxApp', [
         $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel|data|blob|chrome-extension):/);
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel|data|blob):/);
     }])
-    .config(['$routeProvider', '$logProvider', function ($routeProvider, $logProvider) {
+    // .config(['$routeProvider', '$logProvider', function ($routeProvider, $logProvider) {
 
-        $logProvider.debugEnabled(true);
+    //     $logProvider.debugEnabled(true);
 
-        $routeProvider
-            .when('/', {
-                templateUrl: 'views/music.html',
-                controller: 'MusicController',
-                controllerAs: 'music'
-            })
-            .when('/option', {
-                templateUrl: 'views/option.html',
-                controller: 'OptionController'
-            })
-            .otherwise({
-                redirectTo: '/'
-            });
-    }])
+    //     $routeProvider
+    //         .when('/', {
+    //             templateUrl: 'views/music.html',  //ng-href="#/"
+    //             controller: 'MusicController',
+    //             controllerAs: 'music'
+    //         })
+    //         .when('/option', {
+    //             templateUrl: 'views/option.html',  //ng-href="#/option"
+    //             controller: 'OptionController'
+    //         })
+    //         .otherwise({
+    //             redirectTo: '/'
+    //         });
+    // }])
     .filter('trustUrl', function($sce) {
         return function(url) {
             return $sce.trustAsResourceUrl(url);

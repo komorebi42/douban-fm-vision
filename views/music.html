@@ -1,5 +1,5 @@
 
-<!-- 内容部分 -->
+<!-- Main Content -->
 <div id="MusicBox" ng-controller="AudioController" ng-init="initPlay()">
     <div id="cd" ng-expand isexpand="menu.expand">
         <div id="cd-player">
@@ -22,27 +22,28 @@
         
     </div>
     <div id="AudioPlayer" style="position:fixed;left:20px; top:20px;">
-        <!-- 设置播放器 -->
+        <!-- audio element -->
         <audio id="musicAudio" autoplay ng-status ng-timeupdate playing="status.playing" ng-volume volume="status.vol" max-vol="status.maxvol" ng-src="{{ song.url | trustUrl }}" type="audio/mpeg">
             Your browser does not support the audio element. Please try the new version Chrome.
         </audio>
     </div>
 </div>
-<!-- Board Part -->
+<!-- Right Part -->
 <div id="RightPannel" ng-show="!status.hidepannel" class="hidepannel">
-    <!-- 右侧:频道列表 -->
+    <!-- Right part - channles -->
     <div id="ChlPannel" ng-show="showChlsList" class="chlPannelShow">
         <div id="chl-list-wrapper" class="scrollbar" ng-controller="ChannelListController">
             <div id="chl-section" ng-init="loadChannels()">
-                <ul class="channels-list" ng-repeat="group in groups">
+                <ul class="channels-list" ng-repeat="group in groups track by $index" ng-init="addfavIndex = $index">
                     <li class="group-list" ng-bind="group.group_name"></li>
-                    <ul ng-repeat="chl in group.chls">
+                    <ul ng-repeat="chl in group.chls track by $index" ng-init="chlsIndex = $index">
                         <li class="channel">
                             <a class="chl-name" ng-click="chlSelected(chl.id, chl.name)" ng-class="{'li-even': $even, 'li-odd': $odd}">
                                 <i class="chl-playing fa fa-check-circle" ng-show="showSelected(chl.id)"></i>&nbsp;
                                 <span class="cname ng-cloak">
                                     {{chl.name}}<span class="mhz">MHz</span>
                                 </span>
+                                <span class="favbtn" ng-click="favOrUnfavSelected(chl.id, chl.name, addfavIndex)" ng-hide="(addfavIndex == 0) && (chlsIndex == 0 || chlsIndex == 1 )"><i class="fa fa-star-o fa-lg favchls" ng-class="{'fa-star': showFavChl(chl.id)}"></i></span>
                             </a>
                         </li>
                     </ul> 
@@ -51,9 +52,9 @@
             </div>
         </div>
     </div>
-    <!-- 右侧:控制及歌词 -->
+    <!-- Right part - control buttons and lyrics -->
     <div id="MainPannel">
-        <!-- 控制台 -->
+        <!-- control buttons -->
         <div id="CtrlPannel">
             <div id="toggle-btn">
                 <a class="chl-btn" ng-click="showChlsList=!showChlsList"><i class="fa fa-toggle-off fa-2x green-btn" ng-class="{'fa-toggle-on': showChlsList, 'fa-toggle-off': !showChlsList}" style="color: #A0D672;"></i></a>
@@ -67,7 +68,7 @@
                         <span ng-click="loop=!loop" ng-loop><i class="fa fa-random fa-2x green-btn" ng-class="{'fa-refresh': loop, 'fa-random': !loop}"></i></span>
                     </li>
                     <li class="like">
-                        <span ng-click="rate=!rate" ng-like="song.like"><i class="fa fa-heart-o fa-2x green-btn" ng-class="{'fa-heart red-heart': rate, 'fa-heart-o': !rate}"></i>
+                        <span ng-click="rate=!rate" ng-rate="song.like"><i class="fa fa-heart-o fa-2x" ng-class="{'fa-heart red-heart': rate, 'fa-heart-o': !rate}"></i>
                         <i class="fa fa-heart heart-hidden" ng-class="{'heart-active': rate}"></i></span>
                     </li>
                     <li class="bye">
@@ -80,7 +81,7 @@
                         <span ng-click="volflag=!volflag"><i class="fa fa-volume-up fa-2x green-btn" ng-class="{'fa-volume-up': (status.vol >= 60), 'fa-volume-down': (status.vol > 0 && status.vol < 60), 'fa-volume-off': (status.vol == 0)}"></i></span>
                     </li>
                     <li class="login">
-                        <span ng-click="getAuth()"><a href="https://www.douban.com/accounts/login" target="_blank"><i class="fa fa-user fa-2x green-btn"></i></a></span>
+                        <span ng-Login><i class="fa fa-user fa-2x green-btn"></i></span>
                     </li>
                     <li class="share">
                         <span ng-click="shareflag=!shareflag"><i class="fa fa-share-alt fa-2x green-btn"></i></span>
@@ -97,10 +98,12 @@
                     <span id="cursor"></span>
                 </div>
                 <div class="popup">
+                    <!-- volume change -->
                     <div class="volumePop" ng-show="volflag" ng-click="volflag=false">
                         <label for="volume">volume:</label>
                         <input type="range" name="volume" id="volume" min="0" max="{{status.maxvol}}" step="1" ng-model="status.vol"/>
                     </div>
+                    <!-- anonymous user -->
                     <div class="notifyPop" ng-show="inform.notiflag">
                         <div ng-class="{'showpop': inform.chlpop}" ng-click="inform.notiflag=false">点击
                             <a href="https://www.douban.com/accounts/login" target="_blank">登录</a>
@@ -108,6 +111,37 @@
                         <div ng-class="{'showpop': inform.likepop}" ng-click="inform.notiflag=false">点击
                             <a href="https://www.douban.com/accounts/login" target="_blank">登录</a>
                             , 同步你的专属喜好</div>
+                        <div ng-class="{'showpop': inform.favpop}" ng-click="inform.notiflag=false">点击
+                            <a href="https://www.douban.com/accounts/login" target="_blank">登录</a>
+                            , 收藏你的常用兆赫</div>
+                        <div ng-class="{'showpop': inform.loginpop}" ng-click="inform.notiflag=false">点击
+                            <a href="https://www.douban.com/accounts/login" target="_blank">登录</a>
+                            , 更多你的精彩旋律</div>
+                        <div ng-class="{'showpop': inform.logoutpop}" ng-click="inform.notiflag=false">感谢使用, ^^, 欢迎给我提供建议</div>
+                    </div>
+                    <!-- userinfo display -->
+                    <div class="userinfoPop" ng-show="inform.userpop" ng-click="inform.userpop=false">
+                        <div class="user-info">
+                            <div class="user-icon"><img ng-src="{{userinfo.icon}}" alt=""></div>
+                            <div class="user-title"><a ng-href="{{userinfo.site}}" target="_blank">{{userinfo.title}}</a>, 开始聆听</div>
+                            <div class="user-signature">{{userinfo.signature}}</div>
+                        </div>
+                        <div class="user-played">
+                            <span id="played"><a href="http://douban.fm/mine#!type=played" target="_blank"><i class="fa fa-clock-o fa-2x green-btn"></i></a>{{record.played}}
+                                <span class="tips">累计收听</span>
+                            </span>
+                            <span id="liked"><a href="http://douban.fm/mine#!type=liked" target="_blank"><i class="fa fa-heart fa-2x green-btn"></i></a>{{record.liked}}
+                                <span class="tips">红心</span>
+                            </span>
+                            <span id="banned"><a href="http://douban.fm/mine#!type=banned" target="_blank"><i class="fa fa-trash fa-2x green-btn"></i></a>{{record.banned}}
+                                <span class="tips">不再播放</span>
+                            </span>
+                        </div>
+                        <div class="user-logout">
+                            <!-- <label for="logout">
+                            <input type="button" class="btn" name="logout" value="Logout"></label> -->
+                            <a class="logout-btn" ng-href="{{setting.logout}}" target="_blank" ng-click="userLogout()">Logout</label>
+                        </div>
                     </div>
                     <!--
                     <div name="loginForm" class="loginPop" ng-show="loginflag" ng-controller="LoginController" action="#" method="post">
@@ -147,7 +181,7 @@
                 </div>
             </div>
         </div>
-        <!-- 歌词 -->
+        <!-- lyrics -->
         <div id="LyricsPannel">
             <div id="lyrics-img-wrap">
                 <div id="lyrics-wrapper" ng-show="!slideshow && lyric.valid" ng-click="slideshow=true" ng-lyrics ng-hlindex="lyric.hlindex" class="scrollbar">
@@ -159,49 +193,49 @@
                 </div>
                 <div id="image-wrapper" ng-show="slideshow || !lyric.valid" ng-click="slideshow=false">
                     <p class="lyrics-notice" ng-show="lyricNotice" ng-click="lyricNotice=false">
-                        未发现歌词
+                        未发现歌词-Not Found
                     </p>
                     <img class="lyrics-image" ng-class="{'img-opacity': lyricNotice }" ng-show="status.imguseful" ng-click="!lyric.valid ? (lyricNotice=!lyricNotice) : false" ng-src="{{ song.picture | trustUrl }}" >
                 </div>
+                <!-- <div id="lyrics-outer-show">
+                    <p id="lyrics-outer-line">{{lyric.showline}}</p>
+                </div> -->
             </div>
         </div>
-        <!-- 歌曲名/艺术家 -->
+        <!-- song-title && artist -->
         <div id="SongNamePannel" ng-click="lyric.valid ? (slideshow=!slideshow) : (lyricNotice=!lyricNotice)">
             <span class="song-author-show ng-cloak" ng-class="{'slide-animate2': showmarquee}" ng-show-marquee value="song.title">{{song.title}} by {{song.artist}}</span>
         </div>
     </div>
-    <!-- 测试区域 -->
-    <div id="test-area" style="display: none;">
-        <div style="position:fixed; left:10px; bottom: 20px; z-index: 998; overflow:auto;">
-            <ul ng-repeat="lyline in lyric.content" ng-init="test = $index">
-                <li >{{test}} - {{lyline.ts}} : {{lyline.line}}</li>
+    <!-- TEST AREA -->
+    <div id="test-area" style="display: block;">
+        <div style="position:fixed; left:10px; bottom: 20px; z-index: 2; overflow:auto; border:1px dashed #EEE;">
+            <ul ng-repeat="lyline in lyric.content" ng-init="testindex = $index">
+                <li >{{testindex}} - {{lyline.ts}} : {{lyline.line}}</li>
             </ul>
-            <p>{{status.vol}} - 当前音量</p>
+            <p>{{status.vol}} - 音量</p>
         </div>
-        <div style="position:fixed; left: 500px; bottom: 20px; z-index: 999;">
+        <div style="position:fixed; right: 600px; bottom: 20px; z-index: 2; border:1px dashed #EEE;">
             <p>song.url: {{song.url}};</p>
             <p>song.ar: {{song.artist}};</p>
             <p>song.ti: {{song.title}};</p>
             <p>song.disk: {{song.disk}};</p>
             <p>song.img: {{song.picture}};</p>
-            <p>song.like: {{song.like}};</p>
+            <p>song.like: {{song.like}};</p> <hr/>
             <p>next.al: {{songNext.albumtitle}};</p>
             <p>next.ar: {{songNext.artist}};</p>
-            <p>next.ti: {{songNext.title}};</p>
+            <p>next.ti: {{songNext.title}};</p><hr/>
             <p>lyric.name : {{lyric.name}};</p>
-            <p>lyric.show : {{lyric.show}}.</p>
+            <p>lyric.showline : {{lyric.showline}}</p>
         </div>
-        <div style="position:fixed; bottom: 200px; right: 300px; z-index: -1;">
-            <p class="test-para">
-                <!-- <i class="fa fa-heart test fa-5x" ng-class="{'test-hover': rate}"> -->
-                <!-- <i class="fa fa-heart test" ng-class="{'test-hover': rate}"></i>
-                <i class="fa fa-heart test fa-lg" ng-class="{'test-hover': rate}"></i>
-                <i class="fa fa-heart test fa-2x" ng-class="{'test-hover': rate}"></i>
-                <i class="fa fa-heart test fa-3x" ng-class="{'test-hover': rate}"></i>
-                <i class="fa fa-heart test fa-4x" ng-class="{'test-hover': rate}"></i>
-                <i class="fa fa-heart test fa-5x" ng-class="{'test-hover': rate}"></i>
-                <i class="fa fa-heart test" style="font-size: 6em !important" ng-class="{'test-hover': rate}"></i> -->
-            </p>
+        <div style="position:fixed; left: 300px; width: 100px; height:50px; bottom: 20px; border:1px dashed #EEE; list-style:none; overflow: scroll;">
+            <a href="" ng-click="transferdata()">transfer-data</a>
+            <a href="" ng-click="playrecord()">play-record</a>
         </div>
     </div>
+</div>
+
+<!-- Dynamic lyric outer show -->
+<div id="lyrics-outer-show" ng-show="lyric.valid && lyric.tsuseful">
+    <p id="lyrics-outer-line">{{lyric.showline}}</p>
 </div>

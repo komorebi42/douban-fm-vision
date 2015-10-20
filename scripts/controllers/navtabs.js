@@ -8,19 +8,20 @@
 'use strict';
 angular.module('musicboxApp')
     .controller('NavTabsController', ['$scope', '$location', 'expandService', function ($scope, $location, expandService) {
-    	$scope.btnStatus = {
+    	$scope.menubtn = {
     		'expanded': false,
     	};
 
         $scope.isActive = function(route) {
-            return route === $location.path();
+            return route === $location.path(); //ng-class="{active: isActive('/music')}"
         };
 
         $scope.expandPlayer = function() {
-        	$scope.showbtn = !$scope.showbtn;
-        	$scope.btnStatus.expanded = !$scope.btnStatus.expanded;
-        	// expandService.setExpandStatus($scope.btnStatus.expand);
-        	$scope.btnStatus.expanded ? $scope.$emit('setExpand', {'value': true}) : $scope.$emit('setExpand', {'value': false});
+        	if ($scope.music.coffee === false) {
+        		$scope.menubtn.expanded = !$scope.menubtn.expanded;
+	        	// expandService.setExpandStatus($scope.menubtn.expand);
+	        	$scope.menubtn.expanded ? $scope.$emit('setExpand', {'value': true}) : $scope.$emit('setExpand', {'value': false});
+        	}
         };
     }]);
 

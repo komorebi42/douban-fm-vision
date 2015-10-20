@@ -12,7 +12,7 @@ angular.module('musicboxApp')
         //'http://mr3.douban.com/201308250247/4a3de2e8016b5d659821ec76e6a2f35d/view/song/small/p1562725.mp3';
         //$scope.songs: album, picture, artist, url, title, length, sid, aid, albumtitle, like
         
-        $scope.authorize = appConstants.AUTH_HOST + appConstants.AUTHORIZE_URL + '?client_id=' + appConstants.apikey + '&redirect_uri=' + appConstants.REDIRECT_URL + '&response_type=token';
+        //$scope.authorize = appConstants.AUTH_HOST + appConstants.AUTHORIZE_URL + '?client_id=' + appConstants.apikey + '&redirect_uri=' + appConstants.REDIRECT_URL + '&response_type=token';
 
         //请求部分
         //b: bye, sid  long  删除当前曲
@@ -48,6 +48,8 @@ angular.module('musicboxApp')
 
         // initial scope
         $scope.status = {
+            'isLoading': false,
+            'dataRetrievalError': false,
             'playing': false,
             'imguseful': false,
             'vol': songsService.getVolume() ? songsService.getVolume() : 80,
@@ -55,7 +57,8 @@ angular.module('musicboxApp')
             'curtime': '',
             'signed': loginService.getLogStatus(),
             'counts': 0,
-            'hidepannel': false
+            'hidepannel': false,
+            'defaultdisk': false
         };
         $scope.song = {
             'url': '',
@@ -65,6 +68,11 @@ angular.module('musicboxApp')
             'picture': '',
             'like': false,
             'download':''
+        };
+        $scope.record = {
+            'played': '',
+            'liked': '',
+            'banned': ''
         };
         $scope.history = []; //h= sid:[psbr] | sid:[psbr]，避免重复，长度限定20项
         $scope.channel = {
@@ -84,7 +92,11 @@ angular.module('musicboxApp')
         $scope.inform = {
             'notiflag': false,
             'chlpop': false,
-            'likepop': false
+            'likepop': false,
+            'favpop': false,
+            'loginpop': false,
+            'logoutpop': false,
+            'userpop': false
         };
         $scope.fixedUI = {
             'axis': 'images/cdplayer/axis@2x.png',
@@ -93,11 +105,19 @@ angular.module('musicboxApp')
             'disk': 'images/cdplayer/disk@2x.png',
             'line': 'images/cdplayer/line@2x.png',
             'player': 'images/cdplayer/player@2x.png',
-            'info': 'images/cdplayer/infosample.jpeg'
+            'info': 'images/cdplayer/infosample.jpeg',
+            'author': 'images/cdplayer/KYLE@2x.png'
         };
         $scope.setting = {
+            'ue': '',
+            'logout': '',
             'axis': true
         };
+
+        $scope.isLoged = function() {
+            $scope.status.signed = loginService.getLogStatus();
+        };
+
         $scope.isTextFull = function(index) {
             // window.console.log('lyric.marq Arr.length:', $scope.lyric.marq.length, $scope.lyric.marq);
             angular.forEach($scope.lyric.marq, function(v, k, a) {
@@ -110,10 +130,16 @@ angular.module('musicboxApp')
 
         // get ui data
         $scope.showUI = function(song) {
+            if ($scope.status.defaultdisk) {
+                $scope.status.defaultdisk = false;
+            } else {
+                $scope.status.defaultdisk = $scope.getGoodLuck(5);
+            }
+
             $scope.song = song ? {
                 'sid': song.sid,
                 'url': song.url,
-                'disk': song.picture || $scope.fixedUI.disk,
+                'disk': $scope.status.defaultdisk ? $scope.fixedUI.axisNo : (song.picture || $scope.fixedUI.disk),  // 5 persent to display default disk
                 'artist': song.artist,
                 'title': song.title,
                 'picture': song.picture || $scope.fixedUI.info,
@@ -129,9 +155,10 @@ angular.module('musicboxApp')
                 'like': false,
                 'download': 'Like Sunday,Like Rain.mp3'
             };
+            //$scope.fixedUI.axis = $scope.setting.axis ? $scope.fixedUI.axis : $scope.fixedUI.axisNo;
+            $scope.fixedUI.axis = $scope.status.defaultdisk ? $scope.fixedUI.author : ($scope.setting.axis ? $scope.fixedUI.axis : $scope.fixedUI.axisNo);
             $scope.showLyric();
             // window.console.log('download name:', $scope.song.download);
-            $scope.fixedUI.axis = $scope.setting.axis ? $scope.fixedUI.axis : $scope.fixedUI.axisNo;
         };
 
         // new,skip,bye: n->p, s->p, b->p, e->p, r, u //h= sid:[psbr] | sid:[psbr]，避免重复，长度限定20项
@@ -151,15 +178,26 @@ angular.module('musicboxApp')
                 $scope.lyric.hlindex = 0;
             }
             
-            window.console.log('play-Music, type:',type);
+            // window.console.log('play-Music, type:',type);
             if (type === 'e') {
                 $scope.showUI($scope.nextSong);
             }
-            $scope.getSongArr(type);
+            
+            if (type !== 'p') {
+                // if (type === 'e' && !songsService.isArrNextEmpty()) {  // songs will end after arr's played
+                //     $scope.getSongArr(type);
+                // } else {
+                    $scope.getSongArr(type);
 
-            $timeout(function() {
+                    $timeout(function() {
+                        $scope.getSongArr('p', $scope.history.join(' | '));
+                    }, 500);
+                // }
+            } else {
                 $scope.getSongArr('p', $scope.history.join(' | '));
-            }, 3000);
+            }
+
+            // type === 'p' ? $scope.getSongArr(type, $scope.history.join(' | ')) : $scope.getSongArr(type);
         };
 
         // set next song
@@ -167,9 +205,11 @@ angular.module('musicboxApp')
             $scope.nextSong = songsService.getSongPlay();
             if (songsService.isArrNextEmpty()) {
                 $scope.getSongArr('p');
+                window.console.log('NEXT ARRAY IS EMPTY !!!');
             }
             if (!$scope.nextSong) {
                 $scope.nextSong = songsService.getSongPlay();
+                window.console.log('NEXT SONG IS EMPTY !!!');
             }
         };
 
@@ -228,14 +268,127 @@ angular.module('musicboxApp')
                 $scope.lyric.valid = false;
                 $scope.lyric.tsuseful = false;
                 $scope.lyric.hlindex = 0;
-                window.console.log('Lyrics Reject MSG:', reason.msg);
+                // window.console.log('Lyrics Reject MSG:', reason.msg);
             });
         };
+
+        // set default disk
+        $scope.getGoodLuck = function(persent) {
+            if (Number.isInteger(persent) && (persent >= 0 && persent <= 100)) {
+                var random = Math.floor(Math.random() * 100);
+                return random <= persent ? true : false;
+            } else {
+                return false;
+            }
+        };
+
+        // userinfo
+        $scope.userinfo = {
+            'uid': '',
+            'title': '',
+            'location': '',
+            'signature': '',
+            'icon': '',
+            'site': '',
+            'content': ''
+        };
+
+        // get user info
+        $scope.viewInfo = function() {
+            $scope.status.signed = loginService.getLogStatus();
+            $scope.userinfo = loginService.getUserinfo();
+            $scope.playrecord();
+
+            if ($scope.userinfo) {
+                $scope.inform.userpop = true;
+            } else {
+                $scope.inform.notiflag = true;
+                $scope.inform.loginpop = true;
+            }
+        };
+        // user logout 
+        $scope.userLogout = function() {
+            // http://www.douban.com/accounts/logout?source=main&ck=CGaK
+            // http://www.douban.com/accounts/logout?source=radio&ck=CGaK&no_login=y
+            var ck = loginService.getck();
+            if (ck) {
+                // $scope.setting.logout = 'http://www.douban.com/accounts/logout?source=radio&ck=' + ck + 'no_login=y';
+                $scope.setting.logout = 'http://www.douban.com/accounts/logout?source=main&ck=' + ck;
+                loginService.removeCookie();
+                $scope.inform.notiflag = true;
+                $scope.inform.logoutpop = true;
+            }
+        };
+
+        // play record 
+        $scope.playrecord = function() {
+            $scope.status.signed = loginService.getLogStatus();
+            if ($scope.status.signed) {
+                $scope.getplayrecord('played');
+                $scope.getplayrecord('liked');
+                $scope.getplayrecord('banned');
+            }
+        };
+
+        // handle play record
+        $scope.getplayrecord = function(type) {
+            var ck = loginService.getck();
+            var bid = loginService.getbid();
+            if(ck) {
+                // http://douban.fm/j/play_record   & ck, spbid("::"+"bid") type[liked | banned | played]
+                // http://douban.fm/j/play_record&ck=AtuV&spbid=%3A%3A HFkddzlnCBw&type=liked;  | banned | played]
+                songsService.getPlayRecordRaw(ck, bid, type)
+                .then(function(data) {
+                    if(data) {
+                        switch(type) {
+                            case 'played':
+                                $scope.record.played = data.total;
+                                break;
+                            case 'liked':
+                                $scope.record.liked = data.total;
+                                break;
+                            case 'banned':
+                                $scope.record.banned = data.total;
+                                break;
+                        }
+                    }
+                    window.console.log('type:', type, 'play record:', data);
+                }, function(reason) {
+                    window.console.log('type:', type, 'REJECTED:', reason);
+                });
+            }
+        };
+
+        // test area function
+        $scope.transferdata = function() {
+            var ck = loginService.getck();
+            if(ck) {
+                // http://douban.fm/j/transfer_data  & ck
+                // {
+                //     "r": 0,
+                //     "transfer_info": {
+                //         "liked": 0,
+                //         "days": 0,
+                //         "played": 0
+                //     }
+                // }
+                songsService.getTransferData(ck)
+                .then(function(data) {
+                    window.console.log('Transfer_data:', data);
+                }, function(reason) {
+                    window.console.log('Transfer_data REJECTED:', reason);
+                });
+            }
+        };
+
     }]);
 
     // get song service
 angular.module('musicboxApp')
     .service('songsService',['$http', '$q', '$cookieStore', 'chlService', 'appConstants', function($http, $q, $cookieStore, chlService, appConstants){
+        // for test
+
+        // setting
         var self = this;
         self.songArr = [];
         self.songArrNext = [];
@@ -252,25 +405,27 @@ angular.module('musicboxApp')
                 self.arrLen = arr.length;
                 self.curPos = 0;
             }
-            window.console.log('SERVICE set-SongArr: curPos', self.curPos, 'arrLen', self.arrLen, 'songinfo:', self.songinfo);
+            window.console.log('SERVICE setSong-Arr: curPos', self.curPos, 'arrLen', self.arrLen, 'songinfo:', self.songinfo);
         };
 
+        // return current and next play song
         this.getSongPlay = function() {
             if (self.arrLen && self.curPos <= self.arrLen - 1) {
                 self.songinfo = self.songArr[self.curPos] ? self.songArr[self.curPos] : {};
-                self.curPos ++;
-                window.console.log('SERVICE get-SongPlay Arr, curPos', self.curPos-1, 'arrLen', self.arrLen, 'songinfo:', self.songinfo);
+                self.curPos = self.curPos + 1;
+                window.console.log('SERVICE getSong-Play: curPos [i = i + 1]', self.curPos, 'arrLen', self.arrLen, 'songinfo:', self.songinfo);
                 return self.songinfo;
             } else {
                 self.curPos = 0;
                 if (self.songArrNext) {
                     this.setSongArr(self.songArrNext);
                     self.songinfo = self.songArr[self.curPos] ? self.songArr[self.curPos] : {};
-                    self.curPos ++;
-                    window.console.log('SERVICE Arr[0]===[], Arr[0]=Arr[1], curPos', self.curPos-1, 'arrLen', self.arrLen, 'songinfo:', self.songinfo);
+                    self.curPos = self.curPos + 1;
+                    self.songArrNext = [];
+                    window.console.log('SERVICE getSong-Play: curPos [i = 1]', self.curPos, 'arrLen', self.arrLen, 'songinfo:', self.songinfo);
                     return self.songinfo;
                 }
-                window.console.log('Array[0]===[]');
+                window.console.log('SERVICE getSong-Play: self.songArrNext === []');
                 return {};
             }
         };
@@ -287,6 +442,7 @@ angular.module('musicboxApp')
             return self.songinfo;
         };
 
+        // get raw song info
         this.getSongsRaw = function(type, history, pt) {
             type = type || 'n';
             pt = (type == 'p') ? '0.0' : (pt || '0.0');
@@ -312,6 +468,7 @@ angular.module('musicboxApp')
             return deferred.promise;
         };
 
+        // generate 10 random number|chars
         this.getRandom = function() {
             var num = '1234567890abcdef', random = '';
             for (var i = 0; i < 10; i++) {
@@ -320,24 +477,162 @@ angular.module('musicboxApp')
             return random;  
         };
 
+        // play record raw data
+        this.getPlayRecordRaw = function(ck, bid, type) {
+            var deferred = $q.defer();
+            var url = 'http://douban.fm/j/play_record?ck=' + ck + '&spbid=%3A%3A' + bid + '&type=' + type;
+
+            var thePromise = $http.get(url, {responseType: 'json'});
+            thePromise.success(function(result){
+                deferred.resolve(result);
+            }).error(function(response){
+                deferred.reject(response);
+            });
+            return deferred.promise;
+        };
+
+        // transfer data
+        this.getTransferData = function(ck) {
+            var deferred = $q.defer();
+            var url = 'http://douban.fm/j/transfer_data?ck=' + ck;
+
+            var thePromise = $http.get(url, {responseType: 'json'});
+            thePromise.success(function(result){
+                deferred.resolve(result);
+            }).error(function(response){
+                deferred.reject(response);
+            });
+            return deferred.promise;
+        };
+
+        // save volume for the next use
         this.setVolume = function(vol) {
             $cookieStore.put('vol', vol);
         };
 
+        // get volume
         this.getVolume = function() {
             return $cookieStore.get('vol');
         };
+
     }]);
     
     // login service
 angular.module('musicboxApp')
-    .service('loginService', [function () {
+    .service('loginService', ['$http', '$q', 'appConstants', function ($http, $q, appConstants) {
         var self = this;
         self.signed = false;
+        self.userId = '';
+        self.ue = '';
+        self.ck = '';
+        self.bid = '';
+        self.userinfo = {
+            'uid': '',
+            'title': '',
+            'location': '',
+            'signature': '',
+            'icon': '',
+            'site': '',
+            'content': ''
+        };
+        self.userinfoFlag = false;
+
+        this.getUE = function() {
+            this.checkUE();
+            return self.ue;
+        };
+
+        this.getck = function() {
+            return self.ck;
+        };
+
+        this.getbid = function() {
+            return self.bid;
+        };
 
         this.getLogStatus = function() {
             this.checkCookie();
             return self.signed;
+        };
+
+        this.checkFmCookie = function() {
+            chrome.cookies.get({
+                url: 'http://douban.fm',
+                name: 'dbcl2'
+            }, function(result) {
+                if (result) {
+                    self.userId = (result.value.split(':')[0]).slice(1);
+                    if (self.userId) {
+                        self.signed = true;
+                        window.console.log('FM loged:', result.value);
+                    } else {
+                        self.signed = false;
+                        // this.checkCookie();
+                    }
+                } else {
+                    self.signed = false;
+                    // this.checkCookie();
+                }
+            });
+
+            chrome.cookies.get({
+                url: 'http://douban.fm',
+                name: 'ck'
+            }, function(result) {
+                if (result) {
+                    self.ck = result.value.split('"')[1];
+                } else {
+                    // this.checkCookie();
+                    window.console.log('ck is NOT FOUND:', result);
+                }
+            });
+
+            chrome.cookies.get({
+                url: 'http://douban.fm',
+                name: 'bid'
+            }, function(result) {
+                if (result) {
+                    self.bid = result.value.split('"')[1];
+                } else {
+                    window.console.log('bid is NOT FOUND:', result);
+                }
+            });
+        };
+
+        this.removeFmCookie = function() {
+            chrome.cookies.set({
+                url: 'http://douban.fm',
+                name: 'dbcl2',
+                value: ''
+            }, function(result) {
+                window.console.log('Removed FM cookies:', result);
+            });
+
+            chrome.cookies.set({
+                url: 'http://douban.fm',
+                name: 'ck',
+                value: ''
+            }, function(result) {
+                window.console.log('Removed FM cookies:', result);
+            });
+        };
+
+        this.removeCookie = function() {
+            chrome.cookies.set({
+                url: 'http://douban.com',
+                name: 'dbcl2',
+                value: ''
+            }, function(result) {
+                window.console.log('Removed cookies:', result);
+            });
+
+            chrome.cookies.set({
+                url: 'http://douban.com',
+                name: 'ck',
+                value: ''
+            }, function(result) {
+                window.console.log('Removed cookies:', result);
+            });
         };
 
         this.checkCookie = function() {
@@ -346,12 +641,18 @@ angular.module('musicboxApp')
                 name: 'dbcl2'
             }, function(result) {
                 if (result) {
-                    chrome.cookies.set({
-                        url: 'http://douban.fm',
-                        name: 'dbcl2',
-                        value: result.value
-                    });
-                    self.signed = true;
+                    self.userId = (result.value.split(':')[0]).slice(1);
+                    if (self.userId) {
+                        chrome.cookies.set({
+                            url: 'http://douban.fm',
+                            name: 'dbcl2',
+                            value: result.value
+                        });
+                        self.signed = true;
+                        window.console.log('Douban loged:', result.value);
+                    } else {
+                        self.signed = false;
+                    }
                 } else {
                     self.signed = false;
                 }
@@ -367,9 +668,103 @@ angular.module('musicboxApp')
                         name: 'ck',
                         value: result.value
                     });
+                    self.ck = result.value.split('"')[1];
+                }
+            });
+
+            chrome.cookies.get({
+                url: 'http://douban.com',
+                name: 'bid'
+            }, function(result) {
+                if (result) {
+                    self.bid = result.value.split('"')[1];
+                    if (!self.bid) {
+                        window.console.log('bid is NOT FOUND:', result);
+                    }
+                    chrome.cookies.set({
+                        url: 'http://douban.fm',
+                        name: 'bid',
+                        value: result.value
+                    });
                 }
             });
         };
+
+        this.checkUE = function() {
+            chrome.cookies.get({
+                url: 'http://douban.com',
+                name: 'ue'
+            }, function(result) {
+                if (result) {
+                    self.ue = result.value.split('"')[1];
+                    // window.console.log('UE:', result.value);
+                } else {
+                    self.ue = '';
+                }
+            });
+        };
+
+        this.getUserinfo = function() {
+            if (self.userId) {
+                this.userinfoRequest(self.userId)
+                .then(function(xmlData) {
+                    var xmlDoc = null;
+                    try {
+                        if (window.DOMParser) {
+                            xmlDoc = (new DOMParser()).parseFromString(xmlData, "text/xml");
+                            // window.console.log('Created xmlDoc:', xmlDoc);
+                        } else {  // window.ActiveXObject
+                            xmlDoc = new ActiveXObject("Msxml2.DOMDocument");
+                            xmlDoc.async = "false";
+                            xmlDoc.loadXML(xmlData);
+                        } 
+                    } catch(e) {
+                        // window.console.log('Create xmlDoc failed');
+                    }
+
+                    // var xmlDoc = xmlData.responseXML;  // for XMLHttpRequest 
+
+                    // var xmlDoc = document.implementation.createDocument("", "", null);  // for load .xml file
+                    // xmlDoc.async = "false";
+                    // xmlDoc.load(xmlData);
+
+                    self.userinfo.uid = xmlDoc.getElementsByTagName('uid')[0].firstChild.nodeValue;
+                    self.userinfo.title = xmlDoc.getElementsByTagName('title')[0].firstChild.nodeValue;
+                    self.userinfo.location = xmlDoc.getElementsByTagName('location')[0].firstChild.nodeValue;
+                    self.userinfo.signature = xmlDoc.getElementsByTagName('signature')[0].firstChild.nodeValue;
+                    self.userinfo.content = xmlDoc.getElementsByTagName('content')[0].firstChild.nodeValue;
+
+                    var linkNodes = xmlDoc.getElementsByTagName('link');
+                    angular.forEach(linkNodes, function(v, k, a) {
+                        if (v.getAttribute('rel') === 'icon') {
+                            self.userinfo.icon = v.getAttribute('href');
+                        }
+                        if (v.getAttribute('rel') === 'alternate') {
+                            self.userinfo.site = v.getAttribute('href');
+                        }
+                    });
+                }, function(reason) {
+                    // window.console.log('userinfo request REJECTED:', reason);
+                    return {};
+                });
+            }
+            return self.userinfo;
+        };
+
+        this.userinfoRequest = function(userId) {
+            var deferred = $q.defer();
+
+            var url = 'http://api.douban.com/people/' + userId;
+            var infoPromise = $http.get(url, {cache: appConstants.useBrowserCache});
+            infoPromise.success(function(xmlData) {
+                deferred.resolve(xmlData);
+            }).error(function(reason) {
+                deferred.reject(reason);
+            });
+
+            return deferred.promise;
+        };
+
     }]);
 
     // lyrics service
@@ -389,7 +784,7 @@ angular.module('musicboxApp')
 
             if (sid && ssid) {
                 var url = 'http://api.douban.com/v2/fm/lyric?'  + 'sid=' + sid + '&ssid=' + ssid; // + '&apikey=' + '02646d3fb69a52ff072d47bf23cef8fd' + '&app_name=douban_fm_iphone_3.0&sdkVersion=1.9.0&did=d1d5754d8b077285fe85581feafabc82'; //appConstants.apikey + '&version=630&app_name=radio_android';
-                window.console.log('REQUEST LYRICS:', url);
+                // window.console.log('REQUEST LYRICS:', url);
                 var thePromise = $http.get(url, {cache: appConstants.useBrowserCache, responseType: 'json'});
                 thePromise.success(function(result){
                         deferred.resolve(result);

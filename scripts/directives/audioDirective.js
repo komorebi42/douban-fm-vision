@@ -124,8 +124,8 @@ angular.module('musicboxApp')
                             songsService.setVolume(newValue);
                         });
                     } else {
-                        window.console.log('scope.volume:',scope.volume);
-                        window.console.log('audio.volume:',audio.volume*100);
+                        // window.console.log('scope.volume:',scope.volume);
+                        // window.console.log('audio.volume:',audio.volume*100);
                     }
                 }, true);
             }
@@ -140,6 +140,8 @@ angular.module('musicboxApp')
                 var indexhl = 0;
                 var deltatime = 0;
                 var audio = document.getElementById('musicAudio');
+                var wrap = document.getElementById('lyrics-wrapper');
+                var lyricwrap = angular.element(wrap);
 
                 iElement.bind('timeupdate', function() {
                     scope.status.curtime = audio.currentTime;
@@ -158,9 +160,14 @@ angular.module('musicboxApp')
                             scope.lyric.hlindex = indexhl;
                             scope.lyric.deltatime = deltatime;
                         } else {
-                            scope.lyric.hlindex = -1;
+                            scope.lyric.hlindex = -999;
                             scope.lyric.deltatime = 0;
                         }
+                        // if (scope.lyric.valid && !scope.lyric.tsuseful) {  // user can't scroll the lyrics cuz timeupdate realtime
+                        //     lyricwrap.animate({scrollTop: 180}, 3000);
+                        // } else {
+                        //     lyricwrap.animate({scrollTop: 0}, 1000);
+                        // }
                     });
                 });
             }
