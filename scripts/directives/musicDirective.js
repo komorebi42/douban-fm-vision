@@ -6,15 +6,15 @@
  * Directive of the musicboxApp
  */
 'use strict';
-// ng-music, [bind on loop button]
+// ng-music, [bind on content div]
 angular.module('musicboxApp')
     .directive('ngContent', [function () {
         return {
             restrict: 'A',
             scope: true,
             templateUrl: 'views/music.html',
-            link: function (scope, iElement, iAttrs) {
-            }
+            // link: function (scope, iElement, iAttrs) {
+            // }
         };
     }]);
 
@@ -57,25 +57,14 @@ angular.module('musicboxApp')
                                     if (scope.rate) {
                                         scope.inform.notiflag = true;
                                         scope.inform.likepop = true;
+                                        scope.inform.loginpop = false;
+                                        scope.inform.chlpop = false;
+                                        scope.inform.favpop = false;
+                                        scope.inform.logoutpop = false;
                                     } else {
                                         window.console.log('rate:', scope.rate, ' why rate changged?');
                                     }
                                     window.console.log('rate:', scope.rate);
-                                } else {
-                                    // var thePromise = $http.get('http://douban.fm/j/fav_channels', {responseType: 'json'});
-                                    // thePromise.success(function(result){
-                                    //         window.console.log('FAV CHANNELS:', result);
-                                    //     }).error(function(response){
-                                    //         window.console.log('FAV CHL REJECTED REQUEST:', response);
-                                    //     });
-                                        
-                                        // 403 forbidden need_permission
-                                    // var thePromise = $http.get('https://api.douban.com/v2/user/~me', {responseType: 'json'});
-                                    // thePromise.success(function(result){
-                                    //         window.console.log('USER INFO:', result);
-                                    //     }).error(function(response){
-                                    //         window.console.log('USER INFO REJECTED REQUEST:', response);
-                                    //     });
                                 }
                             });
                         } else {
@@ -99,30 +88,38 @@ angular.module('musicboxApp')
         };
     }]);
 
-// login,  [bind on span li.login]
-angular.module('musicboxApp')
-    .directive('ngLogin', ['loginService', 'appConstants', '$timeout', function (loginService, appConstants, $timeout) {
-        return {
-            restrict: 'A',
-            link: function (scope, iElement, iAttrs) {
-                var logLink = angular.element(document.querySelector('#redirectLink'));
-                iElement.bind('click', function() {
-                    scope.status.signed = loginService.getLogStatus();
-                    if (scope.status.signed) {  // loged in
-                        scope.inform.userpop ? scope.inform.userpop = false : scope.viewInfo();
-                    } else {
-                        if (scope.inform.loginpop) {
-                            scope.inform.notiflag = false;
-                            scope.inform.loginpop = false;
-                        } else {
-                            scope.inform.notiflag = true;
-                            scope.inform.loginpop = true;
-                        }
-                    }
-                });
-            }
-        };
-    }]);
+// // login,  [bind on span li.login]
+// angular.module('musicboxApp')
+//     .directive('ngLogin', ['loginService', function (loginService) {
+//         return {
+//             restrict: 'A',
+//             link: function (scope, iElement, iAttrs) {
+//                 iElement.bind('click', function() {
+//                     scope.status.signed = loginService.getLogStatus();
+//                     if (scope.status.signed) {  // loged in
+//                         // scope.inform.userpop ? scope.inform.userpop = false : scope.viewInfo();
+//                         if (scope.inform.userpop) {
+//                             scope.inform.userpop = false;
+//                         } else {
+//                             scope.viewInfo();
+//                         }
+//                     } else {
+//                         if (scope.inform.loginpop) {
+//                             scope.inform.notiflag = false;
+//                             scope.inform.loginpop = false;
+//                         } else {
+//                             scope.inform.notiflag = true;
+//                             scope.inform.loginpop = true;
+//                             scope.inform.chlpop = false;
+//                             scope.inform.likepop = false;
+//                             scope.inform.favpop = false;
+//                             scope.inform.logoutpop = false;
+//                         }
+//                     }
+//                 });
+//             }
+//         };
+//     }]);
 
 // download music,  [bind on .download li]
 angular.module('musicboxApp')
@@ -247,13 +244,15 @@ angular.module('musicboxApp')
                 var wrapWidth = angular.element(document.querySelector('#lyrics-live')).width();
                 $timeout(function() {
                     scope.$watch(iAttrs.marqline, function(newValue, oldValue) {
-                        if (newValue != oldValue) {
-                            if (textWidth >= wrapWidth) {
-                                scope.lyric.marq.push(iAttrs.marqline);
+                        scope.$applyAsync(function() {
+                            if (newValue != oldValue) {
+                                if (textWidth >= wrapWidth) {
+                                    scope.lyric.marq.push(iAttrs.marqline);
+                                }
                             }
-                        }
+                        });
                     });
-                }, 300);
+                }, 50);
             }
         };
     }]);

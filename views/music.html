@@ -1,12 +1,12 @@
 
 <!-- Main Content -->
 <div id="MusicBox" ng-controller="AudioController" ng-init="initPlay()">
-    <div id="cd" ng-expand isexpand="menu.expand">
+    <div id="cd" ng-expand isexpand="systemSetting.expanded">
         <div id="cd-player">
             <img ng-src="{{fixedUI.player}}" alt="cd-player">
         </div>
         <div id="cd-axis">
-            <img ng-class="{'spin': status.playing, 'spin spin-paused': (!status.playing || paused)}" ng-src="{{fixedUI.axis}}" style="{background:#DDD}" alt="cd-axis">
+            <img ng-class="{'spin': status.playing, 'spin spin-paused': (!status.playing || paused)}" ng-src="{{status.axis}}" style="{background:#DDD}" alt="cd-axis">
         </div>
         <div id="cd-disk">
             <img class="diskimg" ng-show="status.imguseful" ng-src="{{ song.disk | trustUrl }}" ng-class="{'spin': status.playing, 'spin spin-paused': (!status.playing || paused)}" alt="cd-disk">
@@ -29,11 +29,11 @@
     </div>
 </div>
 <!-- Right Part -->
-<div id="RightPannel" ng-show="!status.hidepannel" class="hidepannel">
+<div id="RightPannel" ng-show="!systemSetting.expanded" class="hidepannel">
     <!-- Right part - channles -->
     <div id="ChlPannel" ng-show="showChlsList" class="chlPannelShow">
         <div id="chl-list-wrapper" class="scrollbar" ng-controller="ChannelListController">
-            <div id="chl-section" ng-init="loadChannels()">
+            <div id="chl-section" ng-init="initChannels()">
                 <ul class="channels-list" ng-repeat="group in groups track by $index" ng-init="addfavIndex = $index">
                     <li class="group-list" ng-bind="group.group_name"></li>
                     <ul ng-repeat="chl in group.chls track by $index" ng-init="chlsIndex = $index">
@@ -43,7 +43,9 @@
                                 <span class="cname ng-cloak">
                                     {{chl.name}}<span class="mhz">MHz</span>
                                 </span>
-                                <span class="favbtn" ng-click="favOrUnfavSelected(chl.id, chl.name, addfavIndex)" ng-hide="(addfavIndex == 0) && (chlsIndex == 0 || chlsIndex == 1 )"><i class="fa fa-star-o fa-lg favchls" ng-class="{'fa-star': showFavChl(chl.id)}"></i></span>
+                                <span class="favbtn" ng-click="starSelected(chl.id, addfavIndex)" ng-hide="(addfavIndex === 0) && (chlsIndex === 0 || chlsIndex === 1 )">
+                                    <i class="fa fa-star-o fa-lg favchls" ng-class="{'fa-star': (addfavIndex === 0),'fa-star': showFavChl(chl.id),'fa-star-o': !showFavChl(chl.id)}"></i>
+                                </span>
                             </a>
                         </li>
                     </ul> 
@@ -57,12 +59,12 @@
         <!-- control buttons -->
         <div id="CtrlPannel">
             <div id="toggle-btn">
-                <a class="chl-btn" ng-click="showChlsList=!showChlsList"><i class="fa fa-toggle-off fa-2x green-btn" ng-class="{'fa-toggle-on': showChlsList, 'fa-toggle-off': !showChlsList}" style="color: #A0D672;"></i></a>
+                <a class="chl-btn" ng-click="showChlsList=!showChlsList"><i class="fa fa-toggle-off fa-2x green-btn" ng-class="{'fa-toggle-on': showChlsList, 'fa-toggle-off': !showChlsList}"></i></a>
             </div>
             <div id="chl-name-zone">
                 <span class="chl-name-show ng-cloak" ng-class="{'slide-animate': 1}">{{channel.chlName}} MHz</span>
             </div>
-            <div id="btn-zone">
+            <div id="btn-zone" ng-controller="LoginController">
                 <ul class="btn-group">
                     <li class="loop">
                         <span ng-click="loop=!loop" ng-loop><i class="fa fa-random fa-2x green-btn" ng-class="{'fa-refresh': loop, 'fa-random': !loop}"></i></span>
@@ -105,24 +107,24 @@
                     </div>
                     <!-- anonymous user -->
                     <div class="notifyPop" ng-show="inform.notiflag">
-                        <div ng-class="{'showpop': inform.chlpop}" ng-click="inform.notiflag=false">点击
+                        <div ng-class="{'showpop': inform.chlpop}" ng-click="chlpopClose()">点击
                             <a href="https://www.douban.com/accounts/login" target="_blank">登录</a>
                             , 发现你的个性兆赫</div>
-                        <div ng-class="{'showpop': inform.likepop}" ng-click="inform.notiflag=false">点击
+                        <div ng-class="{'showpop': inform.likepop}" ng-click="likepopClose()">点击
                             <a href="https://www.douban.com/accounts/login" target="_blank">登录</a>
                             , 同步你的专属喜好</div>
-                        <div ng-class="{'showpop': inform.favpop}" ng-click="inform.notiflag=false">点击
+                        <div ng-class="{'showpop': inform.favpop}" ng-click="favpopClose()">点击
                             <a href="https://www.douban.com/accounts/login" target="_blank">登录</a>
                             , 收藏你的常用兆赫</div>
-                        <div ng-class="{'showpop': inform.loginpop}" ng-click="inform.notiflag=false">点击
+                        <div ng-class="{'showpop': inform.loginpop}" ng-click="loginpopClose()">点击
                             <a href="https://www.douban.com/accounts/login" target="_blank">登录</a>
                             , 更多你的精彩旋律</div>
-                        <div ng-class="{'showpop': inform.logoutpop}" ng-click="inform.notiflag=false">感谢使用, ^^, 欢迎给我提供建议</div>
+                        <div ng-class="{'showpop': inform.logoutpop}" ng-click="logoutpopClose()">感谢使用, 欢迎给我提供建议</div>
                     </div>
                     <!-- userinfo display -->
                     <div class="userinfoPop" ng-show="inform.userpop" ng-click="inform.userpop=false">
                         <div class="user-info">
-                            <div class="user-icon"><img ng-src="{{userinfo.icon}}" alt=""></div>
+                            <div class="user-icon"><img ng-src="{{userinfo.icon}}" alt="user avatar"></div>
                             <div class="user-title"><a ng-href="{{userinfo.site}}" target="_blank">{{userinfo.title}}</a>, 开始聆听</div>
                             <div class="user-signature">{{userinfo.signature}}</div>
                         </div>
@@ -171,11 +173,11 @@
                     </div>
                     <div class="sharePop" ng-show="shareflag" ng-click="shareflag=false">
                         <ul class="sharelist">
-                            <li><a href="#">豆瓣</a></li>
-                            <li><a href="#">微信</a></li>
-                            <li><a href="#">微博</a></li>
-                            <li><a href="#">Facebook</a></li>
-                            <li><a href="#">Twitter</a></li>
+                            <li><a ng-share-douban>豆瓣</a></li>
+                            <!-- <li><a >微信</a></li> -->
+                            <li><a ng-share-weibo>微博</a></li>
+                            <li><a ng-share-facebook>Facebook</a></li>
+                            <li><a ng-share-twitter>Twitter</a></li>
                         </ul>
                     </div>
                 </div>
@@ -192,9 +194,9 @@
                     </div>
                 </div>
                 <div id="image-wrapper" ng-show="slideshow || !lyric.valid" ng-click="slideshow=false">
-                    <p class="lyrics-notice" ng-show="lyricNotice" ng-click="lyricNotice=false">
-                        未发现歌词-Not Found
-                    </p>
+                    <div class="lyrics-notice" ng-show="lyricNotice" ng-click="lyricNotice=false">
+                        <p>未发现歌词</p>
+                    </div>
                     <img class="lyrics-image" ng-class="{'img-opacity': lyricNotice }" ng-show="status.imguseful" ng-click="!lyric.valid ? (lyricNotice=!lyricNotice) : false" ng-src="{{ song.picture | trustUrl }}" >
                 </div>
                 <!-- <div id="lyrics-outer-show">
@@ -207,35 +209,48 @@
             <span class="song-author-show ng-cloak" ng-class="{'slide-animate2': showmarquee}" ng-show-marquee value="song.title">{{song.title}} by {{song.artist}}</span>
         </div>
     </div>
-    <!-- TEST AREA -->
-    <div id="test-area" style="display: block;">
-        <div style="position:fixed; left:10px; bottom: 20px; z-index: 2; overflow:auto; border:1px dashed #EEE;">
-            <ul ng-repeat="lyline in lyric.content" ng-init="testindex = $index">
-                <li >{{testindex}} - {{lyline.ts}} : {{lyline.line}}</li>
-            </ul>
-            <p>{{status.vol}} - 音量</p>
-        </div>
-        <div style="position:fixed; right: 600px; bottom: 20px; z-index: 2; border:1px dashed #EEE;">
-            <p>song.url: {{song.url}};</p>
-            <p>song.ar: {{song.artist}};</p>
-            <p>song.ti: {{song.title}};</p>
-            <p>song.disk: {{song.disk}};</p>
-            <p>song.img: {{song.picture}};</p>
-            <p>song.like: {{song.like}};</p> <hr/>
-            <p>next.al: {{songNext.albumtitle}};</p>
-            <p>next.ar: {{songNext.artist}};</p>
-            <p>next.ti: {{songNext.title}};</p><hr/>
-            <p>lyric.name : {{lyric.name}};</p>
-            <p>lyric.showline : {{lyric.showline}}</p>
-        </div>
-        <div style="position:fixed; left: 300px; width: 100px; height:50px; bottom: 20px; border:1px dashed #EEE; list-style:none; overflow: scroll;">
-            <a href="" ng-click="transferdata()">transfer-data</a>
-            <a href="" ng-click="playrecord()">play-record</a>
-        </div>
-    </div>
 </div>
 
 <!-- Dynamic lyric outer show -->
-<div id="lyrics-outer-show" ng-show="lyric.valid && lyric.tsuseful">
-    <p id="lyrics-outer-line">{{lyric.showline}}</p>
+<div id="lyrics-outer-show" ng-show="lyric.valid && lyric.tsuseful && systemSetting.displayCaption" ng-class="{'frontCaption': systemSetting.frontCaption}">
+    <div id="lyrics-outer-line">
+        <p id="oneline">{{showLyric.line1}}</p>
+        <p id="nextline">{{showLyric.line2}}</p>
+    </div>
+</div>
+<!-- Loading and diagnosing -->
+<div id="loading-show" ng-show="status.isLoading || status.weberror">
+    <p id="loading" ng-show="status.isLoading"><i class="fa fa-spinner fa-5x blue-btn spin1s"></i></p>
+    <p id="web-error" ng-show="status.weberror">正在准备内容,请稍等...</p>
+</div>
+
+
+<!-- TEST AREA -->
+<div id="test-area" style="display: none;">
+    <div style="position:fixed; left:10px; bottom: 20px; z-index: 2; overflow:auto; border:1px dashed #EEE;">
+        <ul ng-repeat="lyline in lyric.content" ng-init="testindex = $index">
+            <li >{{testindex}} - {{lyline.ts}} : {{lyline.line}}</li>
+        </ul>
+        <p>{{status.vol}} - 音量</p>
+    </div>
+    <div style="position:fixed; right: 600px; bottom: 20px; z-index: 2; border:1px dashed #EEE;">
+        <p>song.url: {{song.url}};</p>
+        <p>song.ar: {{song.artist}};</p>
+        <p>song.ti: {{song.title}};</p>
+        <p>song.disk: {{song.disk}};</p>
+        <p>song.img: {{song.picture}};</p>
+        <p>song.like: {{song.like}};</p> <hr/>
+        <p>next.al: {{songNext.albumtitle}};</p>
+        <p>next.ar: {{songNext.artist}};</p>
+        <p>next.ti: {{songNext.title}};</p><hr/>
+        <p>lyric.name : {{lyric.name}};</p>
+        <p>lyric.showline : {{lyric.showline}}</p>
+    </div>
+    <div style="position:fixed; left: 600px; width: 300px; height:160px; bottom: 20px; border:1px dashed #EEE; list-style:none; overflow: scroll;">
+        <ul>
+            <li><a href="" ng-click="transferdata()">transfer-data</a></li>
+            <li><a href="" ng-click="playrecord()">play-record</a></li>
+            <li><a href="" ng-click="isFavChannels(9)">isFavChannels</a></li>
+        </ul>
+    </div>
 </div>

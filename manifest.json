@@ -1,17 +1,29 @@
 {
     "manifest_version": 2,
-    "name": "FM Music Player",
+    "minimum_chrome_version": "42",
+
+    "name": "豆瓣FM·新视觉 - FM in New Vision",
     "description": "豆瓣FM Music Player",
-    "version": "0.2",
-    "permissions": ["notifications", "cookies", "http://*.douban.fm/*", "https://*.douban.fm/*", "http://*.douban.com/*", "https://*.douban.com/*", "http://223.68.189.43/PASV/*"],
-    "background": {
-        "scripts": ["scripts/app.js"]
-    },
-    "icons": {
-        "128": "images/favicon.ico"
-    },
+    "version": "1.0.0",
+    
+    "permissions": ["notifications", "background", "tabs", "webRequest", "webRequestBlocking", "cookies", "*://*.douban.fm/*", "*://*.douban.com/*", "http://223.68.189.43/PASV/*"],
     "content_security_policy": "script-src 'self' 'unsafe-eval' https://ssl.google-analytics.com; object-src 'self'",
-    "chrome_url_overrides": {
-        "newtab": "index.html"
-    }
+    "incognito": "split",
+    "offline_enabled": false,
+
+    "icons": {
+        "16": "images/favicon_16.png",
+        "64": "images/favicon_64.png",
+        "128": "images/favicon_128.png",
+        "256": "images/favicon_256.png"
+    },
+    "omnibox": {"keyword" : "FM"},
+    "background": {
+        "scripts": ["scripts/background.js"]
+    },
+    "browser_action": {
+        "default_icon": "images/favicon_128.png",
+        "default_title": "豆瓣FM·新视觉 - FM in New Vision"
+    },
+    "update_url": "http://clients2.google.com/service/update2/crx"
 }

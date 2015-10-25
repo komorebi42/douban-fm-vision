@@ -7,7 +7,7 @@
  */
 'use strict';
 angular.module('musicboxApp')
-	.controller('AudioController', ['$rootScope', '$scope', 'expandService', function ($rootScope, $scope, expandService) {
+	.controller('AudioController', ['$rootScope', '$scope', function ($rootScope, $scope) {
         $scope.paused = false;
         $scope.menu = {
         	'expand' : false
@@ -17,12 +17,12 @@ angular.module('musicboxApp')
             $scope.playMusic('n');
         };
 
-        $rootScope.$on('setExpand', function(event, attrs) {
-        	$rootScope.$broadcast('getExpand', attrs);
-        });
+        // $rootScope.$on('setExpand', function(event, attrs) {
+        // 	$rootScope.$broadcast('getExpand', attrs);
+        // });
 
-        $scope.$on('getExpand', function(event, attrs) {
-        	attrs.value ? $scope.menu.expand = true : $scope.menu.expand = false;
-        });
+        // $scope.$on('getExpand', function(event, attrs) {
+        // 	attrs.value ? $scope.menu.expand = true : $scope.menu.expand = false;
+        // });
 
 	}]);

@@ -13,18 +13,8 @@ angular.module('musicboxApp', [
         'ngRoute'
     ])
     .constant('appConstants',{
-        doubanLoginUrl: 'https://www.douban.com/accounts/login', // http://www.douban.com/j/app/login',
-        doubanChannelUrl: 'http://www.douban.com/j/app/radio/channels',
-        doubanSongUrl: 'http://www.douban.com/j/app/radio/people',
-        doubanLyricUrl: 'http://api.douban.com/v2/fm/lyric',
         cacheExpiryPeriodMs: 10000,
         useBrowserCache: true,
-        API_HOST : 'https://api.douban.com',
-        AUTH_HOST : 'https://www.douban.com',
-        REDIRECT_URL : 'https://vinkerz.github.io',
-        AUTHORIZE_URL : '/service/auth2/auth',
-        apikey: '0cef7c30ee4d518f26ce7492cae7f4ad',
-        secret: '2844390f63ef84af'
     })
     .config(['$httpProvider', function ($httpProvider) {
         $httpProvider.defaults.headers.common['Content-Type'] = 'application/x-www-form-urlencoded';
@@ -36,6 +26,48 @@ angular.module('musicboxApp', [
         $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel|data|blob|chrome-extension):/);
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel|data|blob):/);
     }])
+    .filter('trustUrl', function($sce) {
+        return function(url) {
+            return $sce.trustAsResourceUrl(url);
+        };
+    });
+
+// run 
+// angular.module('musicboxApp')
+//     .run([function () {
+//         chrome.browserAction.onClicked.addListener(function(tab) {
+//             var manager_url = chrome.extension.getURL('../index.html');
+//             focusOrCreateTab(manager_url);
+//         });
+
+//         function focusOrCreateTab(url) {
+//             chrome.windows.getAll({
+//                 'populate': true
+//             }, function(windows) {
+//                 var existing_tab = null;
+//                 for (var i in windows) {
+//                     var tabs = windows[i].tabs;
+//                     for (var j in tabs) {
+//                         var tab = tabs[j];
+//                         if (tab.url == url) {
+//                             existing_tab = tab;
+//                             break;
+//                         }
+//                     }
+//                 }
+//                 if (existing_tab) {
+//                     chrome.tabs.update(existing_tab.id, {
+//                         'selected': true
+//                     });
+//                 } else {
+//                     chrome.tabs.create({
+//                         'url': url,
+//                         'selected': true
+//                     });
+//                 }
+//             });
+//         }
+//     }]);
     // .config(['$routeProvider', '$logProvider', function ($routeProvider, $logProvider) {
 
     //     $logProvider.debugEnabled(true);
@@ -54,8 +86,3 @@ angular.module('musicboxApp', [
     //             redirectTo: '/'
     //         });
     // }])
-    .filter('trustUrl', function($sce) {
-        return function(url) {
-            return $sce.trustAsResourceUrl(url);
-        };
-    });

@@ -8,7 +8,7 @@
 'use strict';
 // expand or compress player
 angular.module('musicboxApp')
-    .directive('ngExpand', ['expandService', function (expandService) {
+    .directive('ngExpand', [function () {
         return {
             restrict: 'A',
             link: function (scope, iElement, iAttrs) {
@@ -17,12 +17,10 @@ angular.module('musicboxApp')
                     var pannel = angular.element(document.querySelector('#RightPannel'));
                     scope.$watch(iAttrs.isexpand, function(newValue, oldValue) {
                         if (newValue) {
-                            player.animate({left: 700}, 3000);  //left: 50% of (2280px - 800px)
-                            scope.status.hidepannel = true;
+                            player.animate({left: 665}, 3000);  //left: 50% of (2280px - 800px)=700
                             //pannel.animate({right: 830}, 3000);  //right: 50% of (2280px - 540px)
                         } else {
                             player.animate({left: 44}, 3000);  // left: 2% of 2280px
-                            scope.status.hidepannel = false;
                             //pannel.animate({right: 132}, 3000);  // right: 6% of 2280px
                         }
                     }, true);
@@ -140,20 +138,28 @@ angular.module('musicboxApp')
                 var indexhl = 0;
                 var deltatime = 0;
                 var audio = document.getElementById('musicAudio');
-                var wrap = document.getElementById('lyrics-wrapper');
-                var lyricwrap = angular.element(wrap);
+                // var wrap = document.getElementById('lyrics-wrapper');
+                // var lyricwrap = angular.element(wrap);
 
                 iElement.bind('timeupdate', function() {
                     scope.status.curtime = audio.currentTime;
 
+                    if (audio.currentTime === 1) {
+                        scope.lyric.hlindex = 0;  // first line when start
+                    }
                     scope.$applyAsync(function() {
                         if (scope.lyric.valid && scope.lyric.tsuseful) {
                             angular.forEach(scope.lyric.content, function(lyric, index, arr) {
                                 if (audio.currentTime > lyric.ts) {
                                     indexhl = index;
                                     scope.lyric.showline = lyric.line;
+                                    scope.showLyric.line1 = lyric.line;
                                     if (index < arr.length - 1) {
                                         deltatime = parseFloat(arr[index + 1].ts - lyric.ts).toFixed(2);
+                                        scope.showLyric.line2 = arr[index + 1].line;
+                                    } else {
+                                        scope.showLyric.line1 = '';
+                                        scope.showLyric.line2 = '- END -';
                                     }
                                 }
                             });

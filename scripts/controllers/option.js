@@ -8,18 +8,7 @@
 'use strict';
 angular.module('musicboxApp')
 	.controller('OptionController', ['$scope', function ($scope) {
+		$scope.tabs = ['setting', 'update', 'about'];
+		$scope.selection = $scope.tabs[0];
 		
-		
-	}]);
-
-// ng-option
-angular.module('musicboxApp')
-	.directive('ngOption', [function () {
-		return {
-			restrict: 'A',
-			scope: true,
-			templateUrl: 'views/option.html',
-			link: function (scope, iElement, iAttrs) {
-			}
-		};
 	}]);

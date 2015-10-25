@@ -3,7 +3,7 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>优美的音乐,很动听</title>
+    <title>豆瓣FM·新视觉 - FM in New Vision, 发现打动你内心的声音</title>
     <meta name="description" content="Angular js for DoubanFM">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
@@ -11,59 +11,56 @@
 </head>
 
 <body>
-    <div ng-app="musicboxApp" class="container">
-        <div id="wraper" ng-controller="WraperController">
+    <div id="container" ng-app="musicboxApp">
+        <div id="inner" ng-controller="MainController" ng-init="checkCaptionStatus()">
             <div id="menu-wrapper">
-                <nav id="main-nav" ng-controller="NavTabsController">
+                <nav id="main-nav" ng-controller="MenuController">
                     <ul class="primary_menu">
-                        <li ng-click="showbtn=!showbtn">
-                            <a class="main-btn"><i class="fa fa-umbrella fa-2x green-btn" ng-class="{'blue-btn': showbtn}"></i></a>
+                        <li ng-click="umbrella=!umbrella">
+                            <a class="main-btn expand"><i class="fa fa-umbrella fa-2x green-btn" ng-class="{'blue-btn': umbrella}"></i></a>
                         </li>
-                        <li ng-show="showbtn" ng-click="expandPlayer()" class="btn-menu">
-                            <a class="expand"><i class="fa fa-expand fa-2x green-btn" ng-class="{'fa-expand': !menubtn.expanded, 'fa-compress': menubtn.expanded}"></i></a>
+                        <li ng-click="expandPlayer()" ng-show="umbrella">
+                            <a class="btn-menu expand"><i class="fa fa-expand fa-2x green-btn" ng-class="{'fa-compress': systemSetting.expanded, 'fa-expand': !systemSetting.expanded}"></i></a>
                         </li>
-                        <li ng-show="showbtn" ng-click="music.coffee=!music.coffee" class="btn-menu-1">
-                            <a ><i class="fa fa-gear fa-2x green-btn" ng-class="{'fa-coffee': music.coffee, 'fa-gear gear': !music.coffee}"></i></a>
+                        <li ng-click="enterSetting()" ng-show="umbrella">
+                            <a class="btn-menu-1"><i class="fa fa-gear fa-2x green-btn" ng-class="{'fa-coffee updown': systemSetting.hidedpannel, 'fa-gear gear': !systemSetting.hidedpannel}"></i></a>
                         </li>
-                        <li ng-show="showbtn" ng-click="showbtn=!showbtn" class="btn-menu-2">
-                            <a class="expand" href="https://github.com/vinkerz/vinkerz.github.io" target="_blank"><i class="fa fa-github fa-2x green-btn"></i></a>
-                        </li>
+                        <li ng-click="frontCaption()" ng-show="umbrella">
+                            <a class="btn-menu-2"><i class="fa fa-cc fa-2x green-btn expand"></i></a>
+                        </li><!-- 
+                        <li ng-click="umbrella=!umbrella" ng-show="umbrella">
+                            <a class="btn-menu-3 expand" href="https://github.com/vinkerz/vinkerz.github.io" target="_blank"><i class="fa fa-github fa-2x green-btn"></i></a>
+                        </li> -->
                     </ul>
                 </nav>
             </div>
-            <div id="content" ng-show="!music.option" class="show-option">
+            <div id="content" ng-hide="systemSetting.hidedpannel" class="show-option">
                 <div ng-controller="MusicController" ng-content></div>
-                <!-- <div ng-include="views/music.html" scope="" onload=""></div> -->
+                <!-- <div ng-include="views/music.html" scope="" onload=""></div>class="show-option show-option-updown"  -->
             </div>
-            <div id="option" ng-show="music.option" class="show-option">
+            <div id="option" ng-show="systemSetting.hidedpannel" class="show-music">
                 <div ng-controller="OptionController" ng-option></div>
-                <!-- <div ng-include="views/option.html" scope="" onload=""></div> -->
+                <!-- <div ng-include="views/option.html" scope="" onload=""></div>  show-music hide-option-updown-->
             </div>
         </div>
     </div>
     <script type="text/javascript" src="components/jquery-2.1.4.min.js"></script>
-    <script type="text/javascript" src="components/angular.js"></script>
+    <script type="text/javascript" src="components/angular.min.js"></script>
     <script type="text/javascript" src="components/angular-animate.min.js"></script>
     <script type="text/javascript" src="components/angular-cookies.min.js"></script>
     <script type="text/javascript" src="components/angular-resource.min.js"></script>
     <script type="text/javascript" src="components/angular-route.min.js"></script>
     <script type="text/javascript" src="scripts/app.js"></script>
-    <script type="text/javascript" src="scripts/controllers/wraper.js"></script>
+    <script type="text/javascript" src="scripts/controllers/main.js"></script>
     <script type="text/javascript" src="scripts/controllers/option.js"></script>
     <script type="text/javascript" src="scripts/controllers/channel.js"></script>
     <script type="text/javascript" src="scripts/controllers/music.js"></script>
     <script type="text/javascript" src="scripts/controllers/audio.js"></script>
     <script type="text/javascript" src="scripts/controllers/login.js"></script>
-    <script type="text/javascript" src="scripts/controllers/navtabs.js"></script>
-    <script type="text/javascript" src="scripts/directives/channelDirective.js"></script>
+    <script type="text/javascript" src="scripts/controllers/menu.js"></script>
     <script type="text/javascript" src="scripts/directives/musicDirective.js"></script>
     <script type="text/javascript" src="scripts/directives/audioDirective.js"></script>
-    <script type="text/javascript" src="scripts/services/dataservice.js"></script>
-    <!--
-        <script type="text/javascript" src="scripts/channels-oauth2.json"></script>
-        <script type="text/javascript" src="http://www.douban.com/js/api.js?v=2"></script>
-        <script type="text/javascript" src="http://www.douban.com/js/api-parser.js?v=1"></script>    
-        -->
+    <script type="text/javascript" src="scripts/directives/optionDirective.js"></script>
 </body>
 
 </html>
