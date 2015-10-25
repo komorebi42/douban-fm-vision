@@ -18,12 +18,12 @@
 
 ###效果展示
 	
-	![ScreenShot1](screenshot/001.png)
-	![ScreenShot2](screenshot/002.png)
-	![ScreenShot3](screenshot/003.png)
-	![ScreenShot4](screenshot/004.png)
-	![ScreenShot5](screenshot/005.png)
-	![ScreenShot6](screenshot/006.png)
+![ScreenShot1](screenshot/001.png)
+![ScreenShot2](screenshot/002.png)
+![ScreenShot3](screenshot/003.png)
+![ScreenShot4](screenshot/004.png)
+![ScreenShot5](screenshot/005.png)
+![ScreenShot6](screenshot/006.png)
 	
 	
 	
@@ -31,6 +31,6 @@
 ###安装方式
 	豆瓣FM·新视觉 - FM in New Vision
 	
-	Goole web store [Install]<https://chrome.google.com/webstore/detail/%E8%B1%86%E7%93%A3fm%C2%B7%E6%96%B0%E8%A7%86%E8%A7%89-fm-in-new-vision/iohkfdpdopboklgjdgcmjhlmmiainloc>
+Goole web store Install:<https://chrome.google.com/webstore/detail/%E8%B1%86%E7%93%A3fm%C2%B7%E6%96%B0%E8%A7%86%E8%A7%89-fm-in-new-vision/iohkfdpdopboklgjdgcmjhlmmiainloc>
 	
-	离线安装网盘链接: [下载]<http://pan.baidu.com/s/1eQ7AsgE>
+离线安装网盘链接下载:<http://pan.baidu.com/s/1eQ7AsgE>
