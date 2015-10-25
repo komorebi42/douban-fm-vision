@@ -17,7 +17,24 @@
 	12.分享功能
 
 ###效果展示
-	
+
+截图第一波：
+
+
+![截图](screenshot/01.png)
+![截图](screenshot/02.png)
+![截图](screenshot/03.png)
+![截图](screenshot/04.png)
+![截图](screenshot/05.png)
+![截图](screenshot/06.png)
+![截图](screenshot/07.png)
+![截图](screenshot/08.png)
+![截图](screenshot/09.png)
+![截图](screenshot/10.png)
+
+截图第二波：
+
+
 ![ScreenShot1](screenshot/001.png)
 ![ScreenShot2](screenshot/002.png)
 ![ScreenShot3](screenshot/003.png)
@@ -27,10 +44,16 @@
 	
 	
 	
-	
 ###安装方式
 	豆瓣FM·新视觉 - FM in New Vision
 	
-Goole web store Install:<https://chrome.google.com/webstore/detail/%E8%B1%86%E7%93%A3fm%C2%B7%E6%96%B0%E8%A7%86%E8%A7%89-fm-in-new-vision/iohkfdpdopboklgjdgcmjhlmmiainloc>
-	
-离线安装网盘链接下载:<http://pan.baidu.com/s/1eQ7AsgE>
+Goole web store Install: [地址][1]
+百度离线安装: [地址][2] 　
+
+
+如果觉得不错，在商店上评价打分。
+
+
+[1]:https://chrome.google.com/webstore/detail/%E8%B1%86%E7%93%A3fm%C2%B7%E6%96%B0%E8%A7%86%E8%A7%89-fm-in-new-vision/iohkfdpdopboklgjdgcmjhlmmiainloc
+[2]:http://pan.baidu.com/s/1qW26lmW
+

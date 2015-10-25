@@ -20,6 +20,7 @@ angular.module('musicboxApp')
 
 		$scope.userSetting = {
 			'goodluck':  userSettingService.getGoodLuck() || 1,
+			'goodluckToggle': false,
 			'captionAlways': (userSettingService.getDisplayCaption() !== '00' && userSettingService.getDisplayCaption() !== '01' && userSettingService.getDisplayCaption() !== '10') ? true : false,
 			'captionFirst': userSettingService.getDisplayCaption() === '10' ? true : false,
 			'captionFullscreen': userSettingService.getDisplayCaption() === '01' ? true : false,
@@ -188,8 +189,11 @@ angular.module('musicboxApp')
 
 		// set goodluck
 		$scope.setGoodLuck = function() {
-			$scope.userSetting.goodluck = Math.round(Math.random() * 5);
-			userSettingService.setGoodLuck($scope.userSetting.goodluck);
+			$scope.userSetting.goodluckToggle = !$scope.userSetting.goodluckToggle;
+			if ($scope.userSetting.goodluckToggle) {
+				$scope.userSetting.goodluck = Math.round(Math.random() * 5);
+				userSettingService.setGoodLuck($scope.userSetting.goodluck);
+			}
 		};
 
 	}]);
