@@ -8,6 +8,14 @@
 'use strict';
 angular.module('musicboxApp')
     .controller('MusicController', ['$scope', '$filter', 'songsService', 'lyricsService', 'chlService', 'loginService', 'userSettingService', 'notifyService', 'resizeImgService', '$timeout', function($scope, $filter, songsService, lyricsService, chlService, loginService, userSettingService, notifyService, resizeImgService, $timeout) {
+        // test zone
+        $scope.backToNormal = function(event) {
+            if (event.which === 27) {
+                window.console.log('KeyEvent:', event);
+                $scope.systemSetting.expanded = false;
+            }
+        };
+
         //$scope.songUrl = 'musics/Like Sunday,Like Rain.mp3';  
         //'http://mr3.douban.com/201308250247/4a3de2e8016b5d659821ec76e6a2f35d/view/song/small/p1562725.mp3';
         //$scope.songs: album, picture, artist, url, title, length, sid, aid, albumtitle, like
@@ -73,10 +81,15 @@ angular.module('musicboxApp')
             'notifyNone': userSettingService.getNotifySetting() ? userSettingService.getNotifySetting() : false
         };
         $scope.song = {
+            'album': '',  // variety added at 2015-10-30, ver. 1.0.1.0
+            'albumtitle': '',  // variety added at 2015-10-30, ver. 1.0.1.0
+            'sid': '',
             'url': '',
             'disk': '',
             'artist': '',
             'title': '',
+            'title_by_artist': '',
+            'filename': '',
             'picture': '',
             'like': false,
             'download': ''
@@ -121,7 +134,7 @@ angular.module('musicboxApp')
             'disk': 'images/cdplayer/disk@2x.png',
             'line': 'images/cdplayer/line@2x.png',
             'player': 'images/cdplayer/player@2x.png',
-            'info': 'images/cdplayer/infosample.jpeg',
+            'info': 'images/cdplayer/infosample.jpg',
             'author': 'images/cdplayer/KYLE@2x.png',
             'popicon': 'images/favicon_256.png'
         };
@@ -193,25 +206,52 @@ angular.module('musicboxApp')
                 $scope.status.pictureforAxis = song.picture;
             }
 
-            $scope.song = song ? {
-                'sid': song.sid,
-                'url': song.url,
-                'disk': $scope.status.defaultdisk ? $scope.fixedUI.axisNone : (song.picture || $scope.fixedUI.disk), // 5 persent to display default disk
-                'artist': song.artist,
-                'title': song.title,
-                'picture': song.picture || $scope.fixedUI.info,
-                'like': song.like,
-                'download': song.title + '_' + song.artist + '.' // + song.url.split('.')[song.url.split('.').length - 1]
-            } : {
-                'sid': '',
-                'url': 'musics/Like Sunday,Like Rain.mp3',
-                'disk': 'images/cdplayer/sample.jpg',
-                'artist': 'Frank Whaley',
-                'title': 'Like Sunday, Like Rain',
-                'picture': 'images/cdplayer/infosample.jpeg',
-                'like': false,
-                'download': 'Like Sunday,Like Rain.mp3'
-            };
+            // up to: 1.0.0.3
+            // $scope.song = song ? {
+            //     'album': song.album,
+            //     'albumtitle': song.albumtitle,
+            //     'sid': song.sid,
+            //     'url': song.url,
+            //     'disk': $scope.status.defaultdisk ? $scope.fixedUI.axisNone : (song.picture || $scope.fixedUI.disk), // 5 persent to display default disk
+            //     'artist': song.artist,
+            //     'title': song.title,
+            //     'picture': song.picture || $scope.fixedUI.info,
+            //     'like': song.like,
+            //     'download': song.title + '_' + song.artist + '.' // + song.url.split('.')[song.url.split('.').length - 1]
+            // } : {
+            //     'album': '',
+            //     'albumtitle': '',
+            //     'sid': '',
+            //     'url': '',  //  'musics/Like Sunday,Like Rain.mp3',
+            //     'disk': 'images/cdplayer/sample.jpg',
+            //     'artist': 'Frank Whaley',
+            //     'title': 'Like Sunday, Like Rain',
+            //     'picture': 'images/cdplayer/infosample.jpg',
+            //     'like': false,
+            //     'download': ''  //  'Like Sunday,Like Rain.mp3'
+            // };
+
+            // changed at ver. 1.0.1, no more default settings
+            if (song) {
+                $scope.song = {
+                    'album': song.album,
+                    'albumtitle': song.albumtitle,
+                    'sid': song.sid,
+                    'url': song.url,
+                    'disk': $scope.status.defaultdisk ? $scope.fixedUI.axisNone : (song.picture || $scope.fixedUI.disk), // 5 persent to display default disk
+                    'artist': song.artist,
+                    'title': song.title,
+                    'title_by_artist': song.title + ' - ' + song.artist,
+                    'filename': song.title + '_' + song.artist + '.mp4',
+                    'picture': song.picture || $scope.fixedUI.info,
+                    'like': song.like,
+                    'download': song.title + '_by_' + song.artist + '.' // + song.url.split('.')[song.url.split('.').length - 1]
+                };
+            } else {
+                $scope.getNextSong();
+                $scope.showUI($scope.nextSong);
+            }
+
             //$scope.status.axis = ($scope.userSetting.axisNone && $scope.status.axisNone) ? $scope.fixedUI.axisNone : $scope.fixedUI.axis;
             $scope.status.axis = $scope.status.defaultdisk ? $scope.fixedUI.author : (($scope.userSetting.axisNone && $scope.status.axisNone) ? $scope.fixedUI.axisNone : $scope.fixedUI.axis);
             $scope.showLyric.line1 = '';
@@ -220,20 +260,26 @@ angular.module('musicboxApp')
             $scope.showLyric();
 
             if (!$scope.status.notifyNone) {
+                var title = $scope.song.title || 'New Song';
                 var opt = {
-                    type: 'image',
-                    title: $scope.song.title || 'New Song',
-                    message: $scope.song.artist || 'Various Artists',
-                    iconUrl: $scope.fixedUI.popicon,
-                    imageUrl: $scope.song.picture || 'images/cdplayer/sample.jpg',
+                    // type: 'image',
+                    // title: $scope.song.title || 'New Song',
+                    // message: $scope.song.artist || 'Various Artists',
+                    // iconUrl: $scope.fixedUI.popicon,
+                    // imageUrl: $scope.song.picture || 'images/cdplayer/sample.jpg',
+
+                    body: $scope.song.artist || 'Various Artists',
+                    icon: $scope.song.picture
                 };
-                notifyService.showNotification(opt);
+                notifyService.showNotification(title, opt);
             }
             // window.console.log('download name:', $scope.song.download);
         };
 
         // new,skip,bye: n->p, s->p, b->p, e->p, r, u //h= sid:[psbr] | sid:[psbr]，避免重复，长度限定20项
         $scope.playMusic = function(type) {
+            $scope.song.like = false;
+            
             if (type !== 'n' && type !== 'u') {
                 var history = $scope.song.sid + ':' + type;
                 if ($scope.history.length > 20) {
@@ -353,8 +399,8 @@ angular.module('musicboxApp')
             }
         };
 
-
     }]);
+
 
 // get song service
 angular.module('musicboxApp')
@@ -713,22 +759,23 @@ angular.module('musicboxApp')
 angular.module('musicboxApp')
     .service('notifyService', [function() {
         // show notification
-        this.showNotification = function(opt) {
+        var Notification = window.Notification || window.mozNotification || window.webkitNotification;
+        this.showNotification = function(title, opt) {
             if (!('Notification' in window)) {
                 window.console.log('Update your browser up-to-date and enjoy the special notification');
             } else if (Notification.permission === 'granted') {
-                this.doShowNotification(opt);
+                this.doShowNotification(title, opt);
             } else if (Notification.permission !== 'denied') {
                 Notification.requestPermission(function(permission) {
                     if (permission === 'granted') {
-                        this.doShowNotification(opt);
+                        this.doShowNotification(title, opt);
                     }
                 });
             }
         };
 
         // show notification: do the real work
-        this.doShowNotification = function(opt) {
+        this.doShowNotification = function(title, opt) {
             // var popImgUrl = $scope.song.picture;
             // var iconimg = resizeImgService.resizeImage(popImgUrl, 48, 48);  // img: $scope.fixedUI.popicon
             // var options = {
@@ -737,11 +784,11 @@ angular.module('musicboxApp')
             //     icon: $scope.fixedUI.popicon
             // };
             // window.console.log('Nofitication:', options);
-            // var newSongNotify = new Notification($scope.song.title, options);
-            // $timeout(newSongNotify.close.bind(newSongNotify), 8000);
+            var newSongNotify = new Notification(title, opt);
+            setTimeout(newSongNotify.close.bind(newSongNotify), 9000);
             // 
             // only for chrome notification to use the image type notification
-            chrome.notifications.create(opt, function() {});
+            // chrome.notifications.create(opt, function() {});  // changed on 1.0.1.3, enable on 1.0.1.2
                 // $timeout(chrome.notifications.clear(function(){}), 8000);
             // });
         };

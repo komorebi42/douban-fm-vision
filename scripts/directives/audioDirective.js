@@ -179,3 +179,21 @@ angular.module('musicboxApp')
             }
         };
     }]);
+//  added music information link to Douban FM, function added at 2015-10-30, ver. 1.0.1.0
+angular.module('musicboxApp')
+    .directive('ngAlbum', [function () {
+        return {
+            restrict: 'A',
+            link: function (scope, iElement, iAttrs) {
+                iElement.bind('click', function() {
+                    if (scope.song) {
+                        var url = 'http://music.douban.com';
+                        url += scope.song.album;
+                        var l = (window.screen.width - 30 - 1280) / 2;
+                        var t = (window.screen.height - 10 - 800) / 2;
+                        window.open(url, '_blank', 'width=1280,height=800,left=' + l + ',top=' + t + ',toolbar=yes,menubar=yes,scrollbars=yes,resizable=yes,location=yes,status=yes');    
+                    }
+                });
+            }
+        };
+    }]);

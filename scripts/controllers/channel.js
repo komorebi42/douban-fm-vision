@@ -204,14 +204,14 @@ angular.module('musicboxApp')
 
         this.getChlId = function() {
             if (self.chlId !== 0) {
-                return (self.chlId ? self.chlId : ($cookieStore.get('chlId') ? $cookieStore.get('chlId') : '155'));
+                return (self.chlId ? self.chlId : ($cookieStore.get('chlId') ? $cookieStore.get('chlId') : '2'));  // 155 舒缓
             } else {
                 return 0; // personal MHz            
             }
         };
 
         this.getChlName = function() {
-            return (self.chlName ? self.chlName : ($cookieStore.get('chlName') ? $cookieStore.get('chlName') : '舒缓'));
+            return (self.chlName ? self.chlName : ($cookieStore.get('chlName') ? $cookieStore.get('chlName') : '欧美'));  // 155 舒缓
         };
 
         this.setChannels = function(Id, Name) {

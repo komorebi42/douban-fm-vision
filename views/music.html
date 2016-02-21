@@ -1,11 +1,11 @@
 
 <!-- Main Content -->
 <div id="MusicBox" ng-controller="AudioController" ng-init="initPlay()">
-    <div id="cd" ng-expand isexpand="systemSetting.expanded">
+    <div id="cd" ng-expand isexpand="systemSetting.expanded" ng-keydown="backToNormal()">
         <div id="cd-player">
             <img ng-src="{{fixedUI.player}}" alt="cd-player">
         </div>
-        <div id="cd-axis">
+        <div id="cd-axis" ng-album>
             <img ng-class="{'spin': status.playing, 'spin spin-paused': (!status.playing || paused)}" ng-src="{{status.axis}}" style="{background:#DDD}" alt="cd-axis">
         </div>
         <div id="cd-disk">
@@ -41,7 +41,7 @@
                             <a class="chl-name" ng-click="chlSelected(chl.id, chl.name)" ng-class="{'li-even': $even, 'li-odd': $odd}">
                                 <i class="chl-playing fa fa-check-circle" ng-show="showSelected(chl.id)"></i>&nbsp;
                                 <span class="cname ng-cloak">
-                                    {{chl.name}}<span class="mhz">MHz</span>
+                                    {{chl.name}}<span class="mhz"> MHz</span>
                                 </span>
                                 <span class="favbtn" ng-click="starSelected(chl.id, addfavIndex)" ng-hide="(addfavIndex === 0) && (chlsIndex === 0 || chlsIndex === 1 )">
                                     <i class="fa fa-star-o fa-lg favchls" ng-class="{'fa-star': (addfavIndex === 0),'fa-star': showFavChl(chl.id),'fa-star-o': !showFavChl(chl.id)}"></i>
@@ -70,7 +70,7 @@
                         <span ng-click="loop=!loop" ng-loop><i class="fa fa-random fa-2x green-btn" ng-class="{'fa-refresh': loop, 'fa-random': !loop}"></i></span>
                     </li>
                     <li class="like">
-                        <span ng-click="rate=!rate" ng-rate="song.like"><i class="fa fa-heart-o fa-2x" ng-class="{'fa-heart red-heart': rate, 'fa-heart-o': !rate}"></i>
+                        <span ng-click="rate=!rate" ng-rate ng-like="song.like"><i class="fa fa-heart-o fa-2x" ng-class="{'fa-heart red-heart': rate, 'fa-heart-o': !rate}"></i>
                         <i class="fa fa-heart heart-hidden" ng-class="{'heart-active': rate}"></i></span>
                     </li>
                     <li class="bye">
@@ -89,7 +89,7 @@
                         <span ng-click="shareflag=!shareflag"><i class="fa fa-share-alt fa-2x green-btn"></i></span>
                     </li>
                     <li class="download">
-                        <span><a id="downloadlink" ng-href="{{song.url}}" ng-dlink download><i class="fa fa-download fa-2x green-btn"></i></a></span>
+                        <span><a id="downloadlink" ng-href="{{song.url}}" target="_blank" ng-dlink download="{{song.filename}}"><i class="fa fa-download fa-2x green-btn"></i></a></span>
                     </li>
                     <!-- <li class="search">
                         <span ng-click="searchflag=!searchflag"><i class="fa fa-search fa-2x green-btn"></i></span>
@@ -196,6 +196,7 @@
                 <div id="image-wrapper" ng-show="slideshow || !lyric.valid" ng-click="slideshow=false">
                     <div class="lyrics-notice" ng-show="lyricNotice" ng-click="lyricNotice=false">
                         <p>未发现歌词</p>
+                        <p>Not Found</p>
                     </div>
                     <img class="lyrics-image" ng-class="{'img-opacity': lyricNotice }" ng-show="status.imguseful" ng-click="!lyric.valid ? (lyricNotice=!lyricNotice) : false" ng-src="{{ song.picture | trustUrl }}" >
                 </div>
@@ -206,7 +207,8 @@
         </div>
         <!-- song-title && artist -->
         <div id="SongNamePannel" ng-click="lyric.valid ? (slideshow=!slideshow) : (lyricNotice=!lyricNotice)">
-            <span class="song-author-show ng-cloak" ng-class="{'slide-animate2': showmarquee}" ng-show-marquee value="song.title">{{song.title}} by {{song.artist}}</span>
+            <!-- <span class="song-author-show ng-cloak" ng-class="{'slide-animate2': showmarquee}" ng-show-marquee value="song.title">{{song.title}} by {{song.artist}}</span> -->
+            <span class="song-author-show ng-cloak" ng-class="{'slide-animate2': showmarquee}" ng-show-marquee value="song.title">{{song.title_by_artist}}</span>
         </div>
     </div>
 </div>

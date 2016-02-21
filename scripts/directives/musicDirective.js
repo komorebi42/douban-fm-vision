@@ -62,18 +62,20 @@ angular.module('musicboxApp')
                                         scope.inform.favpop = false;
                                         scope.inform.logoutpop = false;
                                     } else {
-                                        window.console.log('rate:', scope.rate, ' why rate changged?');
+                                        window.console.log('rate:', scope.rate, ' rate changged');
                                     }
                                     window.console.log('rate:', scope.rate);
                                 }
+                                scope.song.like = true;
                             });
                         } else {
                                 scope.playMusic('u');
+                                scope.song.like = false;
                         }
                     });
                 });
 
-                scope.$watch('ngRate', function(newValue, oldValue) {
+                scope.$watch(iAttrs.ngLike, function(newValue, oldValue) {
                     if (newValue) {
                         scope.$applyAsync(function() {
                             scope.rate = true;
@@ -122,22 +124,60 @@ angular.module('musicboxApp')
 //     }]);
 
 // download music,  [bind on .download li]
-angular.module('musicboxApp')
-    .directive('ngDlink', ['$timeout', function($timeout) {
+angular.module('musicboxApp').directive('ngDlink', ['$timeout', function($timeout) {
         return {
             restrict: 'A',
             link: function (scope, iElement, iAttrs) {
                 var dlink = angular.element(document.querySelector('#downloadlink'));
-                scope.$watch(iAttrs.ngHref, function(newValue, oldValue) {
-                    $timeout(function() {
-                        scope.$applyAsync(function() {
-                            dlink.attr('download', scope.song.title + ' - ' + scope.song.artist + '.' + (iAttrs.ngHref.split('.'))[iAttrs.ngHref.split('.').length - 1]);
-                        });
-                    }, 300);
+
+                dlink.on('click', function (e) {
+                    e.preventDefault();
+
+                    scope.$applyAsync(function() {
+                        var filename = scope.song.title + ' - ' + scope.song.artist + '.' + (iAttrs.ngHref.split('.'))[iAttrs.ngHref.split('.').length - 1];
+                        console.log('file:', filename);
+                        // console.log('filename:', scope.song.filename);
+                        
+                        // window.downloadFile.isChrome || window.downloadFile.isSafari
+                        var link = document.createElement('a');
+                        link.href = scope.song.url;
+                        link.download = filename;
+                        
+                        // chrome.runtime.sendMessage({"url": scope.song.url, "file": filename});
+
+                        if (document.createEvent) {
+                            var e = document.createEvent('MouseEvents');
+                            e.initEvent('click', true, true);
+                            link.dispatchEvent(e);
+                            return true;
+                        } else {
+                            return false;  // cancel navigation
+                        }
+                    });
                 });
             }
         };
     }]);
+
+// chrome.extension.onMessage.addListener(
+//     function(request, sender, sendResponse) {
+//         // console.log("onMessage: " + document.title.split('-')[0].trim() + ":" + request.url);
+//         // set_download_url(request.url);
+
+//         var dlink = $('#downloadlink');
+//         var title = $('#SongNamePannel');
+
+//         var filename = title.innerHtml + '.mp4';
+//         console.log('file:', filename);
+//         console.log('url:', request.url);
+//         console.log('download:', request.download);
+//         chrome.runtime.sendMessage({"url": request.url, "file": filename});
+
+//         if (request.download) {
+//             dlink[0].click();
+//         }
+//     }
+// );
 
 // show progress live,  [bind on #progress div]
 angular.module('musicboxApp')
@@ -270,7 +310,7 @@ angular.module('musicboxApp')
                             // window.console.log('show marquee:', textWidth, wrapWidth);
                             //  var offset = parseInt((wrapWidth + textWidth) / 2) + 'px';
 
-                            if (textWidth >= (wrapWidth - 50)) {
+                            if (textWidth >= (wrapWidth - 100)) {
                                 scope.showmarquee = true;
                                 // window.console.log('show marquee: true');
                             } else {

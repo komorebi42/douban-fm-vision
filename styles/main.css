@@ -134,7 +134,7 @@ table {
 /* Layout styles */
 
 body {
-    font-family: "Helvetica Neue", "Open Sans", "MSYahei", Arial, san-serif;
+    font-family: "Helvetica Neue", "Open Sans", "微软雅黑", "Microsoft YaHei", "STXihei", "Arial Narrow", san-serif;
     min-width: 730px;
     min-height: 462px;
 }
@@ -1260,11 +1260,11 @@ body {
 }
 
 .spin {
-    -webkit-animation: spin 5s linear infinite;
-    -moz-animation: spin 5s linear infinite;
-    -ms-animation: spin 5s linear infinite;
-    -o-animation: spin 5s linear infinite;
-    animation: spin 5s linear infinite;
+    -webkit-animation: spin 10s linear infinite;
+    -moz-animation: spin 10s linear infinite;
+    -ms-animation: spin 10s linear infinite;
+    -o-animation: spin 10s linear infinite;
+    animation: spin 10s linear infinite;
     -webkit-animation-play-state: running;
     -moz-animation-play-state: running;
     -ms-animation-play-state: running;
@@ -1446,7 +1446,8 @@ ul.channels-list li.channel {
     width: 420px;
     height: 80px;
     line-height: 80px;
-    font-family: "Myriad Pro", "Helvetica", "Open Sans", "MSYahei", Arial, san-serif;
+    /*font-family: "Myriad Pro", "Helvetica", "Open Sans", "MSYahei", Arial, san-serif;*/
+    font-family: "Myriad Pro", "Helvetica", "Open Sans", "微软雅黑", "Microsoft YaHei", "STXihei", "Arial", san-serif;
     font-size: 1.6em;
     font-weight: 300;
     word-spacing: 2px;
@@ -2631,7 +2632,7 @@ div.user-logout a.logout-btn {
 
 #option-setting-content > div {
     margin: 0 auto;
-    width: 700px;
+    width: 800px;
 }
 
 #option-setting-content > div h3 {
@@ -2661,6 +2662,10 @@ div.user-logout a.logout-btn {
     line-height: 80px;
     font-size: 1.8em;
     color: #95CF5A;
+}
+
+#option-setting-content > div ul li span {
+    word-wrap: normal;
 }
 
  #explaination {

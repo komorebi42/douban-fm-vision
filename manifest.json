@@ -1,10 +1,10 @@
 {
     "manifest_version": 2,
-    "minimum_chrome_version": "42",
+    "minimum_chrome_version": "38",
 
-    "name": "豆瓣FM·新视觉 - FM in New Vision",
-    "description": "豆瓣FM Music Player",
-    "version": "1.0.0",
+    "name": "豆瓣FM新视觉",
+    "description": "本应用在豆瓣FM的基础功能之上，新增动态显示歌词、音量控制、音乐下载、单曲循环、切歌通知等新功能。同时具有拟物化的界面以及用户动态交互。给您新的视觉，新的选择。",
+    "version": "1.0.2",
     
     "permissions": ["notifications", "background", "tabs", "webRequest", "webRequestBlocking", "cookies", "*://*.douban.fm/*", "*://*.douban.com/*", "http://223.68.189.43/PASV/*"],
     "content_security_policy": "script-src 'self' 'unsafe-eval' https://ssl.google-analytics.com; object-src 'self'",
@@ -23,7 +23,7 @@
     },
     "browser_action": {
         "default_icon": "images/favicon_128.png",
-        "default_title": "豆瓣FM·新视觉 - FM in New Vision"
+        "default_title": "豆瓣FM新视觉"
     },
     "update_url": "http://clients2.google.com/service/update2/crx"
 }

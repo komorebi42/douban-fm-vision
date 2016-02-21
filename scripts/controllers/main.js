@@ -21,7 +21,7 @@ angular.module('musicboxApp')
 		$scope.userSetting = {
 			'goodluck':  userSettingService.getGoodLuck() || 1,
 			'goodluckToggle': false,
-			'captionAlways': (userSettingService.getDisplayCaption() !== '00' && userSettingService.getDisplayCaption() !== '01' && userSettingService.getDisplayCaption() !== '10') ? true : false,
+			'captionAlways': userSettingService.getDisplayCaption() === '11' ? true : false,
 			'captionFirst': userSettingService.getDisplayCaption() === '10' ? true : false,
 			'captionFullscreen': userSettingService.getDisplayCaption() === '01' ? true : false,
 			'captionNone': userSettingService.getDisplayCaption() === '00' ? true : false,
@@ -107,11 +107,23 @@ angular.module('musicboxApp')
         		$scope.systemSetting.displayCaption = true;
         		$scope.systemSetting.frontCaption = false;
         		userSettingService.setFrontCaption(false);
+				
+				$scope.userSetting.captionAlways = true;
+        		$scope.userSetting.captionFirst = false;
+				$scope.userSetting.captionFullscreen = false;
+				$scope.userSetting.captionNone = false;
+				userSettingService.setDisplayCaption('11');
         	} else if (!$scope.systemSetting.frontCaption) {
         		$scope.systemSetting.frontCaption = true;
         		userSettingService.setFrontCaption(true);
         	} else if ($scope.systemSetting.frontCaption) {
         		$scope.systemSetting.displayCaption = false;
+
+        		$scope.userSetting.captionNone = true;
+				$scope.userSetting.captionAlways = false;
+				$scope.userSetting.captionFirst = false;
+				$scope.userSetting.captionFullscreen = false;
+				userSettingService.setDisplayCaption('00');
         	}
         };
 
