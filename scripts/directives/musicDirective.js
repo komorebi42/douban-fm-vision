@@ -137,12 +137,12 @@ angular.module('musicboxApp').directive('ngDlink', ['$timeout', function($timeou
                         var filename = scope.song.title + ' - ' + scope.song.artist + '.' + (iAttrs.ngHref.split('.'))[iAttrs.ngHref.split('.').length - 1];
                         console.log('file:', filename);
                         // console.log('filename:', scope.song.filename);
-                        
+
                         // window.downloadFile.isChrome || window.downloadFile.isSafari
                         var link = document.createElement('a');
                         link.href = scope.song.url;
                         link.download = filename;
-                        
+
                         // chrome.runtime.sendMessage({"url": scope.song.url, "file": filename});
 
                         if (document.createEvent) {
@@ -191,7 +191,7 @@ angular.module('musicboxApp')
                 var cursor = angular.element(document.querySelector('#cursor'));
                 var total = progress.width() - cursor.width();
                 var start = cursor.width();
-                
+
                 scope.$watch(iAttrs.ngTime, function(newValue, oldValue) {
                     if (newValue != oldValue) {
                         if (audio.duration) {

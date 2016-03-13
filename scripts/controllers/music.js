@@ -160,8 +160,8 @@ angular.module('musicboxApp')
         //         }
         //     });
         // });
-        // 
-        // 
+        //
+        //
         // user axis none setting
         // $scope.$broadcast('axis-not-display', $scope.userSetting.axisNone);
         $scope.$on('axis-not-display', function(e, msg) {
@@ -202,7 +202,8 @@ angular.module('musicboxApp')
             if ($scope.status.defaultdisk) {
                 $scope.status.defaultdisk = false;
             } else {
-                $scope.status.defaultdisk = $scope.getGoodLuck(6 - $scope.userSetting.goodluck);
+                // $scope.status.defaultdisk = $scope.getGoodLuck(6 - $scope.userSetting.goodluck);
+                $scope.status.defaultdisk = false;
                 $scope.status.pictureforAxis = song.picture;
             }
 
@@ -232,7 +233,7 @@ angular.module('musicboxApp')
             // };
 
             // changed at ver. 1.0.1, no more default settings
-            if (song) {
+            if (song && !song.hasOwnProperty('adtype')) {  // adtype, monitor_url
                 $scope.song = {
                     'album': song.album,
                     'albumtitle': song.albumtitle,
@@ -248,6 +249,9 @@ angular.module('musicboxApp')
                     'download': song.title + '_by_' + song.artist + '.' // + song.url.split('.')[song.url.split('.').length - 1]
                 };
             } else {
+                if (song.hasOwnProperty('adtype')) {
+                    console.log('AD data:', song);
+                }
                 $scope.getNextSong();
                 $scope.showUI($scope.nextSong);
             }

@@ -19,7 +19,6 @@
                 <img id='btn' ng-plug ng-autolength ng-src="{{fixedUI.button}}" alt="power-button">
             </div>
         </div>
-        
     </div>
     <div id="AudioPlayer" style="position:fixed;left:20px; top:20px;">
         <!-- audio element -->
@@ -34,7 +33,7 @@
     <div id="ChlPannel" ng-show="showChlsList" class="chlPannelShow">
         <div id="chl-list-wrapper" class="scrollbar" ng-controller="ChannelListController">
             <div id="chl-section" ng-init="initChannels()">
-                <ul class="channels-list" ng-repeat="group in groups track by $index" ng-init="addfavIndex = $index">
+                <ul class="channels-list" ng-repeat="group in groups track by $index" ng-init="groupId = $index">
                     <li class="group-list" ng-bind="group.group_name"></li>
                     <ul ng-repeat="chl in group.chls track by $index" ng-init="chlsIndex = $index">
                         <li class="channel">
@@ -43,13 +42,14 @@
                                 <span class="cname ng-cloak">
                                     {{chl.name}}<span class="mhz"> MHz</span>
                                 </span>
-                                <span class="favbtn" ng-click="starSelected(chl.id, addfavIndex)" ng-hide="(addfavIndex === 0) && (chlsIndex === 0 || chlsIndex === 1 )">
-                                    <i class="fa fa-star-o fa-lg favchls" ng-class="{'fa-star': (addfavIndex === 0),'fa-star': showFavChl(chl.id),'fa-star-o': !showFavChl(chl.id)}"></i>
+                            </a>
+                            <a class="star-chl" ng-click="starSelected(chl.id, groupId)">
+                                <span class="star-btn" ng-hide="(groupId < 1) && (chlsIndex === 0 || chlsIndex === 1)">
+                                    <i class="fa fa-star fa-lg favchls" ng-class="{'fa-star': showFavedChl(chl.id, groupId, chl.name), 'fa-star-o': !showFavedChl(chl.id, groupId, chl.name)}"></i>
                                 </span>
                             </a>
                         </li>
-                    </ul> 
-
+                    </ul>
                 </ul>
             </div>
         </div>
@@ -70,7 +70,7 @@
                         <span ng-click="loop=!loop" ng-loop><i class="fa fa-random fa-2x green-btn" ng-class="{'fa-refresh': loop, 'fa-random': !loop}"></i></span>
                     </li>
                     <li class="like">
-                        <span ng-click="rate=!rate" ng-rate ng-like="song.like"><i class="fa fa-heart-o fa-2x" ng-class="{'fa-heart red-heart': rate, 'fa-heart-o': !rate}"></i>
+                        <span ng-click="rate=!rate" ng-rate ng-like="song.like"><i class="fa fa-heart-o fa-2x green-btn" ng-class="{'fa-heart red-heart': rate, 'fa-heart-o': !rate}"></i>
                         <i class="fa fa-heart heart-hidden" ng-class="{'heart-active': rate}"></i></span>
                     </li>
                     <li class="bye">
@@ -186,14 +186,14 @@
         <!-- lyrics -->
         <div id="LyricsPannel">
             <div id="lyrics-img-wrap">
-                <div id="lyrics-wrapper" ng-show="!slideshow && lyric.valid" ng-click="slideshow=true" ng-lyrics ng-hlindex="lyric.hlindex" class="scrollbar">
+                <div id="lyrics-wrapper" ng-show="slideshow && lyric.valid" ng-click="slideshow=false" ng-lyrics ng-hlindex="lyric.hlindex" class="scrollbar">
                     <div id="lyrics-live" ng-class="{'no-margin': !lyric.tsuseful}">
                         <ul ng-repeat="oneline in lyric.content" ng-init="mline = $index">
                             <li id="lyrics-line" ng-class="{'highlight': (lyric.hlindex === $index && lyric.tsuseful), 'slide-animate2': isTextFull(mline)}" ng-lyric-marquee marqline="mline" ng-bind="oneline.line"></li>
                         </ul>
                     </div>
                 </div>
-                <div id="image-wrapper" ng-show="slideshow || !lyric.valid" ng-click="slideshow=false">
+                <div id="image-wrapper" ng-show="!slideshow || !lyric.valid" ng-click="slideshow=true">
                     <div class="lyrics-notice" ng-show="lyricNotice" ng-click="lyricNotice=false">
                         <p>未发现歌词</p>
                         <p>Not Found</p>
@@ -206,7 +206,7 @@
             </div>
         </div>
         <!-- song-title && artist -->
-        <div id="SongNamePannel" ng-click="lyric.valid ? (slideshow=!slideshow) : (lyricNotice=!lyricNotice)">
+        <div id="SongNamePannel"><!-- ng-dblclick="lyric.valid ? (slideshow=!slideshow) : (lyricNotice=!lyricNotice)"-->
             <!-- <span class="song-author-show ng-cloak" ng-class="{'slide-animate2': showmarquee}" ng-show-marquee value="song.title">{{song.title}} by {{song.artist}}</span> -->
             <span class="song-author-show ng-cloak" ng-class="{'slide-animate2': showmarquee}" ng-show-marquee value="song.title">{{song.title_by_artist}}</span>
         </div>
@@ -228,7 +228,7 @@
 
 
 <!-- TEST AREA -->
-<div id="test-area" style="display: none;">
+<!-- <div id="test-area" style="display: none;">
     <div style="position:fixed; left:10px; bottom: 20px; z-index: 2; overflow:auto; border:1px dashed #EEE;">
         <ul ng-repeat="lyline in lyric.content" ng-init="testindex = $index">
             <li >{{testindex}} - {{lyline.ts}} : {{lyline.line}}</li>
@@ -255,4 +255,4 @@
             <li><a href="" ng-click="isFavChannels(9)">isFavChannels</a></li>
         </ul>
     </div>
-</div>
+</div> -->

@@ -300,6 +300,10 @@ body {
     font-weight: 100;
 }
 
+.primary_menu li:hover {
+    cursor: pointer;
+}
+
 .primary_menu li a {
     display: block;
     width: 80px;
@@ -335,7 +339,7 @@ body {
     color: #A0D672;
 }
 
-.blue-btn, 
+.blue-btn,
 .green-btn:hover {
     color: #00A7FD !important;
 }
@@ -1030,6 +1034,10 @@ body {
     z-index: 6;
 }
 
+#cd-axis:hover {
+    cursor: pointer;
+}
+
 #cd-axis img {
     width: 602px;
     /*border-radius: 50%;
@@ -1079,6 +1087,10 @@ body {
 
 #cd-button img {
     width: 80px;
+}
+
+#cd-button:hover {
+    cursor: pointer;
 }
 
 #cd-button:active {
@@ -1469,7 +1481,7 @@ ul.channels-list li.channel a.chl-name {
     text-decoration: none;
     text-indent: .3em;
     -ms-text-overflow: ellipsis;
-    text-overflow: ellipsis; 
+    text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
     color: #676767;
@@ -1478,31 +1490,14 @@ ul.channels-list li.channel a.chl-name {
     transition: background .2s linear;
 }
 
-ul.channels-list li.channel a.chl-name:hover {
+ul.channels-list li.channel a.chl-name:hover,
+ul.channels-list li.channel a.chl-name:hover + a.star-chl {
     background-color: #0096FF;
     color: #FEFEFE;
 }
 
 ul.channels-list li.channel a.chl-name i.chl-playing {
     color: #98CD60;
-}
-
-ul.channels-list li.channel a.chl-name span.favbtn {
-    display: none;
-    float: right;
-    padding: 0 20px;
-    width: 50px;
-    height: 80px;
-    line-height: 80px;
-    text-align: center;
-    /*border: 1px solid #D2D2D2;*/
-    color: #98CD60;
-    opacity: 1;
-}
-
-ul.channels-list li.channel a.chl-name:hover span.favbtn {
-    display: inline-block;
-    z-index: 10;
 }
 
 ul.channels-list li.channel a.chl-name span.cname {
@@ -1530,6 +1525,79 @@ ul.channels-list li.channel a.chl-name span.cname:hover {
         transform: translate(-150%, 0);
     }
 }
+
+/* star channel */
+/*ul.channels-list li.channel a.star-chl span.star-btn {
+    display: none;
+    float: right;
+    padding: 0 20px;
+    width: 50px;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+    color: #98CD60;
+    opacity: 1;
+}
+ul.channels-list li.channel a.star-chl:hover span.star-btn {
+    display: inline-block;
+    z-index: 10;
+}*/
+ul.channels-list li.channel a.chl-name:hover + a.star-chl {
+    display: inline-block;
+    /*z-index: 10;*/
+}
+
+ul.channels-list li.channel a.star-chl {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    /*display: inline-block;*/
+    width: 70px;
+    text-decoration: none;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    color: #676767;
+    -webkit-transition: background .2s linear;
+    -o-transition: background .2s linear;
+    transition: background .2s linear;
+}
+
+ul.channels-list li.channel a.star-chl span.star-btn {
+    float: right;
+    padding: 0 10px;
+    width: 50px;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+    color: #98CD60;
+    opacity: 1;
+}
+
+ul.channels-list li.channel a.star-chl:hover {
+    display: inline-block;
+    background-color: #0096FF;
+}
+
+/*ul.channels-list li.channel a.star-chl:hover span.star-btn {
+    color: #FEFEFE;
+}*/
+
+ul.channels-list li.channel a.star-chl:hover span.star-btn .fa-star {
+    color: #FF6D6C;
+}
+
+ul.channels-list li.channel a.star-chl:hover span.star-btn .fa-star-o {
+    color: #FEFEFE;
+}
+
+/*ul.channels-list li.channel a.star-chl:hover + a.chl-name {
+    background-color: #0096FF;
+    color: #FEFEFE;
+}*/
+
 
 ::-webkit-scrollbar {
     width: 16px;
@@ -1683,6 +1751,7 @@ ul.channels-list li.channel a.chl-name span.cname:hover {
 }
 
 #CtrlPannel #toggle-btn a.chl-btn:hover {
+    cursor: pointer;
     color: #676767;
 }
 
@@ -1786,6 +1855,7 @@ ul.channels-list li.channel a.chl-name span.cname:hover {
 
 #CtrlPannel #btn-zone ul.btn-group li span:hover {
     background-color: #E4E4E4;
+    cursor: pointer;
 }
 
 #CtrlPannel #btn-zone ul.btn-group li.like span {
@@ -2187,6 +2257,10 @@ div.user-logout a.logout-btn {
     overflow-Y: auto;
 }
 
+#lyrics-img-wrap #lyrics-wrapper {
+    cursor: pointer;
+}
+
 #lyrics-wrapper #lyrics-live {
     width: 100%;
     position: relative;
@@ -2252,6 +2326,10 @@ div.user-logout a.logout-btn {
     text-align: center;
     /*border-radius: 8px;*/
     /*box-shadow: 0 2px 1em #D2D2D2, 0 -1px 1em #D2D2D2;*/
+}
+
+#lyrics-img-wrap #image-wrapper {
+    cursor: pointer;
 }
 
 #image-wrapper .lyrics-image {
@@ -2347,6 +2425,10 @@ div.user-logout a.logout-btn {
     border-radius: 0 0 10px 10px;
     box-shadow: 0 -1px 1em #D2D2D2;
 }
+
+/*#SongNamePannel:hover {
+    cursor: pointer;
+}*/
 
 #SongNamePannel span.song-author-show {
     display: inline-block;
@@ -2594,6 +2676,7 @@ div.user-logout a.logout-btn {
     opacity: 1;
     color: #2D2D2D;
     border: 4px solid #D0D0D0;
+    cursor: pointer;
 }
 
 /*  option right part */
@@ -2620,7 +2703,7 @@ div.user-logout a.logout-btn {
 
 #option-right-wrapper #option-right-inner > div {
     margin: 0 auto;
-} 
+}
 
 /* user setting */
 
@@ -2662,6 +2745,10 @@ div.user-logout a.logout-btn {
     line-height: 80px;
     font-size: 1.8em;
     color: #95CF5A;
+}
+
+#option-setting-content > div ul li i:hover {
+    cursor: pointer;
 }
 
 #option-setting-content > div ul li span {
@@ -2733,6 +2820,7 @@ div.user-logout a.logout-btn {
 
 #option-right-inner #option-about-content p a:hover {
     color: #00A7FD;
+    cursor: pointer;
 }
 
 #option-right-inner #option-about-content img {

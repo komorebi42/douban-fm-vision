@@ -81,7 +81,7 @@ angular.module('musicboxApp')
 					} else {
 						$scope.systemSetting.displayCaption = true;
 					}
-				} 
+				}
 				if ($scope.userSetting.captionFullscreen) {
 					// $scope.systemSetting.expanded ? $scope.systemSetting.displayCaption = true : $scope.systemSetting.displayCaption = false;
 					if ($scope.systemSetting.expanded) {
@@ -89,7 +89,7 @@ angular.module('musicboxApp')
 					} else {
 						$scope.systemSetting.displayCaption = false;
 					}
-				} 
+				}
         	}
         };
 
@@ -99,15 +99,15 @@ angular.module('musicboxApp')
         	$scope.$broadcast('SettingMode', $scope.systemSetting.hidedpannel);
         };
 
-        // front set or close or display caption 
+        // front set or close or display caption
         $scope.frontCaption = function() {
         	// $scope.systemSetting.frontCaption ? $scope.systemSetting.frontCaption = false : $scope.systemSetting.frontCaption = true;
-        	// 
+        	//
         	if (!$scope.systemSetting.displayCaption) {
         		$scope.systemSetting.displayCaption = true;
         		$scope.systemSetting.frontCaption = false;
         		userSettingService.setFrontCaption(false);
-				
+
 				$scope.userSetting.captionAlways = true;
         		$scope.userSetting.captionFirst = false;
 				$scope.userSetting.captionFullscreen = false;
@@ -153,10 +153,10 @@ angular.module('musicboxApp')
 				$scope.userSetting.captionAlways = false;
 				$scope.userSetting.captionFullscreen = false;
 				$scope.userSetting.captionNone = false;
-			} 
+			}
 		};
 
-		// only display caption on fullscreen page  01 
+		// only display caption on fullscreen page  01
 		$scope.captionFullscreen = function() {
 			$scope.userSetting.captionFullscreen = !$scope.userSetting.captionFullscreen;
 			if ($scope.userSetting.captionFullscreen) {
@@ -170,7 +170,7 @@ angular.module('musicboxApp')
 				$scope.userSetting.captionAlways = false;
 				$scope.userSetting.captionFirst = false;
 				$scope.userSetting.captionNone = false;
-			} 
+			}
 		};
 
 		// donot display caption on all pages  00
@@ -182,7 +182,7 @@ angular.module('musicboxApp')
 				$scope.userSetting.captionFirst = false;
 				$scope.userSetting.captionFullscreen = false;
 				userSettingService.setDisplayCaption('00');
-			} 
+			}
 		};
 
 		// display axis on the disk

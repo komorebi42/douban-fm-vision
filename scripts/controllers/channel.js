@@ -62,7 +62,7 @@ angular.module('musicboxApp')
                 );
         };
 
-        // load users favorite channels 
+        // load users favorite channels
         $scope.loadFavChannels = function() {
             chlService.getFavChannels()
                 .then(function(data) {
@@ -71,7 +71,6 @@ angular.module('musicboxApp')
                     // angular.forEach($scope.groups[0].chls, function(v) {
                     //     $scope.groups[0].chls.pop(v);
                     // });
-                    
                     // angular.forEach($scope.redchl, function(v) {
                     //     $scope.groups[0].chls.push(v);
                     // });
@@ -97,14 +96,17 @@ angular.module('musicboxApp')
         // });
 
         // show the fav or unfav icon
-        $scope.showFavChl = function(chlId) {
+        $scope.showFavedChl = function(chlId, groupId, chlName) {
             var star = false;
-            if ($scope.favChlIds) {
+            if (groupId < 1) {
+                star = true;
+            } else if ($scope.favChlIds) {
                 var index = $scope.favChlIds.indexOf(chlId);
                 if (index !== -1) {
                     star = true;
                 }
             }
+            // if (!!star) {console.log('stared chls:', chlName);};
             return star;
         };
 
@@ -206,7 +208,7 @@ angular.module('musicboxApp')
             if (self.chlId !== 0) {
                 return (self.chlId ? self.chlId : ($cookieStore.get('chlId') ? $cookieStore.get('chlId') : '2'));  // 155 舒缓
             } else {
-                return 0; // personal MHz            
+                return 0; // personal MHz
             }
         };
 
@@ -260,7 +262,7 @@ angular.module('musicboxApp')
                 deferred.resolve(cachedData.realData);
             }
             return deferred.promise;
-        };        
+        };
 
         // get the favorite chls list
         this.getFavChannels = function() {
@@ -279,7 +281,7 @@ angular.module('musicboxApp')
             //     data: {
             //         res: 1
             //     }
-            // }   
+            // }
         };
 
         // favorite the selected chl
@@ -291,7 +293,7 @@ angular.module('musicboxApp')
             //     data: {
             //         res: 1
             //     }
-            // }   
+            // }
         };
 
         // is favorite channel
@@ -306,7 +308,7 @@ angular.module('musicboxApp')
             //             is_fav: true
             //         }
             //     }
-            // }  
+            // }
         };
 
         // defer promise
