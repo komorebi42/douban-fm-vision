@@ -79,7 +79,7 @@
 	豆瓣FM·新视觉 - FM in New Vision
 	
 Goole web store Install: [地址][1]
-百度离线安装: [地址][2] 　
+百度离线安装: [地址][2]
 
 或者使用QQ浏览器，在应用商店搜索「豆瓣FM新视觉」安装即可。
 
@@ -88,5 +88,5 @@ Goole web store Install: [地址][1]
 
 
 [1]:https://chrome.google.com/webstore/detail/%E8%B1%86%E7%93%A3fm%C2%B7%E6%96%B0%E8%A7%86%E8%A7%89-fm-in-new-vision/iohkfdpdopboklgjdgcmjhlmmiainloc
-[2]:http://pan.baidu.com/s/1gdXNAKF
+[2]:http://pan.baidu.com/s/1c1nBcuW
 
