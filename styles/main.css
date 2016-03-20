@@ -1426,7 +1426,7 @@ body {
     height: 740px;
     margin-left: -450px;
     background-color: #EEE;
-    border: 0px solid #EDEDED;
+    border: 0 solid #EDEDED;
     border-radius: 10px;
     box-shadow: 3px 5px 1em #D2D2D2, -3px -3px 1em #D2D2D2;
     overflow-Y: auto;
@@ -1485,15 +1485,21 @@ ul.channels-list li.channel a.chl-name {
     overflow: hidden;
     white-space: nowrap;
     color: #676767;
-    -webkit-transition: background .2s linear;
-    -o-transition: background .2s linear;
-    transition: background .2s linear;
+    -webkit-transition: background .1s linear;
+    -o-transition: background .1s linear;
+    transition: background .1s linear;
 }
 
-ul.channels-list li.channel a.chl-name:hover,
-ul.channels-list li.channel a.chl-name:hover + a.star-chl {
+ul.channels-list li.channel a.chl-name:hover {
     background-color: #0096FF;
     color: #FEFEFE;
+}
+
+ul.channels-list li.channel a.chl-name:hover + a.star-chl {
+    -webkit-transition: background .1s linear;
+    -o-transition: background .1s linear;
+    transition: background .1s linear;
+    display: inline-block;
 }
 
 ul.channels-list li.channel a.chl-name i.chl-playing {
@@ -1542,17 +1548,13 @@ ul.channels-list li.channel a.star-chl:hover span.star-btn {
     display: inline-block;
     z-index: 10;
 }*/
-ul.channels-list li.channel a.chl-name:hover + a.star-chl {
-    display: inline-block;
-    /*z-index: 10;*/
-}
 
 ul.channels-list li.channel a.star-chl {
     display: none;
+    /*display: inline-block;*/
     position: absolute;
     right: 0;
     top: 0;
-    /*display: inline-block;*/
     width: 70px;
     text-decoration: none;
     -ms-text-overflow: ellipsis;
@@ -1560,9 +1562,6 @@ ul.channels-list li.channel a.star-chl {
     overflow: hidden;
     white-space: nowrap;
     color: #676767;
-    -webkit-transition: background .2s linear;
-    -o-transition: background .2s linear;
-    transition: background .2s linear;
 }
 
 ul.channels-list li.channel a.star-chl span.star-btn {
@@ -1718,7 +1717,7 @@ ul.channels-list li.channel a.star-chl:hover span.star-btn .fa-star-o {
     width: 540px;
     height: 740px;
     background-color: #F4F4F4;
-    border: 0px solid #EDEDED;
+    border: 0 solid #EDEDED;
     box-shadow: 3px 5px 1em #D2D2D2, -3px -3px 1em #D2D2D2;
     border-radius: 10px;
     overflow: hidden;
@@ -2270,7 +2269,7 @@ div.user-logout a.logout-btn {
     word-spacing: 1px;
     letter-spacing: 1px;
     font-size: 1.4em;
-    font-weight: 160;
+    font-weight: 200;
 }
 
 #lyrics-wrapper #lyrics-live .no-margin {
@@ -2408,7 +2407,7 @@ div.user-logout a.logout-btn {
 
 #SongNamePannel {
     position: absolute;
-    bottom: 0px;
+    bottom: 0;
     margin: 0 auto;
     background-color: #FFF;
     width: 100%;
@@ -2877,7 +2876,7 @@ div.user-logout a.logout-btn {
     overflow: hidden;
     vertical-align: top;
     perspective: 400px;
-    perspective-origin: 50%, 50%;
+    /*perspective-origin: 50%, 50%;*/
 }
 
 .roll span {
@@ -2888,7 +2887,7 @@ div.user-logout a.logout-btn {
     -ms-transition: all .4s ease;
     -o-transition: all .4s ease;
     transition: all .4s ease;
-    transform-origin: 50%, 0;
+    /*transform-origin: 50%, 0;*/
     transform-style: preserve-3d;
 }
 

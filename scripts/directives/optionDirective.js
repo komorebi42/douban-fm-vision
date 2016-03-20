@@ -12,7 +12,7 @@ angular.module('musicboxApp')
         return {
             restrict: 'A',
             scope: true,
-            templateUrl: 'views/option.html',
+            templateUrl: 'views/option.html'
             // link: function (scope, iElement, iAttrs) {
             // }
         };

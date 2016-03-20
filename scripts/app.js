@@ -6,15 +6,10 @@
  * Main module of the application.
  */
 'use strict';
-angular.module('musicboxApp', [
-        'ngAnimate',
-        'ngCookies',
-        'ngResource',
-        'ngRoute'
-    ])
+angular.module('musicboxApp', ['ngAnimate', 'ngCookies', 'ngResource', 'ngRoute'])
     .constant('appConstants',{
         cacheExpiryPeriodMs: 10000,
-        useBrowserCache: true,
+        useBrowserCache: true
     })
     .config(['$httpProvider', function ($httpProvider) {
         $httpProvider.defaults.headers.common['Content-Type'] = 'application/x-www-form-urlencoded';

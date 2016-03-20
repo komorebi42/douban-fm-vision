@@ -4,9 +4,21 @@
 
     "name": "豆瓣FM新视觉",
     "description": "不一样的豆瓣FM，试试？！",
-    "version": "1.1.0",
+    "version": "1.2.0",
 
-    "permissions": ["notifications", "background", "tabs", "webRequest", "webRequestBlocking", "cookies", "*://*.douban.fm/*", "*://*.douban.com/*", "http://223.68.189.43/PASV/*"],
+    "permissions": [
+        "notifications",
+        "background",
+        "tabs",
+        "webRequest",
+        "webRequestBlocking",
+        "cookies",
+        "*://*.douban.fm/*",
+        "*://*.douban.com/*",
+        "http://223.68.189.43/PASV/*",
+        "https://www.google-analytics.com/",
+        "storage"
+    ],
     "content_security_policy": "script-src 'self' 'unsafe-eval' https://ssl.google-analytics.com; object-src 'self'",
     "incognito": "split",
     "offline_enabled": false,

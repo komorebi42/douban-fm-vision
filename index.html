@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="zh">
+<html lang="zh" ng-app="musicboxApp" ng-controller="MainController" ng-init="checkCaptionStatus()">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>豆瓣FM新视觉, 发现打动你内心的声音</title>
+    <title ng-cloak>{{title}}</title>
     <meta name="description" content="Angular js for DoubanFM">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
@@ -11,8 +11,8 @@
 </head>
 
 <body>
-    <div id="container" ng-app="musicboxApp">
-        <div id="inner" ng-controller="MainController" ng-init="checkCaptionStatus()">
+    <div id="container">
+        <div id="inner">
             <div id="menu-wrapper">
                 <nav id="main-nav" ng-controller="MenuController">
                     <ul class="primary_menu">
@@ -29,7 +29,7 @@
                             <a class="btn-menu-2"><i class="fa fa-cc fa-2x green-btn expand"></i></a>
                         </li>
                         <li ng-click="umbrella=!umbrella" ng-show="umbrella">
-                            <a class="btn-menu-3 expand" href="https://github.com/vinkerz/vinkerz.github.io" target="_blank"><i class="fa fa-github fa-2x green-btn"></i></a>
+                            <a class="btn-menu-3 expand" href="https://github.com/vinkerz/douban-fm-vision" target="_blank"><i class="fa fa-github fa-2x green-btn"></i></a>
                         </li>
                     </ul>
                 </nav>
