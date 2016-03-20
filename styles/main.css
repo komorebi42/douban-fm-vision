@@ -2134,7 +2134,7 @@ div.user-played span .tips {
     display: none;
 }
 
-div.user-played span#played:hover .tips {
+div.user-played span#played-num:hover .tips {
     display: block;
     left: 69px;
     /*left: 99px;*/

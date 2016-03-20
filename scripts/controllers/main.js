@@ -13,7 +13,7 @@ angular.module('musicboxApp').controller('MainController', ['$scope', 'userSetti
     // update page title when changed songs
     $scope.$on('mainController.songsTitleChanged', function(e, data) {
         if (data) {
-            $scope.title = data.song + ' - ' + data.artist;  // + ' - 豆瓣FM新视觉';   
+            $scope.title = data.song + ' - ' + data.artist + ' [豆瓣FM·新视觉]';
         } else {
             $scope.title = '豆瓣FM新视觉 - 发现打动你内心的声音';
         }
@@ -25,7 +25,7 @@ angular.module('musicboxApp').controller('MainController', ['$scope', 'userSetti
         'weberror': false,
         'expanded': false,
         'hidedpannel': false,
-        'frontCaption': userSettingService.getFrontCaption() ? userSettingService.getFrontCaption() : false,
+        'frontCaption': userSettingService.getFrontCaption() || false,
         'displayCaption': false
     };
 
@@ -36,8 +36,8 @@ angular.module('musicboxApp').controller('MainController', ['$scope', 'userSetti
         'captionFirst': userSettingService.getDisplayCaption() === '10',
         'captionFullscreen': userSettingService.getDisplayCaption() === '01',
         'captionNone': userSettingService.getDisplayCaption() === '00',
-        'axisNone': userSettingService.getAxisSetting() ? userSettingService.getAxisSetting() : false,
-        'notifyNone': userSettingService.getNotifySetting() ? userSettingService.getNotifySetting() : false
+        'axisNone': userSettingService.getAxisSetting() || false,
+        'notifyNone': userSettingService.getNotifySetting() || false
     };
 
     $scope.checkCaptionStatus = function() {
@@ -51,22 +51,16 @@ angular.module('musicboxApp').controller('MainController', ['$scope', 'userSetti
                 break;
             case '10':
                 $scope.userSetting.captionFirst = true;
-                if (!$scope.systemSetting.expanded) {
-                    $scope.systemSetting.displayCaption = false;
-                } else {
-                    $scope.systemSetting.displayCaption = true;
-                }
+                $scope.systemSetting.displayCaption = $scope.systemSetting.expanded;
+
                 $scope.userSetting.captionAlways = false;
                 $scope.userSetting.captionFullscreen = false;
                 $scope.userSetting.captionNone = false;
                 break;
             case '01':
                 $scope.userSetting.captionFullscreen = true;
-                if ($scope.systemSetting.expanded) {
-                    $scope.systemSetting.displayCaption = true;
-                } else {
-                    $scope.systemSetting.displayCaption = false;
-                }
+                $scope.systemSetting.displayCaption = $scope.systemSetting.expanded;
+
                 $scope.userSetting.captionAlways = false;
                 $scope.userSetting.captionFirst = false;
                 $scope.userSetting.captionNone = false;
@@ -86,20 +80,10 @@ angular.module('musicboxApp').controller('MainController', ['$scope', 'userSetti
         if ($scope.systemSetting.hidedpannel === false) {
             $scope.systemSetting.expanded = !$scope.systemSetting.expanded;
             if ($scope.userSetting.captionFirst) {
-                // $scope.systemSetting.expanded ? $scope.systemSetting.displayCaption = false : $scope.systemSetting.displayCaption = true;
-                if ($scope.systemSetting.expanded) {
-                    $scope.systemSetting.displayCaption = false;
-                } else {
-                    $scope.systemSetting.displayCaption = true;
-                }
+                $scope.systemSetting.displayCaption = !$scope.systemSetting.expanded;
             }
             if ($scope.userSetting.captionFullscreen) {
-                // $scope.systemSetting.expanded ? $scope.systemSetting.displayCaption = true : $scope.systemSetting.displayCaption = false;
-                if ($scope.systemSetting.expanded) {
-                    $scope.systemSetting.displayCaption = true;
-                } else {
-                    $scope.systemSetting.displayCaption = false;
-                }
+                $scope.systemSetting.displayCaption = $scope.systemSetting.expanded;
             }
         }
     };
@@ -107,7 +91,7 @@ angular.module('musicboxApp').controller('MainController', ['$scope', 'userSetti
     // enter user setting
     $scope.enterSetting = function() {
         $scope.systemSetting.hidedpannel = !$scope.systemSetting.hidedpannel;
-        $scope.$broadcast('SettingMode', $scope.systemSetting.hidedpannel);
+        // $scope.$broadcast('SettingMode', $scope.systemSetting.hidedpannel);
     };
 
     // front set or close or display caption

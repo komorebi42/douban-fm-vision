@@ -96,5 +96,5 @@ Goole web store Installation: [地址][1]
 
 
 [1]:https://chrome.google.com/webstore/detail/%E8%B1%86%E7%93%A3fm%C2%B7%E6%96%B0%E8%A7%86%E8%A7%89-fm-in-new-vision/iohkfdpdopboklgjdgcmjhlmmiainloc
-[2]:http://pan.baidu.com/s/1c1nBcuW
+[2]:http://pan.baidu.com/s/1kTXk5gV
 

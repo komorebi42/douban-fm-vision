@@ -129,7 +129,7 @@
                             <div class="user-signature">{{userinfo.signature}}</div>
                         </div>
                         <div class="user-played">
-                            <span id="played"><a href="http://douban.fm/mine#!type=played" target="_blank"><i class="fa fa-clock-o fa-2x green-btn"></i></a>{{record.played}}
+                            <span id="played-num"><a href="http://douban.fm/mine#!type=played" target="_blank"><i class="fa fa-clock-o fa-2x green-btn"></i></a>{{record.played}}
                                 <span class="tips">累计收听</span>
                             </span>
                             <span id="liked"><a href="http://douban.fm/mine#!type=liked" target="_blank"><i class="fa fa-heart fa-2x green-btn"></i></a>{{record.liked}}
@@ -142,7 +142,7 @@
                         <div class="user-logout">
                             <!-- <label for="logout">
                             <input type="button" class="btn" name="logout" value="Logout"></label> -->
-                            <a class="logout-btn" ng-href="{{setting.logout}}" target="_blank" ng-click="userLogout()">Logout</label>
+                            <a class="logout-btn" ng-href="{{setting.logout}}" target="_blank" ng-click="userLogout()">Logout</a>
                         </div>
                     </div>
                     <!--

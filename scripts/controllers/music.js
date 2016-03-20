@@ -69,7 +69,7 @@ angular.module('musicboxApp').controller('MusicController', ['$scope', '$filter'
     $scope.status = {
         'playing': false,
         'imguseful': false,
-        'vol': songsService.getVolume() ? songsService.getVolume() : 80,
+        'vol': songsService.getVolume() || 80,
         'maxvol': 100,
         'curtime': '',
         'signed': loginService.getLogStatus(),
@@ -77,8 +77,8 @@ angular.module('musicboxApp').controller('MusicController', ['$scope', '$filter'
         'axis': 'images/cdplayer/axis@2x.png',  // for display
         'defaultdisk': false,
         'pictureforAxis': '',
-        'axisNone': userSettingService.getAxisSetting() ? userSettingService.getAxisSetting() : false,
-        'notifyNone': userSettingService.getNotifySetting() ? userSettingService.getNotifySetting() : false
+        'axisNone': userSettingService.getAxisSetting() || false,
+        'notifyNone': userSettingService.getNotifySetting() || false
     };
     $scope.song = {
         'album': '',  // variety added at 2015-10-30, ver. 1.0.1.0
@@ -178,7 +178,7 @@ angular.module('musicboxApp').controller('MusicController', ['$scope', '$filter'
     // do not display notification
     // $scope.$broadcast('notification-not-display', $scope.userSetting.notifyNone);
     $scope.$on('notification-not-display', function(e, msg) {
-        $scope.status.notifyNone = msg ? true : false;
+        $scope.status.notifyNone = (msg !== null);
     });
 
     // user enter setting mode

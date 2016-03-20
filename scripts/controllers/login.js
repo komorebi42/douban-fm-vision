@@ -12,7 +12,7 @@ angular.module('musicboxApp')
 
         $scope.setting = {
             'ue': '',
-            'logout': '',
+            'logout': ''
         };
 
         // userinfo

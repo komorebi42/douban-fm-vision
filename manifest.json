@@ -1,9 +1,9 @@
 {
     "manifest_version": 2,
-    "minimum_chrome_version": "38",
+    "minimum_chrome_version": "32",
 
     "name": "豆瓣FM新视觉",
-    "description": "不一样的豆瓣FM，试试？！",
+    "description": "不一样的豆瓣FM，试试？！\nhttps://github.com/vinkerz/douban-fm-vision \nhttps://www.douban.com/people/xiaobo1873/",
     "version": "1.2.0",
 
     "permissions": [
@@ -13,8 +13,10 @@
         "webRequest",
         "webRequestBlocking",
         "cookies",
+        "downloads",
         "*://*.douban.fm/*",
         "*://*.douban.com/*",
+        "*://*.doubanio.com/*",
         "http://223.68.189.43/PASV/*",
         "https://www.google-analytics.com/",
         "storage"
