@@ -94,7 +94,31 @@ Goole web store Installation: [地址][1]
 
 如果觉得不错，在商店上评价打分。
 
+###Contribution
+I *really* welcome contributions! Please feel free to fork and send pull requests when...
+
+
+	*   You have an idea about how to improve this project.
+	*   You have found or fixed a bug!
+	
+I'll test and integrate them when time permits.
+
+###Help
+If you have any idea to improve this project or any problem using it, please create an [issue][3].
+
+
+###License
+The MIT License (MIT) Copyright &copy; 2015-2016 Kyle Yang and [contributors][4].
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 
 [1]:https://chrome.google.com/webstore/detail/%E8%B1%86%E7%93%A3fm%C2%B7%E6%96%B0%E8%A7%86%E8%A7%89-fm-in-new-vision/iohkfdpdopboklgjdgcmjhlmmiainloc
 [2]:http://pan.baidu.com/s/1kTXk5gV
+[3]:https://github.com/vinkerz/douban-fm-vision/issues
+[4]:https://github.com/vinkerz/douban-fm-vision/graphs/contributors
 
