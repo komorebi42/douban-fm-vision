@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3afcd4e4-3bca-4b56-8728-93dea493075f" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/controllers/channel.js" afterPath="$PROJECT_DIR$/scripts/controllers/channel.js" />
-    </list>
+    <list default="true" id="3afcd4e4-3bca-4b56-8728-93dea493075f" name="Default" comment="" />
     <ignored path="cosvos.github.io.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -296,12 +294,12 @@
       <workItem from="1458440452628" duration="5557000" />
       <workItem from="1458456551255" duration="7530000" />
       <workItem from="1458481405065" duration="4870000" />
-      <workItem from="1459070332492" duration="327000" />
+      <workItem from="1459070332492" duration="424000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="18284000" />
+    <option name="totallyTimeSpent" value="18381000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="15" y="23" width="1265" height="761" extended-state="0" />
