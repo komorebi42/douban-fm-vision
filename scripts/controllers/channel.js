@@ -49,7 +49,7 @@ angular.module('musicboxApp')
                 .then(function(data) {
                         $scope.groups = data.groups;
                         $scope.redchl = data.groups[0].chls;
-                        if (loginService.getLogStatus()) {
+                        if (loginService.getLogStatus() && $scope.groups[0].chls.length <= 3) {
                             $scope.loadFavChannels();
                         } else {
                             $scope.systemSetting.isLoading = false;
