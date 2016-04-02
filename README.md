@@ -95,7 +95,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 [1]:https://chrome.google.com/webstore/detail/%E8%B1%86%E7%93%A3fm%C2%B7%E6%96%B0%E8%A7%86%E8%A7%89-fm-in-new-vision/iohkfdpdopboklgjdgcmjhlmmiainloc
-[2]:http://pan.baidu.com/s/1kTXk5gV
+[2]:http://pan.baidu.com/s/1eRXb8FS
 [3]:https://github.com/vinkerz/douban-fm-vision/issues
 [4]:https://github.com/vinkerz/douban-fm-vision/graphs/contributors
 
