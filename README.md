@@ -1,20 +1,25 @@
-##豆瓣FM·新视觉 - FM in New Vision
+##豆瓣FM·新视觉 - New Player
 
-###参考了实体Player的设计，并结合豆瓣FM的API进行了重新设计。
+`A real Player on web, used douban.com's API`
 
+###Update History
 
-版本: 1.2.0
+ver: 1.2.1
     
-    更新日期: 2016-03-20
-    更新内容:
+    date: 2016-04-02
+    * 修复部分歌曲到小站的链接
+    * 修复用户设置bug
+    
+ver: 1.2.0
+    
+    date: 2016-03-20
     * 新增下载歌曲自动设置文件名
     * 新增页面title自动更新
     * 调整频道列表样式
     
-版本: 1.1.0
+ver: 1.1.0
     
-    更新日期: 2016-03-13
-    更新内容:
+    date: 2016-03-13
     * 添加广告过滤功能
     * 添加收听当前频道时可以关注其他频道的功能
     * 更新频道列表显示样式
@@ -22,29 +27,25 @@
     * 更改部分点击交互
     * 添加github菜单链接
     
-版本: 1.0.2
+ver: 1.0.2
     
-    更新日期: 2016-02-21
-    更新内容:
+    date: 2016-02-21
     * 微调部分视觉效果
     
-版本: 1.0.1.3
+ver: 1.0.1.3
     
-    更新日期: 2015-11-08
-    更新内容:
+    date: 2015-11-08
     * 修改通知中心的内容呈现方式
     * 对window系统下的字体显示效果改进
 
-版本: 1.0.1
+ver: 1.0.1
     
-    更新日期: 2015-10-30
-    更新内容:
+    date: 2015-10-30
     * 新增唱片专辑页面导向: 点击唱片可以跳转到豆瓣专辑信息页面
 
-版本: 1.0.0
+ver: 1.0.0
     
-    更新日期: 2015-10-24
-    更新内容:
+    date: 2015-10-24
     1.频道选择功能
     2.用户登录功能
     3.单曲循环功能
@@ -57,42 +58,18 @@
     10.用户交互显示功能
     11.切歌通知功能
 
-###效果展示
-
-截图第一波：
-
-
-![截图](screenshot/01.png)
-![截图](screenshot/02.png)
-![截图](screenshot/03.png)
-![截图](screenshot/04.png)
-![截图](screenshot/05.png)
-![截图](screenshot/06.png)
-![截图](screenshot/07.png)
-![截图](screenshot/09.png)
-![截图](screenshot/10.png)
-
-截图第二波：
-
+###ScreenShots
 
 ![ScreenShot2](screenshot/002.png)
-![ScreenShot3](screenshot/003.png)
-![ScreenShot4](screenshot/004.png)
-![ScreenShot5](screenshot/005.png)
 ![ScreenShot6](screenshot/006.png)
 	
 	
 	
-###安装方式
-	豆瓣FM·新视觉 - FM in New Vision
-	
-Goole web store Installation: [地址][1]
-百度离线安装: [地址][2]
+###Installation
 
-或者使用QQ浏览器，在应用商店搜索「豆瓣FM新视觉」安装即可。
+Goole web store Installation: [link][1], Baidu pan: [link][2]
 
-
-如果觉得不错，在商店上评价打分。
+Give me 5 stars if you like it.
 
 ###Contribution
 I *really* welcome contributions! Please feel free to fork and send pull requests when...

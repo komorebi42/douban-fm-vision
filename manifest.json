@@ -4,7 +4,7 @@
 
     "name": "豆瓣FM新视觉",
     "description": "不一样的豆瓣FM，试试？！\nhttps://github.com/vinkerz/douban-fm-vision \nhttps://www.douban.com/people/xiaobo1873/",
-    "version": "1.2.0",
+    "version": "1.2.1",
 
     "permissions": [
         "notifications",
