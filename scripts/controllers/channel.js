@@ -206,17 +206,39 @@ angular.module('musicboxApp')
 
         this.getChlId = function() {
             if (self.chlId !== 0) {
-                return (self.chlId ? self.chlId : ($cookieStore.get('chlId') ? $cookieStore.get('chlId') : '2'));  // 155 舒缓
+                if (self.chlId) {
+                    return self.chlId;
+                } else {
+                    if (window.localStorage) {
+                        return localStorage.getItem('chlId') ? localStorage.getItem('chlId') : '2';
+                    } else {
+                        return ($cookieStore.get('chlId') ? $cookieStore.get('chlId') : '2');
+                    }
+                }
+                // return (self.chlId ? self.chlId : ($cookieStore.get('chlId') ? $cookieStore.get('chlId') : '2'));  // 155 舒缓
             } else {
                 return 0; // personal MHz
             }
         };
 
         this.getChlName = function() {
-            return (self.chlName ? self.chlName : ($cookieStore.get('chlName') ? $cookieStore.get('chlName') : '欧美'));  // 155 舒缓
+            if (self.chlName) {
+                return self.chlName;
+            } else {
+                if (window.localStorage) {
+                    return localStorage.getItem('chlName') ? localStorage.getItem('chlName') : '欧美';
+                } else {
+                    return ($cookieStore.get('chlName') ? $cookieStore.get('chlName') : '欧美');
+                }
+            }
+            // return (self.chlName ? self.chlName : ($cookieStore.get('chlName') ? $cookieStore.get('chlName') : '欧美'));  // 155 舒缓
         };
 
         this.setChannels = function(Id, Name) {
+            if (window.localStorage) {
+                localStorage.setItem('chlId', Id);
+                localStorage.setItem('chlName', Name);
+            }
             $cookieStore.put('chlId', Id);
             $cookieStore.put('chlName', Name);
         };

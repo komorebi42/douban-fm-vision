@@ -538,12 +538,19 @@ angular.module('musicboxApp').service('songsService', ['$http', '$q', '$cookieSt
 
     // save volume for the next use
     this.setVolume = function(vol) {
+        if (window.localStorage) {
+            localStorage.setItem('vol', vol);
+        }
         $cookieStore.put('vol', vol);
     };
 
     // get volume
     this.getVolume = function() {
-        return $cookieStore.get('vol');
+        if (window.localStorage) {
+            return localStorage.getItem('vol');
+        } else {
+            return $cookieStore.get('vol');
+        }
     };
 
     // add request referer

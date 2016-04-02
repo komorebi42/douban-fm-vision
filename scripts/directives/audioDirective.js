@@ -187,7 +187,13 @@ angular.module('musicboxApp')
                 iElement.bind('click', function() {
                     if (scope.song) {
                         var url = 'http://music.douban.com';
-                        url += scope.song.album;
+                        var reg = /site\.douban\.com\/.*/gi;
+
+                        if (scope.song.album.match(reg)) {
+                            url = scope.song.album;
+                        } else {
+                            url += scope.song.album;
+                        }
                         var l = (window.screen.width - 30 - 1280) / 2;
                         var t = (window.screen.height - 10 - 800) / 2;
                         window.open(url, '_blank', 'width=1280,height=800,left=' + l + ',top=' + t + ',toolbar=yes,menubar=yes,scrollbars=yes,resizable=yes,location=yes,status=yes');    

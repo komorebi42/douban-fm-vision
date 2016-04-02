@@ -209,51 +209,86 @@ angular.module('musicboxApp').controller('MainController', ['$scope', 'userSetti
 angular.module('musicboxApp').service('userSettingService', ['$cookieStore', function ($cookieStore) {
     // save goodluck for the next use
     this.setGoodLuck = function(goodLuck) {
+        if (window.localStorage) {
+            localStorage.setItem('goodLuck', goodLuck);
+        }
         $cookieStore.put('goodLuck', goodLuck);
     };
 
     // get goodluck
     this.getGoodLuck = function() {
-        return $cookieStore.get('goodLuck');
+        if (window.localStorage) {
+            return localStorage.getItem('goodLuck');
+        } else {
+            return $cookieStore.get('goodLuck');
+        }
     };
 
     // save frontCaption for the next use
     this.setFrontCaption = function(frontCaption) {
+        if (window.localStorage) {
+            localStorage.setItem('frontCaption', frontCaption);
+        }
         $cookieStore.put('frontCaption', frontCaption);
     };
 
     // get frontCaption
     this.getFrontCaption = function() {
-        return $cookieStore.get('frontCaption');
+        if (window.localStorage) {
+            return localStorage.getItem('frontCaption');
+        } else {
+            return $cookieStore.get('frontCaption');
+        }
     };
 
     // save displayCaption for the next use
     this.setDisplayCaption = function(displayCaption) {
+        if (window.localStorage) {
+            localStorage.setItem('displayCaption', displayCaption);
+        }
         $cookieStore.put('displayCaption', displayCaption);
     };
 
     // get displayCaption
     this.getDisplayCaption = function() {
-        return $cookieStore.get('displayCaption');
+        if (window.localStorage) {
+            return localStorage.getItem('displayCaption');
+        } else {
+            return $cookieStore.get('displayCaption');
+        }
     };
 
     // save axisNone for the next use
     this.setAxisSetting = function(axisNone) {
+        if (window.localStorage) {
+            localStorage.setItem('axisNone', axisNone);
+        }
         $cookieStore.put('axisNone', axisNone);
     };
 
     // get axisNone
     this.getAxisSetting = function() {
-        return $cookieStore.get('axisNone');
+        if (window.localStorage) {
+            return localStorage.getItem('axisNone');
+        } else {
+            return $cookieStore.get('axisNone');
+        }
     };
 
     // save notifyNone for the next use
     this.setNotifySetting = function(notifyNone) {
+        if (window.localStorage) {
+            localStorage.setItem('notifyNone', notifyNone);
+        }
         $cookieStore.put('notifyNone', notifyNone);
     };
 
     // get notifyNone
     this.getNotifySetting = function() {
-        return $cookieStore.get('notifyNone');
+        if (window.localStorage) {
+            return localStorage.getItem('notifyNone');
+        } else {
+            return $cookieStore.get('notifyNone');
+        }
     };
 }]);
