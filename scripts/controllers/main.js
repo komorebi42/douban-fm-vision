@@ -25,7 +25,7 @@ angular.module('musicboxApp').controller('MainController', ['$scope', 'userSetti
         'weberror': false,
         'expanded': false,
         'hidedpannel': false,
-        'frontCaption': userSettingService.getFrontCaption() || false,
+        'frontCaption': userSettingService.getFrontCaption() || true,  // false,
         'displayCaption': false
     };
 

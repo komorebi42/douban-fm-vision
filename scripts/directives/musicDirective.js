@@ -143,11 +143,11 @@ angular.module('musicboxApp').directive('ngDlink', ['$timeout', function($timeou
                         bps = (re.exec(url))[1],
                         filename;
 
-                    if (bps) {
-                        filename = title + '-' + artist + '[' + bps + ']' + ext;
-                    } else {
+                    // if (bps) {
+                    //     filename = title + '-' + artist + '[' + bps + ']' + ext;
+                    // } else {
                         filename = title + '-' + artist + ext;
-                    }
+                    // }
                     chrome.runtime.sendMessage({"url": url, "filename": filename});
 
                     // console.log("filename:", filename,'url:', url,'bps:', bps,'ext:', ext);
